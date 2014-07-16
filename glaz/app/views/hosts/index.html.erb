@@ -5,7 +5,7 @@
     </tr>
     <% @hosts.each do |item| %>
     <tr>
-        <td><%= link_to item.fqdn, edit_host_path(item), :title => 'edit host'  %></td>
+        <td><%= link_to item.fqdn, host_path(item), :title => 'edit host'  %></td>
         <td><%= item.title %></td>
     </tr>
     <% end %>

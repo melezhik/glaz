@@ -2,12 +2,14 @@
     <tr>
         <th>title</th>
         <th>command</th>
+        <th>command type</th>
         <th>default value</th>
     </tr>
     <% @metrics.each do |item| %>
     <tr>
-        <td><%= link_to item.title, edit_metric_path(item), :title => 'edit metric'  %></td>
-        <td><%= item.command %></td>
+        <td><%= link_to item.title, metric_path(item), :title => 'edit metric'  %></td>
+        <td><strong><code><%= item.command %></code></strong></td>
+        <td><%= item.command_type %></td>
         <td><%= item.default_value %></td>
     </tr>
     <% end %>

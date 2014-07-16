@@ -18,6 +18,7 @@
     <%= f.label :command %><br>
     <%= f.text_field :command, :size => 100 %>
   </p>
+  <%= f.select :command_type, options_for_select(['ssh', 'snmp' ], :selected => @metric.command_type),  {} %>
   <p>
     <%= f.label :default_value %><br>
     <%= f.text_field :default_value, :size => 100 %>
@@ -25,6 +26,4 @@
   <p>
     <%= f.submit %>
   </p>
-
 <% end %>
-

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140716124915) do
+ActiveRecord::Schema.define(version: 20140716130440) do
 
   create_table "hosts", force: true do |t|
     t.string   "title"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20140716124915) do
     t.string   "default_value"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "command_type",  default: "ssh"
   end
 
 end

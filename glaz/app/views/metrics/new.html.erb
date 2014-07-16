@@ -1,4 +1,4 @@
-<%= form_for :host, url: hosts_path  do |f| %>
+<%= form_for :metric, url: metrics_path  do |f| %>
   <p>
     <%= f.label :title %><br>
     <%= f.text_field :title, :size => 100 %>
@@ -7,6 +7,7 @@
     <%= f.label :command %><br>
     <%= f.text_field :command, :size => 100 %>
   </p>
+  <%= f.select :command_type, options_for_select(['ssh', 'snmp' ]),  {} %>
   <p>
     <%= f.label :default_value %><br>
     <%= f.text_field :default_value, :size => 100 %>

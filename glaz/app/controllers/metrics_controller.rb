@@ -46,7 +46,7 @@ class MetricsController < ApplicationController
 private
     def _params
         params.require(:metric).permit( 
-                :title, :command, :default_value
+                :title, :command, :default_value, :command_type 
         )
     end
 
