@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
   resources :hosts
+  resources :metrics
+
   root 'hosts#index'
   
   # The priority is based upon order of creation: first created -> highest priority.

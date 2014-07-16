@@ -1,0 +1,13 @@
+<h2>Metric Summary </h2>
+
+<pre>
+  <strong>Title:</strong> <%= @metric.title %>
+  <strong>Command:</strong> <%= @metric.command %>
+  <strong>Default Value:</strong> <%= @metric.default_value %>
+</pre>
+
+<h2> Actions </h2>
+
+<%= link_to 'edit metric', edit_metric_path(@metric), :title => 'edit metric attributes' %> | 
+<%= link_to 'delete metric', metric_path(@metric), :method => :DELETE, :title => 'delete this metric' %>
+

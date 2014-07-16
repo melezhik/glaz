@@ -1,0 +1,30 @@
+<%= form_for [@metric] do |f| %>
+  <% if @metric.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@metric.errors.count, "error") %> prohibited
+      this metric from being updated:</h2>
+    <ul>
+    <% @metric.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <p>
+    <%= f.label :title %><br>
+    <%= f.text_field :title, :size => 100 %>
+  </p>
+  <p>
+    <%= f.label :command %><br>
+    <%= f.text_field :command, :size => 100 %>
+  </p>
+  <p>
+    <%= f.label :default_value %><br>
+    <%= f.text_field :default_value, :size => 100 %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+
+<% end %>
+
