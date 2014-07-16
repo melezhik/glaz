@@ -1,12 +1,12 @@
-<table>
-    <th>
-        <td>fqdn</td>
-        <td>title</td>
-    </th>
+<table class="table-bordered table-striped table">
+    <tr>
+        <th>fqdn</th>
+        <th>title</th>
+    </tr>
     <% @hosts.each do |item| %>
     <tr>
         <td><%= item.fqdn %></td>
         <td><%= item.title %></td>
     </tr>
     <% end %>
-<table>
+</table>
