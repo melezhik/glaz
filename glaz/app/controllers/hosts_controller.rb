@@ -24,6 +24,20 @@ class HostsController < ApplicationController
         redirect_to hosts_url
     end
 
+    def update
+
+        @host = Host.find(params[:id])
+
+        if @host.update _params
+            flash[:notice] = "host ID: #{@host.id} has been successfully updated"
+            redirect_to @host
+        else 
+            flash[:alert] = "error has been occured when update host ID: #{@host.id}"
+            render 'edit'
+        end
+
+    end
+
 
 private
     def _params
