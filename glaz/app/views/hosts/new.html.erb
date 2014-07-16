@@ -1,0 +1,14 @@
+<%= form_for :host, url: hosts_path  do |f| %>
+  <p>
+    <%= f.label :fqdn %><br>
+    <%= f.text_field :fqdn, :size => 100  %>
+  </p>
+  <p>
+    <%= f.label :title %><br>
+    <%= f.text_field :title, :size => 100 %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+
