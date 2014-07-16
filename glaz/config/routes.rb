@@ -1,9 +1,15 @@
 Rails.application.routes.draw do
+    
+    resources :hosts do
+        member do
+            get 'add_metric_form'
+            patch 'metric'
+        end
+    end
 
-  resources :hosts
-  resources :metrics
+    resources :metrics
 
-  root 'hosts#index'
+    root 'hosts#index'
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

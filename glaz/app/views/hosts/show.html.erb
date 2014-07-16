@@ -5,8 +5,20 @@
   <strong>Title:</strong> <%= @host.title %>
 </pre>
 
+<h2> Available Metrics </h2>
+<% if @host.has_metrics? %>
+<ul>
+<% @host.metrics.each do |m| %>
+    <li> <%= link_to  m.title, metric_path(Metric.find(m.id)), :title => 'show metric data'  %> </li>
+<% end %>
+</ul>
+<% else %>
+    0 metrics found
+<% end %>
+
 <h2> Actions </h2>
 
 <%= link_to 'edit host', edit_host_path(@host), :title => 'edit host attributes' %> | 
+<%= link_to 'add metrics to host', add_metric_form_host_path(@host), :title => 'add metric to host' %> | 
 <%= link_to 'delete host', host_path(@host), :method => :DELETE, :title => 'delete this host' %>
 

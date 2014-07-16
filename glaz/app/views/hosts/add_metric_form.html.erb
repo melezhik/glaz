@@ -1,0 +1,21 @@
+<%= form_for ['metric', @host] do |f| %>
+  <% if @host.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@host.errors.count, "error") %> prohibited
+      this host from being updated:</h2>
+    <ul>
+    <% @host.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <%= select_tag :metric_id, options_for_select(@metrics), {}  %>
+  <p>
+    <%= hidden_field :host_id, :value => @host.id %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+
