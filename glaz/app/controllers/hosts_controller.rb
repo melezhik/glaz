@@ -9,7 +9,7 @@ class HostsController < ApplicationController
 
     def create
         @host = Host.new _params
-        @host.save
+        @host.save!
         redirect_to @host
     end
 
@@ -36,6 +36,10 @@ class HostsController < ApplicationController
             render 'edit'
         end
 
+    end
+
+    def edit
+        @host = Host.find(params[:id])
     end
 
 
