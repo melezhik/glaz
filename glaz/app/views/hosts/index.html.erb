@@ -1,0 +1,12 @@
+<table>
+    <th>
+        <td>fqdn</td>
+        <td>title</td>
+    </th>
+    <% @hosts.each do |item| %>
+    <tr>
+        <td><%= item.fqdn %></td>
+        <td><%= item.title %></td>
+    </tr>
+    <% end %>
+<table>
