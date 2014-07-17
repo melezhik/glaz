@@ -1,9 +1,12 @@
 Rails.application.routes.draw do
     
+    resources :tasks
+
     resources :hosts do
         member do
             get 'add_metric_form'
             patch 'metric'
+            post 'remove_metric'
         end
     end
 

@@ -1,24 +1,55 @@
-<h2>Host Summary </h2>
+<table class="table-striped table-bordered table">
+<tr>
+    <th colspan=3>Host summary</th>
+</tr>
+<tr>
+    <th>Fqdn</th>
+    <th>Title</th>
+    <th>Enable</th>
+</tr>
 
-<pre>
-  <strong>Fqdn:</strong> <%= @host.fqdn %>
-  <strong>Title:</strong> <%= @host.title %>
-</pre>
+<tr>
+    <td><%= @host.fqdn %></td>
+    <td><%= @host.title %></td>
+    <td><%= @host.enabled %></td>
+</tr>
+</table>
 
-<h2> Available Metrics </h2>
+<table class="table-striped table-bordered table">
+<tr>
+    <th>Actions</th>
+</tr>
+<tr>
+  <td>  <%= link_to 'edit host', edit_host_path(@host), :title => 'edit host attributes' %> | 
+        <%= link_to 'add metric to host', add_metric_form_host_path(@host), :title => 'add metric to host' %> | 
+        <%= link_to 'delete host', host_path(@host), :method => :DELETE, :title => 'delete this host' %> 
+  </td>
+</tr>
+</table>
+
+<table class="table-bordered table-striped table">
+<tr>
+    <th colspan=2>Available Metrics</th>
+</tr>
 <% if @host.has_metrics? %>
-<ol>
+<tr>
+    <th>name</th>
+    <th>actions</th>
+</tr>
 <% @host.metrics.each do |m| %>
-    <li> <%= link_to  m.title, metric_path(Metric.find(m.id)), :title => 'show metric data'  %> </li>
+    <tr>
+        <td> 
+            <%= link_to  m.title, metric_path(m), :title => 'show metric data'  %>
+        </td>
+        <td>
+            <%= link_to 'remove', task_path(@host.tasks.select{|i| i[:metric_id] == m.id }.first), :method => :delete, :title => 'remove this metric from host' %> 
+        </td>
+    </tr>
 <% end %>
-</ol>
+</table>
 <% else %>
-    0 metrics found
+    <tr>
+        <td colspan=2>0 metrics found</td>
+    </tr>
 <% end %>
-
-<h2> Actions </h2>
-
-<%= link_to 'edit host', edit_host_path(@host), :title => 'edit host attributes' %> | 
-<%= link_to 'add metrics to host', add_metric_form_host_path(@host), :title => 'add metric to host' %> | 
-<%= link_to 'delete host', host_path(@host), :method => :DELETE, :title => 'delete this host' %>
 

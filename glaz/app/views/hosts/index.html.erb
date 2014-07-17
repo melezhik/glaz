@@ -2,11 +2,13 @@
     <tr>
         <th>fqdn</th>
         <th>title</th>
+        <th>enabled</th>
     </tr>
     <% @hosts.each do |item| %>
     <tr>
         <td><%= link_to item.fqdn, host_path(item), :title => 'edit host'  %></td>
         <td><%= item.title %></td>
+        <td><%= item.enabled %></td>
     </tr>
     <% end %>
 </table>

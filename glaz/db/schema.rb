@@ -11,13 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140716133641) do
+ActiveRecord::Schema.define(version: 20140717100259) do
 
   create_table "hosts", force: true do |t|
     t.string   "title"
     t.string   "fqdn"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "enabled",    default: true
   end
 
   create_table "metrics", force: true do |t|

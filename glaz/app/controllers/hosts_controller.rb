@@ -62,7 +62,7 @@ class HostsController < ApplicationController
 private
     def _params
         params.require(:host).permit( 
-                :title, :fqdn
+                :title, :fqdn, :enabled
         )
     end
     

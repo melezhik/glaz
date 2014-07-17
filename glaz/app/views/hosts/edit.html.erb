@@ -19,6 +19,10 @@
     <%= f.text_field :title, :size => 100 %>
   </p>
   <p>
+    <%= f.label :enabled %><br>
+    <%= f.check_box :enabled, { :value => true , :checked => @host[:enabled], :title => 'enable / disable host synchronization '  }  %>
+  </p>
+  <p>
     <%= f.submit %>
   </p>
 
