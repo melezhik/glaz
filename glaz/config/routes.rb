@@ -1,11 +1,18 @@
 Rails.application.routes.draw do
     
     resources :tasks do
+
+        resources :builds do
+            resources :logs
+        end
+
         member do
+
             post 'enable'
             post 'disable'
             post 'synchronize'
         end
+
     end
 
     resources :hosts do
@@ -17,6 +24,8 @@ Rails.application.routes.draw do
     end
 
     resources :metrics
+
+
 
     root 'hosts#index'
   
