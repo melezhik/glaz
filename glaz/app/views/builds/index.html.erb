@@ -10,7 +10,7 @@
     </tr>
     <% @builds.each do |item| %>
     <tr>
-        <td><%= link_to item.id, task_build_logs_path(@task,item), :title => 'see log data'  %></td>
+        <td><%= link_to item.id, task_build_path(@task,item), :title => 'see log data'  %></td>
         <td><%= item.created_at.strftime('%B %d, %Y at %H:%M') %></td>
         <td><%= item.duration || '?' %> seconds</td>
         <td><%= item.state %></td>
