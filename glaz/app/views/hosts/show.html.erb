@@ -21,7 +21,7 @@
 </tr>
 <tr>
   <td>  
-        <%= link_to 'synchronize', synchronize_host_path(@host), :title => 'synchronize host metrics' %> | 
+        <%= link_to 'synchronize', synchronize_host_path(@host), :method => :POST, :title => 'synchronize host metrics' %> | 
         <%= link_to 'new metric', add_metric_form_host_path(@host), :title => 'add metric to host' %> | 
         <%= link_to 'edit', edit_host_path(@host), :title => 'edit host attributes' %> | 
         <%= link_to 'delete', host_path(@host), :method => :DELETE, :title => 'delete this host' %> 
@@ -49,13 +49,13 @@
             <%= task.enabled %>
         </td>
         <td>
-            <%= link_to 'remove', task_path(task), :method => :delete, :title => 'remove this metric from host' %> |
+            <%= link_to 'synchronize', synchronize_task_path(task), :method => :POST, :title => 'synchronize metric' %> |
             <% if task.enabled? %>
                 <%= link_to 'disable', disable_task_path(task), :method => :post, :title => 'remove this metric from synchronazation' %> |
             <% else %>
                 <%= link_to 'enable', enable_task_path(task), :method => :post, :title => 'add this metric to synchronazation' %>  |
             <% end %>
-            <%= link_to 'synchronize', synchronize_task_path(task), :title => 'synchronize metric' %>
+            <%= link_to 'remove', task_path(task), :method => :delete, :title => 'remove this metric from host' %>
         </td>
     </tr>
 <% end %>

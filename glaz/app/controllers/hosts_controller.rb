@@ -59,6 +59,13 @@ class HostsController < ApplicationController
         redirect_to @host
     end
 
+
+    def synchronize
+        @host = Host.find(params[:id])
+        flash[:notice] = "host ID: #{params[:id]} has been successfully scheduled to synchronization queue"
+        redirect_to @host
+    end
+
 private
     def _params
         params.require(:host).permit( 

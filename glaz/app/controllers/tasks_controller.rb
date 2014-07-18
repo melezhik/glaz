@@ -24,4 +24,10 @@ class TasksController < ApplicationController
         redirect_to :back
     end
 
+    def synchronize
+        @task = Task.find(params[:id])
+        flash[:notice] = "task ID: #{params[:id]} has been successfully scheduled to synchronization queue"
+        redirect_to :back
+    end
+
 end
