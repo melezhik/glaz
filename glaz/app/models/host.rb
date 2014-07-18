@@ -15,4 +15,8 @@ class Host < ActiveRecord::Base
     def disabled?
         enabled == false
     end
+
+    def task metric_id
+        tasks.select{|i| i[:metric_id] == metric_id}.first
+    end
 end

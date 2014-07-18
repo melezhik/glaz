@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140717100259) do
+ActiveRecord::Schema.define(version: 20140718105713) do
 
   create_table "hosts", force: true do |t|
     t.string   "title"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20140717100259) do
   create_table "tasks", force: true do |t|
     t.integer "host_id"
     t.integer "metric_id"
+    t.boolean "enabled",   default: true
   end
 
 end

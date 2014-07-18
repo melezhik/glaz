@@ -8,4 +8,20 @@ class TasksController < ApplicationController
         redirect_to :back
     end
 
+    def enable
+        @task = Task.find(params[:id])
+        @task.update!  :enabled  => true 
+        @task.save!
+        flash[:notice] = "task ID:#{params[:id]} has been successfully enabled"
+        redirect_to :back
+    end
+
+    def disable
+        @task = Task.find(params[:id])
+        @task.update!  :enabled  => false 
+        @task.save!
+        flash[:notice] = "task ID:#{params[:id]} has been successfully disabled"
+        redirect_to :back
+    end
+
 end
