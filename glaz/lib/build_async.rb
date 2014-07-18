@@ -20,6 +20,8 @@ class BuildAsync < Struct.new( :task, :build   )
 
     def success(job)
         log :debug, "succeeded async build for task ID: #{task.id}"
+        mark_build_as_succeeded
+
     end
 
 
@@ -53,7 +55,7 @@ class BuildAsync < Struct.new( :task, :build   )
     end
 
     def mark_build_as_succeeded
-        build.update({ :state => 'OK' })
+        build.update({ :state => 'SUCCEEDED' })
         build.save!
     end
 

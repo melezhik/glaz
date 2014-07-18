@@ -1,0 +1,55 @@
+<table class="table-striped table-bordered table">
+<tr>
+    <th colspan=6 >Build Summary</th>
+</tr>
+<tr>
+    <th>ID</th>
+    <th>Date</th>
+    <th>State</th>
+    <th>Duration</th>
+    <th>Host</th>
+    <th>Metric</th>
+</tr>
+
+<tr>
+    <td><%= @build.id %></td>
+    <td><%= @build.created_at.strftime('%B %d, %Y at %H:%M')  %></td>
+    <td><%= @build.state %></td>
+    <td><%= @build.duration || '?' %> seconds </td>
+    <td><%= link_to @build.task.host.fqdn, host_path(@build.task.host) %></td>
+    <td><%= link_to @build.task.metric.title, metric_path(@build.task.metric)  %></td>
+    
+</tr>
+</table>
+
+<table class="table-bordered table-striped table">
+<tr>
+    <th colspan=3>Logs</th>
+</tr>
+<% if @build.has_logs? %>
+<tr>
+    <th>Date</th>
+    <th>Level</th>
+    <th>Data</th>
+</tr>
+<% @build.logs.each do |l| %>
+    <tr>
+        <td>
+            <%= l.created_at.strftime('%B %d, %Y at %H:%M') %>
+        </td>
+        <td>
+            <%= l.level %>
+        </td>
+        <td>
+            <pre><%= l.chunk %></pre>
+        </td>
+    </tr>
+<% end %>
+
+<% else %>
+    <tr>
+        <td colspan=6 >no logs found</td>
+    </tr>
+<% end %>
+</table>
+

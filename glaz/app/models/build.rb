@@ -4,4 +4,9 @@ class Build < ActiveRecord::Base
 
     has_many :logs
 
+
+    def has_logs?
+        logs.size > 0
+    end
+
 end
