@@ -19,4 +19,8 @@ class Host < ActiveRecord::Base
     def task metric_id
         tasks.select{|i| i[:metric_id] == metric_id}.first
     end
+
+    def active_tasks do
+        tasks.select{|i| i.enabled? }
+    end
 end
