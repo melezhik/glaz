@@ -2,7 +2,7 @@ class BuildAsync < Struct.new( :task, :build   )
 
 
     def perform
-        runner = RunTask.new task, build
+        runner = RunTask.new task, build, self
         runner.run 
     end
 

@@ -17,4 +17,7 @@ class Task < ActiveRecord::Base
         Metric.find metric_id
     end
 
+    def has_builds?
+        builds.size > 0
+    end
 end
