@@ -1,0 +1,17 @@
+<table class="table-bordered table-striped table">
+    <tr>
+        <td colspan=3>Builds for host <strong><%= @task.host.fqdn %></strong> and metric <strong><%= @task.metric.title %></strong></td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <th>Duration</th>
+        <th>State</th>
+    </tr>
+    <% @builds.each do |item| %>
+    <tr>
+        <td><%= item.created_at.strftime('%B %d, %Y at %H:%M') %></td>
+        <td><%= item.duration || '?' %> seconds</td>
+        <td><%= item.state %></td>
+    </tr>
+    <% end %>
+</table>

@@ -1,8 +1,8 @@
-class BuildAsync < Struct.new( :task   )
+class BuildAsync < Struct.new( :task, :build   )
 
 
     def perform
-        runner = RunTask.new task
+        runner = RunTask.new task, build
         runner.run 
     end
 
@@ -43,17 +43,17 @@ class BuildAsync < Struct.new( :task   )
     end
 
     def mark_build_as_in_progress
-        build.update({ :status => 'IN_PROGRESS' })
+        build.update({ :state => 'IN_PROGRESS' })
         build.save!
     end
 
     def mark_build_as_failed
-        build.update({ :status => 'FAIL' })
+        build.update({ :state => 'FAIL' })
         build.save!
     end
 
     def mark_build_as_succeeded
-        build.update({ :status => 'OK' })
+        build.update({ :state => 'OK' })
         build.save!
     end
 

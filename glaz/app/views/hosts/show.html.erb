@@ -49,6 +49,7 @@
             <%= task.enabled %>
         </td>
         <td>
+            <%= link_to  'builds', task_builds_path(task), :title => 'show builds for metric'  %> |
             <%= link_to 'synchronize', synchronize_task_path(task), :method => :POST, :title => 'synchronize metric' %> |
             <% if task.enabled? %>
                 <%= link_to 'disable', disable_task_path(task), :method => :post, :title => 'remove this metric from synchronazation' %> |

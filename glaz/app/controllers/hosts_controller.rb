@@ -62,9 +62,12 @@ class HostsController < ApplicationController
 
     def synchronize
         @host = Host.find(params[:id])
-        host.active_tasks.each do |task|
-            Delayed::Job.enqueue( BuildAsync.new( task ) )
-            logger.info "host ID: #{params[:id]}, task ID:#{t.id} has been successfully scheduled to synchronization queue"        
+
+        @host.active_tasks.each do |task|
+            build = task.builds.create :state => 'PENDING'
+            build.save!
+            Delayed::Job.enqueue( BuildAsync.new( task, build ) )
+            logger.info "host ID: #{params[:id]}, task ID:#{task.id} has been successfully scheduled to synchronization queue"        
         end
         flash[:notice] = "host ID: #{params[:id]} has been successfully scheduled to synchronization queue"
         redirect_to @host
