@@ -1,6 +1,6 @@
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=3>Host summary</th>
+    <th colspan=3>Host Summary</th>
 </tr>
 <tr>
     <th>Fqdn</th>
@@ -20,16 +20,18 @@
     <th>Actions</th>
 </tr>
 <tr>
-  <td>  <%= link_to 'edit host', edit_host_path(@host), :title => 'edit host attributes' %> | 
-        <%= link_to 'add metric to host', add_metric_form_host_path(@host), :title => 'add metric to host' %> | 
-        <%= link_to 'delete host', host_path(@host), :method => :DELETE, :title => 'delete this host' %> 
+  <td>  
+        <%= link_to 'synchronize', synchronize_host_path(@host), :title => 'synchronize host metrics' %> | 
+        <%= link_to 'new metric', add_metric_form_host_path(@host), :title => 'add metric to host' %> | 
+        <%= link_to 'edit', edit_host_path(@host), :title => 'edit host attributes' %> | 
+        <%= link_to 'delete', host_path(@host), :method => :DELETE, :title => 'delete this host' %> 
   </td>
 </tr>
 </table>
 
 <table class="table-bordered table-striped table">
 <tr>
-    <th colspan=3>Available Metrics</th>
+    <th colspan=3>Metrics</th>
 </tr>
 <% if @host.has_metrics? %>
 <tr>
@@ -49,10 +51,11 @@
         <td>
             <%= link_to 'remove', task_path(task), :method => :delete, :title => 'remove this metric from host' %> |
             <% if task.enabled? %>
-                <%= link_to 'disable', disable_task_path(task), :method => :post, :title => 'remove this metric from synchronazation' %> 
+                <%= link_to 'disable', disable_task_path(task), :method => :post, :title => 'remove this metric from synchronazation' %> |
             <% else %>
-                <%= link_to 'enable', enable_task_path(task), :method => :post, :title => 'add this metric to synchronazation' %> 
+                <%= link_to 'enable', enable_task_path(task), :method => :post, :title => 'add this metric to synchronazation' %>  |
             <% end %>
+            <%= link_to 'synchronize', synchronize_task_path(task), :title => 'synchronize metric' %>
         </td>
     </tr>
 <% end %>

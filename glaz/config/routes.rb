@@ -4,6 +4,7 @@ Rails.application.routes.draw do
         member do
             post 'enable'
             post 'disable'
+            post 'synchronize'
         end
     end
 
@@ -11,6 +12,7 @@ Rails.application.routes.draw do
         member do
             get 'add_metric_form'
             patch 'metric'
+            post 'synchronize'
         end
     end
 

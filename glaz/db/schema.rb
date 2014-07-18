@@ -11,7 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140718105713) do
+ActiveRecord::Schema.define(version: 20140718114407) do
+
+  create_table "builds", force: true do |t|
+    t.string   "state"
+    t.text     "value"
+    t.integer  "task_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "builds", ["task_id"], name: "index_builds_on_task_id", using: :btree
 
   create_table "hosts", force: true do |t|
     t.string   "title"
@@ -20,6 +30,16 @@ ActiveRecord::Schema.define(version: 20140718105713) do
     t.datetime "updated_at"
     t.boolean  "enabled",    default: true
   end
+
+  create_table "logs", force: true do |t|
+    t.string   "level"
+    t.binary   "chunk",      limit: 16777215
+    t.integer  "build_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "logs", ["build_id"], name: "index_logs_on_build_id", using: :btree
 
   create_table "metrics", force: true do |t|
     t.string   "title"
