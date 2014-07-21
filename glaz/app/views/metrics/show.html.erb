@@ -1,14 +1,37 @@
-<h2>Metric Summary </h2>
+<table class="table-striped table-bordered table">
+    <tr>
+        <th colspan=6 >metric summary</th>
+    </tr>
+    <tr>
+        <th>Title</th>
+        <th>Command</th>
+        <th>Command Type</th>
+        <th>Default Value</th>
+        <th>Sub Metrics</th>
+        <th>Actions</th>
+    </tr>
+    <tr>
+        <td><%= @metric.title %></td>
+        <td><%= @metric.command %></td>
+        <td><%= @metric.command_type %></td>
+        <td><%= @metric.default_value %></td>
+        <td>
+            <pre>
+            <% @metric.sub_metrics.each do |sm| %>
+                <%= sm.obj_by_id.title %>
+            <% end %>
+            </pre>
+        </td>
+        <td>
+            <%= link_to 'edit metric', edit_metric_path(@metric), :title => 'edit metric attributes' %> | 
+            <%= link_to 'add sub metric', new_metric_sub_metrics_path(@metric), :title => 'add submetric to this metric' %> | 
+            <%= link_to 'delete metric', metric_path(@metric), :method => :DELETE, :title => 'delete this metric' %>
+        </td>
+    </tr>
+</table>
 
-<pre>
-  <strong>Title:</strong> <%= @metric.title %>
-  <strong>Command:</strong> <%= @metric.command %>
-  <strong>Command Type:</strong> <%= @metric.command_type %>
-  <strong>Default Value:</strong> <%= @metric.default_value %>
-</pre>
 
-<h2> Actions </h2>
 
-<%= link_to 'edit metric', edit_metric_path(@metric), :title => 'edit metric attributes' %> | 
-<%= link_to 'delete metric', metric_path(@metric), :method => :DELETE, :title => 'delete this metric' %>
+
+
 

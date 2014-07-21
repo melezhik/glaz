@@ -1,0 +1,19 @@
+<h2>Add submetric to metric [<%= @metric.title %>]</h2>
+<%= form_for [@metric,@metric.sub_metrics.build] do |f| %>
+  <% if @metric.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@metric.errors.count, "error") %> prohibited
+      this metric from being updated:</h2>
+    <ul>
+    <% @metric.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <%= f.select :sub_metric_id, options_for_select( @sub_metrics ), {}  %>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+

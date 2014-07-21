@@ -23,7 +23,9 @@ Rails.application.routes.draw do
         end
     end
 
-    resources :metrics
+    resources :metrics do
+        resource :sub_metrics
+    end
 
 
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140718122718) do
+ActiveRecord::Schema.define(version: 20140721114052) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -66,6 +66,15 @@ ActiveRecord::Schema.define(version: 20140718122718) do
     t.datetime "updated_at"
     t.string   "command_type",  default: "ssh"
   end
+
+  create_table "sub_metrics", force: true do |t|
+    t.integer  "sub_metric_id"
+    t.integer  "metric_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sub_metrics", ["metric_id"], name: "index_sub_metrics_on_metric_id", using: :btree
 
   create_table "tasks", force: true do |t|
     t.integer "host_id"
