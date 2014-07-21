@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140721114052) do
+ActiveRecord::Schema.define(version: 20140721140602) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 20140721114052) do
     t.integer "host_id"
     t.integer "metric_id"
     t.boolean "enabled",   default: true
+    t.string  "retval"
   end
 
 end
