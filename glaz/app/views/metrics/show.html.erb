@@ -19,7 +19,8 @@
             <% if @metric.has_sub_metrics? %>
             <ol>
             <% @metric.sub_metrics.each do |sm| %>
-                <li><%= link_to sm.metric.title, metric_path(sm.metric) %></li>
+                <li><%= link_to sm.obj.title, metric_path(sm.obj) %> - 
+                    <%= link_to 'remove submetric', metric_sub_metrics_path(@metric), :method => :DELETE, :title => 'remove submetric for this metric' %></li>
             <% end %>
             </ol>
             <% else %>
