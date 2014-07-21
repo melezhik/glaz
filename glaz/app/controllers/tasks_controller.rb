@@ -26,6 +26,9 @@ class TasksController < ApplicationController
 
     def synchronize
         @task = Task.find(params[:id])
+        build = @task.builds.create :state => 'PENDING'
+        build.save!
+        Delayed::Job.enqueue( BuildAsync.new( @task, build ) )
         flash[:notice] = "task ID: #{params[:id]} has been successfully scheduled to synchronization queue"
         redirect_to :back
     end
