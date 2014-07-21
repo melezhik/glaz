@@ -2,7 +2,7 @@ class SubMetric < ActiveRecord::Base
 
     belongs_to :metric
 
-    def obj_by_id 
-        Metric.find(id)
+    def metric 
+        Metric.find(sub_metric_id)
     end    
 end

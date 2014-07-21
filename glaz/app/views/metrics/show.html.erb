@@ -16,11 +16,15 @@
         <td><%= @metric.command_type %></td>
         <td><%= @metric.default_value %></td>
         <td>
-            <pre>
+            <% if @metric.has_sub_metrics? %>
+            <ol>
             <% @metric.sub_metrics.each do |sm| %>
-                <%= sm.obj_by_id.title %>
+                <li><%= link_to sm.metric.title, metric_path(sm.metric) %></li>
             <% end %>
-            </pre>
+            </ol>
+            <% else %>
+            ---
+            <% end %>
         </td>
         <td>
             <%= link_to 'edit metric', edit_metric_path(@metric), :title => 'edit metric attributes' %> | 
