@@ -5,9 +5,9 @@ class Metric < ActiveRecord::Base
     has_many :hosts
     has_many :metrics, through: :hosts
 
-    has_many :sub_metrics
+    has_many :submetrics
 
     def has_sub_metrics?
-        sub_metrics.size > 0
+        submetrics.size > 0
     end
 end

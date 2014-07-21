@@ -1,4 +1,4 @@
-class SubMetric < ActiveRecord::Base
+class Submetric < ActiveRecord::Base
 
     belongs_to :metric
 

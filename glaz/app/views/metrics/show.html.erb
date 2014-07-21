@@ -18,9 +18,9 @@
         <td>
             <% if @metric.has_sub_metrics? %>
             <ol>
-            <% @metric.sub_metrics.each do |sm| %>
+            <% @metric.submetrics.each do |sm| %>
                 <li><%= link_to sm.obj.title, metric_path(sm.obj) %> - 
-                    <%= link_to 'remove submetric', metric_sub_metrics_path(@metric), :method => :DELETE, :title => 'remove submetric for this metric' %></li>
+                    <%= link_to 'remove submetric', metric_submetric_path(@metric,sm), :method => :DELETE, :title => 'remove submetric for this metric' %></li>
             <% end %>
             </ol>
             <% else %>
@@ -29,7 +29,7 @@
         </td>
         <td>
             <%= link_to 'edit metric', edit_metric_path(@metric), :title => 'edit metric attributes' %> | 
-            <%= link_to 'add sub metric', new_metric_sub_metrics_path(@metric), :title => 'add submetric to this metric' %> | 
+            <%= link_to 'add sub metric', new_metric_submetric_path(@metric), :title => 'add submetric to this metric' %> | 
             <%= link_to 'delete metric', metric_path(@metric), :method => :DELETE, :title => 'delete this metric' %>
         </td>
     </tr>

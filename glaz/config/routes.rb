@@ -24,7 +24,7 @@ Rails.application.routes.draw do
     end
 
     resources :metrics do
-        resource :sub_metrics
+        resources :submetrics
     end
 
 

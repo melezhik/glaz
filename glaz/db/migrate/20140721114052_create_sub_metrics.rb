@@ -1,6 +1,6 @@
 class CreateSubMetrics < ActiveRecord::Migration
   def change
-    create_table :sub_metrics do |t|
+    create_table :submetrics do |t|
       t.integer :sub_metric_id
       t.references :metric, index: true
       t.timestamps
