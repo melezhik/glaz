@@ -4,7 +4,15 @@ require 'open3'
 class RunTask < Struct.new( :task, :build, :build_async   )
 
     def run
-        execute_command task.metric.command
+        if task.metric.has_sub_metrics?
+            build_async.log :info, "task has submetrics, running over them"
+            task.submetrics.each do |sm|
+                execute_command sm.obj.command
+            end
+        else
+            build_async.log :info, "task has single metric"
+            execute_command task.metric.command
+        end
     end
 
 private

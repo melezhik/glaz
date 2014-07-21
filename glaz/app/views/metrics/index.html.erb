@@ -4,6 +4,7 @@
         <th>command</th>
         <th>command type</th>
         <th>default value</th>
+        <th>has sub metrics?</th>
     </tr>
     <% @metrics.each do |item| %>
     <tr>
@@ -11,6 +12,7 @@
         <td><strong><code><%= item.command %></code></strong></td>
         <td><%= item.command_type %></td>
         <td><%= item.default_value %></td>
+        <td><%= item.has_sub_metrics? %></td>
     </tr>
     <% end %>
 </table>
