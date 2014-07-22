@@ -1,26 +1,13 @@
 require File.join(File.dirname(__FILE__),'errors')
 require 'open3'
 
-class RunTask < Struct.new( :task, :build, :build_async   )
+class RunTask < Struct.new( :host, :metric, :build, :build_async   )
 
     def run
-        if task.metric.has_sub_metrics?
-            build_async.log :info, "task has submetrics, running over them"
-            task.metric.submetrics.each do |sm|
-                retval = execute_command sm.obj.command
-                task.update!(:retval =>  retval.join(" "))
-                task.save!
-                build.update!(:retval =>  retval.join(" "))
-                build.save!
-            end
-        else
-            build_async.log :info, "task has single metric"
-            retval = execute_command task.metric.command
-            task.update!(:retval => retval.join(" "))
-            task.save!
-            build.update!(:retval =>  retval.join(" "))
-            build.save!
-        end
+        build_async.log :info, "cexecute command: #{metric.command}"
+        retval = execute_command metric.command
+        build.update!(:retval =>  retval.join(" "))
+        build.save!
     end
 
 private

@@ -1,32 +1,32 @@
-class BuildAsync < Struct.new( :task, :build   )
+class BuildAsync < Struct.new( :host, :metric, :build   )
 
 
     def perform
-        runner = RunTask.new task, build, self
+        runner = RunTask.new host, metric, build, self
         runner.run 
     end
 
     def before(job) 
         mark_build_as_in_progress
-        log :debug, "scheduled async build for task ID: #{task.id}"
+        log :debug, "scheduled async build ID: #{build.id}"
     end
 
     def after(job)
-        log :debug, "finished async build for task ID: #{task.id}"
+        log :debug, "finished async build ID: #{build.id}"
         build.update({ :duration => (build.updated_at - build.created_at).to_int })
         build.save!
         log :debug, "#{build.duration} seconds took for this build"
     end
 
     def success(job)
-        log :debug, "succeeded async build for task ID: #{task.id}"
+        log :debug, "succeeded async build ID: #{build.id}"
         mark_build_as_succeeded
 
     end
 
 
     def error(job, ex)
-        log  :error, "failed async build for task ID: #{task.id}"
+        log  :error, "failed async build ID: #{build.id}"
         log  :error, "#{ex.class} : #{ex.message}"
         log  :error, ex.backtrace
     end
