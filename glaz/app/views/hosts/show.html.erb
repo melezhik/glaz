@@ -50,7 +50,15 @@
             <%= task.enabled %>
         </td>
         <td>
-            <%= @host.metric_value(m) %>
+            <% if m.multi? %>
+                <ol>
+                <% m.submetrics.each do |sm| %>
+                    <li><%= sm.obj.title %> : <%= @host.metric_value(sm.obj) %></li>
+                <% end %>
+                </ol>
+            <% else %>
+                <%= @host.metric_value(m) %>
+            <% end %>
         </td>
         <td>
             <%= link_to  'builds', task_builds_path(task), :title => 'show builds for metric'  %> |

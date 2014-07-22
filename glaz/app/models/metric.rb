@@ -10,4 +10,8 @@ class Metric < ActiveRecord::Base
     def has_sub_metrics?
         submetrics.size > 0
     end
+
+    def multi?
+        has_sub_metrics?
+    end
 end
