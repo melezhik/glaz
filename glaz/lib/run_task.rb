@@ -28,7 +28,7 @@ private
         chunk = ""
         ret_val = []
 
-        Open3.popen2e(cmd) do |stdin, stdout, stderr, wait_thr|
+        Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
             i = 0; chunk = []
             while line = stdout.gets

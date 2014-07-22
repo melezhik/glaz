@@ -3,6 +3,13 @@
     <th colspan=7 >Build Summary</th>
 </tr>
 <tr>
+
+    <td colspan=7 ><%= link_to 'back to builds', task_builds_path(@build.task) %></td>
+</tr>
+<tr>
+    <td colspan=7 ><%= link_to 'run new build', synchronize_task_path(@build.task), :method => :post %></td>
+</tr>
+<tr>
     <th>ID</th>
     <th>Date</th>
     <th>State</th>
