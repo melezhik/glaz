@@ -1,9 +1,11 @@
 <table class="table-bordered table-striped table">
     <tr>
-        <td colspan=5 >Builds for host <strong><%= @task.host.fqdn %></strong> and metric <strong><%= @task.metric.title %></strong></td>
-    </tr>
-    <tr>
-        <td colspan=5 ><%= link_to 'run new build', synchronize_task_path(@task), :method => :post %></td>
+        <td colspan=1 >
+            Builds for host <strong><%= @task.host.fqdn %></strong> and metric <strong><%= @task.metric.title %></strong>
+        </td>
+        <td colspan=4 >
+            <%= link_to 'run new build', synchronize_task_path(@task), :method => :post %>
+        </td>
     </tr>
     <% if @task.has_builds? %>
     <tr>

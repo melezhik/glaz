@@ -10,12 +10,16 @@ class RunTask < Struct.new( :task, :build, :build_async   )
                 retval = execute_command sm.obj.command
                 task.update!(:retval =>  retval.join(" "))
                 task.save!
+                build.update!(:retval =>  retval.join(" "))
+                build.save!
             end
         else
             build_async.log :info, "task has single metric"
             retval = execute_command task.metric.command
             task.update!(:retval => retval.join(" "))
             task.save!
+            build.update!(:retval =>  retval.join(" "))
+            build.save!
         end
     end
 
@@ -26,7 +30,7 @@ private
         build_async.log :info, "running command: #{cmd}"
 
         chunk = ""
-        ret_val = []
+        retval = []
 
         Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
@@ -34,6 +38,7 @@ private
             while line = stdout.gets
                 i += 1
                 chunk << line
+                retval << line.chomp
                 if chunk.size > 30
                     build_async.log :debug,  ( chunk.join "" )
                     chunk = []
