@@ -27,7 +27,7 @@ class Host < ActiveRecord::Base
 
 
     def metric_value metric
-        stat[metric.id]
+        stat["#{metric.id}"]
     end
 
 
