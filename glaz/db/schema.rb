@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140722092738) do
+ActiveRecord::Schema.define(version: 20140722105529) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -26,10 +26,10 @@ ActiveRecord::Schema.define(version: 20140722092738) do
   add_index "builds", ["task_id"], name: "index_builds_on_task_id", using: :btree
 
   create_table "delayed_jobs", force: true do |t|
-    t.integer  "priority",   default: 0, null: false
-    t.integer  "attempts",   default: 0, null: false
-    t.text     "handler",                null: false
-    t.text     "last_error"
+    t.integer  "priority",                    default: 0, null: false
+    t.integer  "attempts",                    default: 0, null: false
+    t.text     "handler",    limit: 16777215,             null: false
+    t.text     "last_error", limit: 16777215
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
@@ -46,7 +46,8 @@ ActiveRecord::Schema.define(version: 20140722092738) do
     t.string   "fqdn"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "enabled",    default: true
+    t.boolean  "enabled",                     default: true
+    t.binary   "data",       limit: 16777215
   end
 
   create_table "logs", force: true do |t|
@@ -81,7 +82,6 @@ ActiveRecord::Schema.define(version: 20140722092738) do
     t.integer "host_id"
     t.integer "metric_id"
     t.boolean "enabled",   default: true
-    t.string  "retval"
   end
 
 end

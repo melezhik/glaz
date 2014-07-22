@@ -50,7 +50,7 @@
             <%= task.enabled %>
         </td>
         <td>
-            <%= task.retval %>
+            <%= @host.metric_value(m).retval %>
         </td>
         <td>
             <%= link_to  'builds', task_builds_path(task), :title => 'show builds for metric'  %> |
