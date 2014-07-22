@@ -50,7 +50,7 @@
             <%= l.level %>
         </td>
         <td>
-            <pre><%= l.chunk %></pre>
+            <pre><%= l.chunk.force_encoding("UTF-8") %></pre>
         </td>
     </tr>
 <% end %>
