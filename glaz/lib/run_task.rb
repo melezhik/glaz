@@ -4,7 +4,7 @@ require 'open3'
 class RunTask < Struct.new( :host, :metric, :build, :build_async   )
 
     def run
-        build_async.log :info, "cexecute command: #{metric.command}"
+        build_async.log :info, "running command: #{metric.command} #{metric.class}"
         retval = execute_command metric.command
         build.update!(:retval =>  retval.join(" "))
         build.save!

@@ -33,7 +33,7 @@ class TasksController < ApplicationController
             @task.metric.submetrics.each do |sm|
                 build = @task.builds.create :state => 'PENDING'
                 build.save!
-                Delayed::Job.enqueue( BuildAsync.new( @task.host, sm.metric, build ) )
+                Delayed::Job.enqueue( BuildAsync.new( @task.host, sm.obj, build ) )
                 logger.info "host ID: #{@task.host.id}, build ID:#{build.id} has been successfully scheduled to synchronization queue"
             end
         else

@@ -3,8 +3,11 @@
         <td colspan=1 >
             Builds for host <strong><%= @task.host.fqdn %></strong> and metric <strong><%= @task.metric.title %></strong>
         </td>
-        <td colspan=4 >
+        <td colspan=1 >
             <%= link_to 'run new build', synchronize_task_path(@task), :method => :post %>
+        </td>
+        <td colspan=3 >
+            <%= link_to 'back to host', host_path(@task.host)  %>
         </td>
     </tr>
     <% if @task.has_builds? %>
