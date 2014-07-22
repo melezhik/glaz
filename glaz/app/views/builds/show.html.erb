@@ -1,6 +1,6 @@
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=6 >Build Summary</th>
+    <th colspan=7 >Build Summary</th>
 </tr>
 <tr>
     <th>ID</th>
@@ -9,6 +9,7 @@
     <th>Duration</th>
     <th>Host</th>
     <th>Metric</th>
+    <th>Last Return Value</th>
 </tr>
 
 <tr>
@@ -18,7 +19,7 @@
     <td><%= @build.duration || '?' %> seconds </td>
     <td><%= link_to @build.task.host.fqdn, host_path(@build.task.host) %></td>
     <td><%= link_to @build.task.metric.title, metric_path(@build.task.metric)  %></td>
-    
+    <td><%= @build.retval %></td>
 </tr>
 </table>
 

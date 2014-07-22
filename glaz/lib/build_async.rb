@@ -27,6 +27,8 @@ class BuildAsync < Struct.new( :task, :build   )
 
     def error(job, ex)
         log  :error, "failed async build for task ID: #{task.id}"
+        log  :error, "#{ex.class} : #{ex.message}"
+        log  :error, ex.backtrace
     end
 
     def failure(job)
