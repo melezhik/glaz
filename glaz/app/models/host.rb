@@ -1,4 +1,5 @@
 class Host < ActiveRecord::Base
+
     validates :fqdn, presence: true
     has_many :tasks
     has_many :metrics, through: :tasks
@@ -23,4 +24,23 @@ class Host < ActiveRecord::Base
     def active_tasks 
         tasks.select{|i| i.enabled? }
     end
+
+
+    def metric_value metric
+        stat[metric.id]
+    end
+
+
+
+    def stat 
+
+        if ( data.nil? or data.empty? )
+            Hash.new
+        else
+            (JSON.parse!(data)).to_hash
+        end
+
+    end
+
+
 end

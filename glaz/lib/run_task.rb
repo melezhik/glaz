@@ -8,6 +8,10 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
         retval = execute_command metric.command
         build.update!(:retval =>  retval.join(" "))
         build.save!
+        stat = host.data_as_hash
+        stat[metric.id] = retval.join(" ")
+        host.update!( :data =>  stat.to_json )
+        host.save!
     end
 
 private
