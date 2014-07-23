@@ -27,9 +27,20 @@ class Host < ActiveRecord::Base
 
 
     def metric_value metric
-        stat["#{metric.id}"]
+        if stat.has_key? "#{metric.id}"
+            stat["#{metric.id}"]['value']
+        else
+            nil
+        end
     end
 
+    def metric_timestamp metric
+        if stat.has_key? "#{metric.id}"
+            Time.at(stat["#{metric.id}"]["timestamp"])
+        else
+            nil
+        end
+    end
 
 
     def stat 

@@ -37,7 +37,7 @@
 <tr>
     <th>Name</th>
     <th>Enabled</th>
-    <th>Last Return Value</th>
+    <th>Return Value</th>
     <th>Actions</th>
 </tr>
 <% @host.metrics.each do |m| %>
@@ -51,13 +51,12 @@
         </td>
         <td>
             <% if m.multi? %>
-                <ol>
                 <% m.submetrics.each do |sm| %>
-                    <li><%= sm.obj.title %> : <%= @host.metric_value(sm.obj) %></li>
+                     - <strong><%= sm.obj.title %></strong> : <%= @host.metric_value(sm.obj) %> <small>[<%= time_ago_in_words(@host.metric_timestamp(sm.obj)) %> ago]</small><br>
                 <% end %>
-                </ol>
             <% else %>
-                <%= @host.metric_value(m) %>
+                -  <strong><%= m.title %></strong> : <%= @host.metric_value(m) %>
+                <small>[<%= time_ago_in_words(@host.metric_timestamp(m)) %> ago]</small>
             <% end %>
         </td>
         <td>
