@@ -28,3 +28,36 @@
 </tr>
 </table>
 
+
+<table class="table-bordered table-striped table">
+<tr>
+    <th colspan=2 >Hosts</th>
+</tr>
+<% if @report.has_hosts? %>
+<tr>
+    <th>Name</th>
+    <th>Actions</th>
+</tr>
+
+<%- list = [] %>
+<% @report.hosts.each do |h| %>
+    <% list << { :host => h, :point => @report.point(h.id) } %>
+<% end %>
+
+<% list.each do |i| %>
+    <tr>
+        <td> 
+            <%= link_to  i[:host].fqdn, host_path(i[:host]), :title => 'show host data'  %>
+        </td>
+        <td>
+            <%= link_to 'remove', point_path(i[:point]), :method => :delete, :title => 'remove this host from report' %>
+        </td>
+    </tr>
+<% end %>
+</table>
+<% else %>
+    <tr>
+        <td colspan=7 > 0 metrics found</td>
+    </tr>
+<% end %>
+

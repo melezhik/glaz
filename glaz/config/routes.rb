@@ -7,6 +7,8 @@ Rails.application.routes.draw do
         end
     end
 
+    resources :points
+
     resources :tasks do
 
         resources :builds do
@@ -14,7 +16,6 @@ Rails.application.routes.draw do
         end
 
         member do
-
             post 'enable'
             post 'disable'
             post 'synchronize'

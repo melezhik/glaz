@@ -3,12 +3,13 @@ class Report < ActiveRecord::Base
     has_many :points
     has_many :hosts, through: :points
 
-    def host
-        Host.find host_id
+
+    def has_hosts?
+        hosts.size != 0
     end
 
-    def report
-        Report.find report_id
+    def point host_id
+        points.select{|i| i[:host_id] == host_id}.first
     end
 
 end
