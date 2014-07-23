@@ -48,7 +48,7 @@
 <% @host.metrics.each do |m| %>
     <% if m.multi? %>
         <% m.submetrics.each do |sm| %>
-            <%- list << { :task => @host.task(m.id) , :metric => sm.obj, :multi => true, :group => m.title } %>
+            <%- list << { :task => @host.task(m.id) , :metric => sm.obj, :multi => true, :group => m.title, :group_metric => sm.metric } %>
         <% end %>
     <% else %>
         <% list << { :task => @host.task(m.id) , :metric => m, :multi => false } %>
@@ -65,7 +65,7 @@
         </td>
         <td>
             <% if i[:multi] %>
-                <%= i[:group] %>
+                <%= link_to i[:group], metric_path(i[:group_metric]), :title => 'show multi metric data'  %>
             <% else %>
                 ---
             <% end %>
