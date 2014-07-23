@@ -1,0 +1,27 @@
+<table class="table-striped table-bordered table">
+<tr>
+    <th colspan=1>Report Summary</th>
+</tr>
+<tr>
+    <th>Title</th>
+</tr>
+
+<tr>
+    <td><%= @report.title %></td>
+</tr>
+</table>
+
+<table class="table-striped table-bordered table">
+<tr>
+    <th colspan=2 >Actions</th>
+</tr>
+<tr>
+    <td>  
+        <%= link_to 'edit', edit_report_path(@report), :title => 'edit report attributes' %>
+    </td>
+    <td>
+        <%= link_to 'delete', report_path(@report), :method => :DELETE, :title => 'delete this report' %> 
+    </td>
+</tr>
+</table>
+
