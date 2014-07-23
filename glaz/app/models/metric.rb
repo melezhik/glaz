@@ -3,7 +3,7 @@ class Metric < ActiveRecord::Base
     validates :title, presence: true
 
     has_many :tasks
-    has_many :hosts, through: :task
+    has_many :hosts, through: :tasks
 
     has_many :submetrics
 

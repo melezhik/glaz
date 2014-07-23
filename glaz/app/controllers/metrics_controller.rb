@@ -25,6 +25,11 @@ class MetricsController < ApplicationController
             sm.destroy            
         end
 
+        Task.all.where( ' metric_id = ? ', params[:id] ).each do |t|
+            logger.debug "remove related task ID: #{t.id}"
+            t.destroy            
+        end
+
         @metric.destroy
         flash[:notice] = "metric ID :#{params[:id]} has been successfully deleted"
         redirect_to metrics_url
