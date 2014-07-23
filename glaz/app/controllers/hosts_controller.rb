@@ -20,6 +20,12 @@ class HostsController < ApplicationController
 
     def destroy
         @host = Host.find(params[:id])
+
+        Task.all.where( ' host_id = ? ', params[:id] ).each do |t|
+            logger.debug "remove related task ID: #{t.id}"
+            t.destroy            
+        end
+
         @host.destroy
         flash[:notice] = "host ID :#{params[:id]} has been successfully deleted"
         redirect_to hosts_url
