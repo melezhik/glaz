@@ -77,7 +77,9 @@
              <%= @host.metric_value(i[:metric]) %> 
         </td>
         <td>
-            <%= time_ago_in_words(@host.metric_timestamp(i[:metric])) %> ago
+            <% if @host.metric_has_timestamp?(i[:metric]) %>
+                <%=  time_ago_in_words(@host.metric_timestamp(i[:metric])) %> ago
+            <% end %>
         </td>
         <td>
             <%= link_to  'builds', task_builds_path(i[:task]), :title => 'show builds for metric'  %> |

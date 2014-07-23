@@ -42,6 +42,10 @@ class Host < ActiveRecord::Base
         end
     end
 
+    def metric_has_timestamp? metric
+        stat.has_key? "#{metric.id}" and stat["#{metric.id}"].has_key? "timestamp"
+    end
+
 
     def stat 
 
