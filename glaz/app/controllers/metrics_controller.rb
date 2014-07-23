@@ -19,6 +19,12 @@ class MetricsController < ApplicationController
 
     def destroy
         @metric = Metric.find(params[:id])
+
+        Submetric.all.where( ' sub_metric_id = ? ', params[:id] ).each do |sm|
+            logger.debug "remove link to metric <#{@metric.title}> from group <#{sm.metric.title}>"
+            sm.destroy            
+        end
+
         @metric.destroy
         flash[:notice] = "metric ID :#{params[:id]} has been successfully deleted"
         redirect_to metrics_url
