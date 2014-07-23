@@ -1,6 +1,6 @@
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=1>Report Summary</th>
+    <th colspan=1>Report Data</th>
 </tr>
 <tr>
     <th>Title</th>
@@ -11,26 +11,17 @@
 </tr>
 </table>
 
-<table class="table-striped table-bordered table">
-<tr>
-    <th colspan=4 >Actions</th>
-</tr>
-<tr>
-    <td>  
-        <%= link_to 'edit', edit_report_path(@report), :title => 'edit report attributes' %>
-    </td>
-    <td>  
-        <%= link_to 'view', view_report_path(@report), :title => 'view report data' %>
-    </td>
-    <td>
-        <%= link_to 'add host', add_host_form_report_path(@report), :title => 'add host to report' %>
-    </td>
-    <td>
-        <%= link_to 'delete', report_path(@report), :method => :DELETE, :title => 'delete this report' %> 
-    </td>
-</tr>
-</table>
 
+<%- metrics = [] %>
+<%- seen = {} %>
+<% @report.hosts.each do |h| %>
+    <% h.stat.keys.each do |m| %>
+        <% unless seen.has_key? "#{m}"
+            <% metrics << ["#{m}"] %>
+            <% seen["#{m}"] = 1 %>
+        <% end %>
+    <% end >
+<% end %>
 
 <table class="table-bordered table-striped table">
 <tr>
@@ -38,7 +29,9 @@
 </tr>
 <% if @report.has_hosts? %>
 <tr>
-    <th>Name</th>
+    <th>Host</th>
+    <% metrics. %>
+    <% end %>
     <th>Actions</th>
 </tr>
 

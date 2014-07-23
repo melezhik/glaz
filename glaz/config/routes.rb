@@ -4,6 +4,7 @@ Rails.application.routes.draw do
         member do
             get 'add_host_form'
             patch 'host'
+            get 'view'
         end
     end
 
