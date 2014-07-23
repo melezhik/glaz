@@ -1,8 +1,13 @@
 class Host < ActiveRecord::Base
 
     validates :fqdn, presence: true
+
     has_many :tasks
     has_many :metrics, through: :tasks
+
+    has_many :points
+    has_many :reports, through: :points
+
 
 
     def has_metrics?

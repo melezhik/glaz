@@ -1,7 +1,7 @@
 class Report < ActiveRecord::Base
 
-    belongs_to :host
-    belongs_to :report
+    has_many :points
+    has_many :hosts, through: :points
 
     def host
         Host.find host_id
