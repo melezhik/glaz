@@ -11,11 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140722105529) do
+ActiveRecord::Schema.define(version: 20140723110635) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
-    t.text     "value"
+    t.text     "value",      limit: 16777215
     t.integer  "task_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -67,6 +67,12 @@ ActiveRecord::Schema.define(version: 20140722105529) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "command_type",  default: "ssh"
+  end
+
+  create_table "reports", force: true do |t|
+    t.string   "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "submetrics", force: true do |t|

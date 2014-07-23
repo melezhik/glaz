@@ -39,7 +39,7 @@
     <th>Multi</th>
     <th>Group</th>
     <th>Enabled</th>
-    <th>Return Value</th>
+    <th>Current Value</th>
     <th>TimeStamp</th>
     <th>Actions</th>
 </tr>
@@ -74,7 +74,7 @@
             <%= i[:task].enabled %>
         </td>
         <td>
-             <%= @host.metric_value(i[:metric]) %> 
+             <p class="text-success" ><%= @host.metric_value(i[:metric]) %></p>
         </td>
         <td>
             <% if @host.metric_has_timestamp?(i[:metric]) %>
