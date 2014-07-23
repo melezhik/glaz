@@ -31,50 +31,70 @@
 
 <table class="table-bordered table-striped table">
 <tr>
-    <th colspan=4 >Metrics</th>
+    <th colspan=7 >Metrics</th>
 </tr>
 <% if @host.has_metrics? %>
 <tr>
     <th>Name</th>
+    <th>Multi</th>
+    <th>Group</th>
     <th>Enabled</th>
     <th>Return Value</th>
+    <th>TimeStamp</th>
     <th>Actions</th>
 </tr>
+
+<%- list = [] %>
 <% @host.metrics.each do |m| %>
-    <% task = @host.task(m.id) %>
+    <% if m.multi? %>
+        <% m.submetrics.each do |sm| %>
+            <%- list << { :task => @host.task(m.id) , :metric => sm.obj, :multi => true, :group => m.title } %>
+        <% end %>
+    <% else %>
+        <% list << { :task => @host.task(m.id) , :metric => m, :multi => false } %>
+    <% end %>
+<% end %>
+
+<% list.each do |i| %>
     <tr>
         <td> 
-            <%= link_to  m.title, metric_path(m), :title => 'show metric data'  %>
+            <%= link_to  i[:metric].title, metric_path(i[:metric]), :title => 'show metric data'  %>
         </td>
         <td>
-            <%= task.enabled %>
+            <%= i[:multi] %>
         </td>
         <td>
-            <% if m.multi? %>
-                <% m.submetrics.each do |sm| %>
-                     - <strong><%= sm.obj.title %></strong> : <%= @host.metric_value(sm.obj) %> <small>[<%= time_ago_in_words(@host.metric_timestamp(sm.obj)) %> ago]</small><br>
-                <% end %>
+            <% if i[:multi] %>
+                <%= i[:group] %>
             <% else %>
-                -  <strong><%= m.title %></strong> : <%= @host.metric_value(m) %>
-                <small>[<%= time_ago_in_words(@host.metric_timestamp(m)) %> ago]</small>
+                ---
             <% end %>
         </td>
         <td>
-            <%= link_to  'builds', task_builds_path(task), :title => 'show builds for metric'  %> |
-            <%= link_to 'synchronize', synchronize_task_path(task), :method => :POST, :title => 'synchronize metric' %> |
-            <% if task.enabled? %>
-                <%= link_to 'disable', disable_task_path(task), :method => :post, :title => 'remove this metric from synchronazation' %> |
+            <%= i[:task].enabled %>
+        </td>
+        <td>
+             <%= @host.metric_value(i[:metric]) %> 
+        </td>
+        <td>
+            <%= time_ago_in_words(@host.metric_timestamp(i[:metric])) %> ago
+        </td>
+        <td>
+            <%= link_to  'builds', task_builds_path(i[:task]), :title => 'show builds for metric'  %> |
+            <%= link_to 'synchronize', synchronize_task_path(i[:task]), :method => :POST, :title => 'synchronize metric' %> |
+            <% if i[:task].enabled? %>
+                <%= link_to 'disable', disable_task_path(i[:task]), :method => :post, :title => 'remove this metric from synchronazation' %> |
             <% else %>
-                <%= link_to 'enable', enable_task_path(task), :method => :post, :title => 'add this metric to synchronazation' %>  |
+                <%= link_to 'enable', enable_task_path(i[:task]), :method => :post, :title => 'add this metric to synchronazation' %>  |
             <% end %>
-            <%= link_to 'remove', task_path(task), :method => :delete, :title => 'remove this metric from host' %>
+            <%= link_to 'remove', task_path(i[:task]), :method => :delete, :title => 'remove this metric from host' %>
         </td>
     </tr>
 <% end %>
 </table>
 <% else %>
     <tr>
-        <td colspan=2>0 metrics found</td>
+        <td colspan=7 > 0 metrics found</td>
     </tr>
 <% end %>
 
