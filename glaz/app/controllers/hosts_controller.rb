@@ -63,26 +63,31 @@ class HostsController < ApplicationController
     def synchronize
 
         @host = Host.find(params[:id])
-        @host.active_tasks.each do |task|
 
-            if task.metric.has_sub_metrics?
-                logger.info "task has submetrics, running over them"
-                task.metric.submetrics.each do |sm|
+        if @host.enabled?
+            @host.active_tasks.each do |task|
+    
+                if task.metric.has_sub_metrics?
+                    logger.info "task has submetrics, running over them"
+                    task.metric.submetrics.each do |sm|
+                        build = task.builds.create :state => 'PENDING'
+                        build.save!
+                        Delayed::Job.enqueue( BuildAsync.new( @host, sm.obj, build ) )
+                        logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
+                    end
+                else
+                    logger.info "task has single metric"
                     build = task.builds.create :state => 'PENDING'
                     build.save!
-                    Delayed::Job.enqueue( BuildAsync.new( @host, sm.obj, build ) )
+                    Delayed::Job.enqueue( BuildAsync.new( @host, task.metric, build ) )
                     logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
                 end
-            else
-                logger.info "task has single metric"
-                build = task.builds.create :state => 'PENDING'
-                build.save!
-                Delayed::Job.enqueue( BuildAsync.new( @host, task.metric, build ) )
-                logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
             end
+    
+            flash[:notice] = "host ID: #{params[:id]} has been successfully scheduled to synchronization queue"
+        else
+            flash[:warn] = "cannot synchronize disabled host ID: #{params[:id]}"
         end
-
-        flash[:notice] = "host ID: #{params[:id]} has been successfully scheduled to synchronization queue"
         redirect_to @host
     end
 
