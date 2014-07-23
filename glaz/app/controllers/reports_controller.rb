@@ -47,7 +47,6 @@ class ReportsController < ApplicationController
     def add_host_form
         @report = Report.find(params[:id])
         @hosts = Host.all.map { |i| a = Array.new; a.push i.title; a.push i.id; a }
-        @point = Point.new
     end
 
     def point

@@ -47,7 +47,6 @@ class HostsController < ApplicationController
     def add_metric_form
         @host = Host.find(params[:id])
         @metrics = Metric.all.map { |i| a = Array.new; a.push i.title; a.push i.id; a }
-        @task = Task.new
     end
 
     def metric

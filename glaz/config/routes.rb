@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
     
-    resources :reports
+    resources :reports do
+        member do
+            get 'add_host_form'
+            patch 'host'
+        end
+    end
 
     resources :tasks do
 

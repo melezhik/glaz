@@ -13,11 +13,14 @@
 
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=2 >Actions</th>
+    <th colspan=3 >Actions</th>
 </tr>
 <tr>
     <td>  
         <%= link_to 'edit', edit_report_path(@report), :title => 'edit report attributes' %>
+    </td>
+    <td>
+        <%= link_to 'add host', add_host_form_report_path(@report), :title => 'add report to report' %>
     </td>
     <td>
         <%= link_to 'delete', report_path(@report), :method => :DELETE, :title => 'delete this report' %> 
