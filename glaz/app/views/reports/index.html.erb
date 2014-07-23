@@ -1,0 +1,19 @@
+<table class="table-bordered table-striped table">
+    <tr>
+        <th>reports list</th>
+    </tr>
+    <% unless @reports.empty? %>
+    <tr>
+        <th>title</th>
+    </tr>
+    <% @reports.each do |item| %>
+    <tr>
+        <td><%= link_to item.title, report_path(item), :title => 'edit report'  %></td>
+    </tr>
+    <% end %>
+    <% else %>
+    <tr>
+        <td colspan=3 >0 reports found</td>
+    </tr>
+    <% end %>
+</table>
