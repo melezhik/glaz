@@ -26,6 +26,11 @@ class HostsController < ApplicationController
             t.destroy            
         end
 
+        Point.all.where( ' host_id = ? ', params[:id] ).each do |p|
+            logger.debug "remove related point ID: #{p.id}"
+            p.destroy            
+        end
+
         @host.destroy
         flash[:notice] = "host ID :#{params[:id]} has been successfully deleted"
         redirect_to hosts_url
