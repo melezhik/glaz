@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 20140724093353) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "duration"
-    t.string   "retval"
+    t.binary   "retval",     limit: 16777215
   end
 
   add_index "builds", ["task_id"], name: "index_builds_on_task_id", using: :btree
