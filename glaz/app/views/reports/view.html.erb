@@ -26,7 +26,7 @@
 
 <table class="table-striped table-bordered table">
 <tr>
-    <th>Metrcis/Hosts</th>
+    <th>Metric/Host</th>
 <% host_list.each do |i| %>
         <th class="text-info">
             <%= link_to  i[:host].fqdn, host_path(i[:host])  %> 
@@ -36,14 +36,14 @@
 
 <% m_list.each do |i| %>
 <tr>
-    <td class="text-info">
-        <%= i[:metric].title %>
-    </td>
+    <th class="text-info">
+        <%= link_to i[:metric].title, metric_path(i[:metric])  %>
+    </th>
     <% host_list.each do |j| %>
             <td> 
                 <%= j[:host].metric_value(i[:metric]) %>
                 <% if j[:host].metric_has_timestamp?(i[:metric]) %>
-                    <span class="text-primary"><%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago</span>
+                    <span class="text-muted"><%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago</span>
                 <% end %>
     
             </td>
