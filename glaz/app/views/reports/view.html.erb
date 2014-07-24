@@ -3,7 +3,7 @@
     <th>Title</th>
 </tr>
 <tr>
-    <td><%= @report.title %></td>
+    <td><%= link_to @report.title, report_path(@report)  %></td>
 </tr>
 </table>
 
@@ -42,6 +42,10 @@
     <% host_list.each do |j| %>
             <td> 
                 <%= j[:host].metric_value(i[:metric]) %>
+                <% if j[:host].metric_has_timestamp?(i[:metric]) %>
+                    <span class="text-primary"><%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago</span>
+                <% end %>
+    
             </td>
     <% end %>
 </tr>
