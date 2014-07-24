@@ -30,6 +30,11 @@ class MetricsController < ApplicationController
             t.destroy            
         end
 
+        Xpoint.all.where( ' metric_id = ? ', params[:id] ).each do |p|
+            logger.debug "remove related xpoint ID: #{p.id}"
+            p.destroy
+        end
+
         @metric.destroy
         flash[:notice] = "metric ID :#{params[:id]} has been successfully deleted"
         redirect_to metrics_url

@@ -45,12 +45,13 @@
     <th>Actions</th>
 </tr>
 
-<%- list = [] %>
+<%- host_list = [] %>
 <% @report.hosts.each do |h| %>
-    <% list << { :host => h, :point => @report.point(h.id) } %>
+    <% host_list << { :host => h, :point => @report.point(h.id) } %>
 <% end %>
 
-<% list.each do |i| %>
+
+<% host_list.each do |i| %>
     <tr>
         <td> 
             <%= link_to  i[:host].fqdn, host_path(i[:host]), :title => 'show host data'  %>
@@ -64,6 +65,59 @@
 <% else %>
     <tr>
         <td colspan=7 > 0 hosts found</td>
+    </tr>
+<% end %>
+
+
+
+<table class="table-bordered table-striped table">
+<tr>
+    <th colspan=7 >Metrics</th>
+</tr>
+<% if @report.has_metrics? %>
+<tr>
+    <th>Name</th>
+    <th>Multi</th>
+    <th>Group</th>
+    <th>Actions</th>
+</tr>
+
+
+<%- m_list = [] %>
+<% @report.metrics.each do |m| %>
+    <% if m.multi? %>
+        <% m.submetrics.each do |sm| %>
+            <%- m_list << { :point => @report.xpoint(m.id) , :metric => sm.obj, :multi => true, :group => m.title, :group_metric => sm.metric } %>
+        <% end %>
+    <% else %>
+        <% m_list << { :point => @report.xpoint(m.id) , :metric => m, :multi => false } %>
+    <% end %>
+<% end %>
+
+<% m_list.each do |i| %>
+    <tr>
+        <td> 
+            <%= link_to  i[:metric].title, metric_path(i[:metric]), :title => 'show metric data'  %>
+        </td>
+        <td>
+            <%= i[:multi] %>
+        </td>
+        <td>
+            <% if i[:multi] %>
+                <%= link_to i[:group], metric_path(i[:group_metric]), :title => 'show multi metric data'  %>
+            <% else %>
+                ---
+            <% end %>
+        </td>
+        <td>
+            <%= link_to 'remove', xpoint_path(i[:point]), :method => :delete, :title => 'remove this metric from report' %>
+        </td>
+    </tr>
+<% end %>
+</table>
+<% else %>
+    <tr>
+        <td colspan=4 > 0 metrics found</td>
     </tr>
 <% end %>
 
