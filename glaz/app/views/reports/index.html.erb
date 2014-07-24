@@ -1,6 +1,6 @@
 <table class="table-bordered table-striped table">
     <tr>
-        <th colspan=6 >reports list</th>
+            <th colspan=6 >reports list</th>
     </tr>
 
     <% unless @reports.empty? %>
@@ -19,7 +19,7 @@
             <%= link_to 'edit', edit_report_path(item), :title => 'edit report attributes' %>
         </td>
         <td>
-            <%= link_to 'view', view_report_path(item), :title => 'view report data' %>
+            <%= link_to 'structure', report_path(item), :title => 'view report data' %>
         </td>
         <td>
             <%= link_to 'add host', add_host_form_report_path(item), :title => 'add host to report' %>
