@@ -8,6 +8,8 @@ class Host < ActiveRecord::Base
     has_many :points
     has_many :reports, through: :points
 
+    has_many :xpoints
+    has_many :reports, through: :xpoints
 
 
     def has_metrics?

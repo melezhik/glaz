@@ -3,12 +3,15 @@ Rails.application.routes.draw do
     resources :reports do
         member do
             get 'add_host_form'
+            get 'add_metric_form'
             patch 'host'
+            patch 'metric'
             get 'view'
         end
     end
 
     resources :points
+    resources :xpoints
 
     resources :tasks do
 

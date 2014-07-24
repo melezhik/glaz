@@ -1,0 +1,21 @@
+<%= form_for ['metric', @report] do |f| %>
+  <% if @report.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@report.errors.count, "error") %> prohibited
+      this report from being updated:</h2>
+    <ul>
+    <% @report.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <%= select_tag :metric_id, options_for_select(@metrics), {}  %>
+  <p>
+    <%= hidden_field :report_id, :value => @report.id %>
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+<% end %>
+

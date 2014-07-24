@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140723120844) do
+ActiveRecord::Schema.define(version: 20140724093353) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -93,6 +93,11 @@ ActiveRecord::Schema.define(version: 20140723120844) do
     t.integer "host_id"
     t.integer "metric_id"
     t.boolean "enabled",   default: true
+  end
+
+  create_table "xpoints", force: true do |t|
+    t.integer "metric_id"
+    t.integer "report_id"
   end
 
 end

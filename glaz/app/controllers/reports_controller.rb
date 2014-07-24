@@ -64,6 +64,20 @@ class ReportsController < ApplicationController
         redirect_to @report
     end
 
+    def add_metric_form
+        @report = Report.find(params[:id])
+        @metrics = Metric.all.map { |i| a = Array.new; a.push "<#{i.title}>"; a.push i.id; a }
+    end
+
+    def metric
+        @report = Report.find(params[:id])
+        @metric = Metric.find(params[:metric_id])
+        @point = Xpoint.new :metric_id => params[:metric_id] , :report_id => params[:id]
+        @point.save!
+        flash[:notice] = "metric ID :#{params[:metric_id]} has been successfully added to report ID : #{params[:id]}" 
+        redirect_to @report
+    end
+
 private
     def _params
         params.require(:report).permit( 
