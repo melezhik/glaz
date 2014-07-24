@@ -24,7 +24,7 @@
         <td><%= item.created_at.strftime('%B %d, %Y at %H:%M') %></td>
         <td><%= item.duration || '?' %> seconds</td>
         <td><%= item.state %></td>
-        <td><%= item.retval %></td>
+        <td><%= (item.retval||"").force_encoding('UTF-8') %></td>
     </tr>
     <% end %>
     <% else %>

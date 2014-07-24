@@ -27,7 +27,7 @@
     <td><%= @build.duration || '?' %> seconds </td>
     <td><%= link_to @build.task.host.fqdn, host_path(@build.task.host) %></td>
     <td><%= link_to @build.task.metric.title, metric_path(@build.task.metric)  %></td>
-    <td><%= @build.retval.force_encoding("UTF-8") %></td>
+    <td><%= (@build.retval||"").force_encoding("UTF-8") %></td>
 </tr>
 </table>
 
@@ -50,7 +50,7 @@
             <%= l.level %>
         </td>
         <td>
-            <pre><%= l.chunk.force_encoding("UTF-8") %></pre>
+            <pre><%= (l.chunk||"").force_encoding("UTF-8") %></pre>
         </td>
     </tr>
 <% end %>
