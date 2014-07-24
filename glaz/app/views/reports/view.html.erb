@@ -35,9 +35,10 @@ setTimeout(function(){ window.location.reload(1);}, 5000);
 <tr>
     <th>Metric/Host</th>
 <% host_list.each do |i| %>
-        <th class="text-info">
-            <%= link_to  i[:host].fqdn, host_path(i[:host])  %> 
-        </th>
+        <td>
+            <strong class="text-info"><%= link_to  i[:host].fqdn, host_path(i[:host])  %></strong>
+            <sub><%= link_to  'sync', synchronize_host_path(i[:host]), :method => :POST, :title => 'request synchronization'  %></sub>
+        </td>
 <% end %>
 </tr>
 
