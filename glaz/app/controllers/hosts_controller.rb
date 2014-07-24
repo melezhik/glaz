@@ -98,7 +98,7 @@ class HostsController < ApplicationController
         else
             flash[:warn] = "cannot synchronize disabled host ID: #{params[:id]}"
         end
-        redirect_to @host
+        redirect_to :back
     end
 
 private

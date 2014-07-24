@@ -28,8 +28,8 @@
 <tr>
     <th>Metrcis/Hosts</th>
 <% host_list.each do |i| %>
-        <th class="text-info"> 
-            <%=  i[:host].fqdn %>
+        <th class="text-info">
+            <%= link_to  i[:host].fqdn, synchronize_host_path(i[:host]), :method => :POST, :title => 'synchronize host metrics' %> 
         </th>
 <% end %>
 </tr>
