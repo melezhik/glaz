@@ -18,6 +18,10 @@ class ReportsController < ApplicationController
         @report = Report.find(params[:id])
     end
 
+    def view
+        @report = Report.find(params[:id])
+    end
+
     def destroy
         @report = Report.find(params[:id])
         @report.destroy

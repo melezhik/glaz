@@ -1,59 +1,50 @@
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=1>Report Data</th>
-</tr>
-<tr>
     <th>Title</th>
 </tr>
-
 <tr>
     <td><%= @report.title %></td>
 </tr>
 </table>
 
-
-<%- metrics = [] %>
-<%- seen = {} %>
+<%- host_list = [] %>
 <% @report.hosts.each do |h| %>
-    <% h.stat.keys.each do |m| %>
-        <% unless seen.has_key? "#{m}"
-            <% metrics << ["#{m}"] %>
-            <% seen["#{m}"] = 1 %>
+    <% host_list << { :host => h, :point => @report.point(h.id) } %>
+<% end %>
+
+
+<%- m_list = [] %>
+<% @report.metrics.each do |m| %>
+    <% if m.multi? %>
+        <% m.submetrics.each do |sm| %>
+            <%- m_list << { :point => @report.xpoint(m.id) , :metric => sm.obj, :multi => true, :group => m.title, :group_metric => sm.metric } %>
         <% end %>
-    <% end >
-<% end %>
-
-<table class="table-bordered table-striped table">
-<tr>
-    <th colspan=2 >Hosts</th>
-</tr>
-<% if @report.has_hosts? %>
-<tr>
-    <th>Host</th>
-    <% metrics. %>
+    <% else %>
+        <% m_list << { :point => @report.xpoint(m.id) , :metric => m, :multi => false } %>
     <% end %>
-    <th>Actions</th>
-</tr>
-
-<%- list = [] %>
-<% @report.hosts.each do |h| %>
-    <% list << { :host => h, :point => @report.point(h.id) } %>
 <% end %>
 
-<% list.each do |i| %>
-    <tr>
-        <td> 
-            <%= link_to  i[:host].fqdn, host_path(i[:host]), :title => 'show host data'  %>
-        </td>
-        <td>
-            <%= link_to 'remove', point_path(i[:point]), :method => :delete, :title => 'remove this host from report' %>
-        </td>
-    </tr>
+<table class="table-striped table-bordered table">
+<tr>
+    <th>Metrcis/Hosts</th>
+<% host_list.each do |i| %>
+        <th class="text-info"> 
+            <%=  i[:host].fqdn %>
+        </th>
+<% end %>
+</tr>
+
+<% m_list.each do |i| %>
+<tr>
+    <td class="text-info">
+        <%= i[:metric].title %>
+    </td>
+    <% host_list.each do |j| %>
+            <td> 
+                <%= j[:host].metric_value(i[:metric]) %>
+            </td>
+    <% end %>
+</tr>
 <% end %>
 </table>
-<% else %>
-    <tr>
-        <td colspan=7 > 0 hosts found</td>
-    </tr>
-<% end %>
 
