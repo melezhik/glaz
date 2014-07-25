@@ -1,8 +1,6 @@
 class SubmetricsController < ApplicationController
 
-    def index
-        @metric = Metric.find(params[:metric_id])
-    end
+    load_and_authorize_resource param_method: :_params
 
     def new
         @metric = Metric.find(params[:metric_id])

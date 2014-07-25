@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
 
+    load_and_authorize_resource param_method: :_params
 
     def destroy
         @task = Task.find(params[:id])
