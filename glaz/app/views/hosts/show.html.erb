@@ -37,7 +37,7 @@
 
 <table class="table-bordered table-striped table">
 <tr>
-    <th colspan=10 >Metrics</th>
+    <th colspan=11 >Metrics</th>
 </tr>
 <% if @host.has_metrics? %>
 <tr>
@@ -49,6 +49,7 @@
     <th>Metric Group ID</th>
     <th>Enabled</th>
     <th>Current Value</th>
+    <th>Sample Value</th>
     <th>TimeStamp</th>
     <th>Actions</th>
 </tr>
@@ -85,7 +86,10 @@
             <%= i[:task].enabled %>
         </td>
         <td>
-             <p class="text-success" ><%= @host.metric_value(i[:metric]) %></p>
+             <p class="<%= @host.metric_value_diviated?(i[:metric]) ? 'text-danger' : 'text-success' %>" ><%= @host.metric_value(i[:metric]) %></p>
+        </td>
+        <td>
+             <p><%= i[:metric].default_value %></p>
         </td>
         <td>
         <% if @host.metric_has_timestamp?(i[:metric]) %>
@@ -108,7 +112,7 @@
 </table>
 <% else %>
     <tr>
-        <td colspan=10 > 0 metrics found</td>
+        <td colspan=11 > 0 metrics found</td>
     </tr>
 <% end %>
 

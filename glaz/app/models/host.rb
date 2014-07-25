@@ -36,6 +36,17 @@ class Host < ActiveRecord::Base
         end
     end
 
+    def metric_value_diviated? metric
+
+        if metric.default_value.nil? or metric.default_value.empty?
+            false
+        else
+            mv  = metric_value(metric) || 'NOT-SET'
+            dv = metric.default_value
+            mv != dv
+        end
+    end
+
     def has_metric? metric
         if metric.multi?
             metric.submetrics_ids.map  { |i| metrics_ids.include?  i }.include?  true
