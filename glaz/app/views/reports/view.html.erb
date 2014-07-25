@@ -14,15 +14,10 @@ setTimeout(function(){ window.location.reload(1);}, 5000);
 </tr>
 </table>
 
-<%- host_list = [] %>
-<% @report.hosts.each do |h| %>
-    <% host_list << { :host => h, :point => @report.point(h.id) } %>
-<% end %>
-
 <table class="table-striped table-bordered table">
 <tr>
     <th>Metric/Host</th>
-<% host_list.each do |i| %>
+<% @report.hosts_list.each do |i| %>
         <td>
             <strong class="text-info"><%= link_to  i[:host].fqdn, host_path(i[:host])  %></strong>
             <sub><%= link_to  'sync', synchronize_host_path(i[:host]), :method => :POST, :title => 'request synchronization'  %></sub>
@@ -35,7 +30,7 @@ setTimeout(function(){ window.location.reload(1);}, 5000);
     <th class="text-info">
         <%= link_to i[:metric].title, metric_path(i[:metric])  %>
     </th>
-    <% host_list.each do |j| %>
+    <% @report.hosts_list.each do |j| %>
             <td> 
                 <% if j[:host].has_metric? i[:metric] %>
                     <%= j[:host].metric_value(i[:metric]) %>

@@ -15,8 +15,12 @@ class Report < ActiveRecord::Base
         metrics.size != 0
     end
 
-    def point host_id
-        points.select{|i| i[:host_id] == host_id}.first
+    def hosts_list 
+        list = []
+        points.each do |point|
+                list << { :point => point , :host => point.host }
+        end
+        list
     end
 
     def metrics_flat_list 

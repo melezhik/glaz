@@ -45,13 +45,8 @@
     <th>Actions</th>
 </tr>
 
-<%- host_list = [] %>
-<% @report.hosts.each do |h| %>
-    <% host_list << { :host => h, :point => @report.point(h.id) } %>
-<% end %>
 
-
-<% host_list.each do |i| %>
+<% @report.hosts_list.each do |i| %>
     <tr>
         <td> 
             <%= link_to  i[:host].fqdn, host_path(i[:host]), :title => 'show host data'  %>
