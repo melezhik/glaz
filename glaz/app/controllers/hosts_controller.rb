@@ -64,7 +64,7 @@ class HostsController < ApplicationController
         @host = Host.find(params[:id])
         @metric = Metric.find(params[:metric_id])
         if @host.has_metric? @metric
-            flash[:warn] = "cannot add metric ID:#{params[:metric_id]}, metric is already added!" 
+            flash[:warn] = "cannot add metric ID:#{params[:metric_id]} to host, metric is already added!" 
         else
             @task = Task.new :metric_id => params[:metric_id] , :host_id => params[:id]
             @task.save!

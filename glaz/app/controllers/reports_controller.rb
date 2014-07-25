@@ -74,11 +74,17 @@ class ReportsController < ApplicationController
     end
 
     def metric
+
         @report = Report.find(params[:id])
         @metric = Metric.find(params[:metric_id])
-        @point = Xpoint.new :metric_id => params[:metric_id] , :report_id => params[:id]
-        @point.save!
-        flash[:notice] = "metric ID :#{params[:metric_id]} has been successfully added to report ID : #{params[:id]}" 
+
+        if @report.has_metric? @metric
+            flash[:warn] = "cannot add metric ID:#{params[:metric_id]} to report, metric is already added!" 
+        else
+            @point = Xpoint.new :metric_id => params[:metric_id] , :report_id => params[:id]
+            @point.save!
+            flash[:notice] = "metric ID :#{params[:metric_id]} has been successfully added to report ID : #{params[:id]}" 
+        end
         redirect_to @report
     end
 

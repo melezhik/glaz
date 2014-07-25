@@ -38,7 +38,7 @@ class Host < ActiveRecord::Base
 
     def has_metric? metric
         if metric.multi?
-            metrics_ids.include? metric.submetrics_ids
+            metric.submetrics_ids.map  { |i| metrics_ids.include?  i }.include?  true
         else
             metrics_ids.include? metric.id
         end

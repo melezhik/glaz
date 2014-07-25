@@ -37,4 +37,20 @@ class Report < ActiveRecord::Base
         list
     end
 
+
+    def has_metric? metric
+        if metric.multi?
+            metric.submetrics_ids.map  { |i| metrics_ids.include?  i }.include?  true
+        else
+            metrics_ids.include? metric.id
+        end
+    end
+
+    def metrics_ids
+        list = []
+        metrics_flat_list.each { |i| list << i[:metric].id }
+        list
+    end
+
+
 end
