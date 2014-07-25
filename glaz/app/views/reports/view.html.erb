@@ -44,7 +44,7 @@ setTimeout(function(){ window.location.reload(1);}, 5000);
                             <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago</span>
                     <% end %>
                 <% else %>
-                    <span class="text-danger">?</span>
+                    <span class="text-danger" title="this metric is unknown for this host">?</span>
                 <% end %>
             </td>
     <% end %>
