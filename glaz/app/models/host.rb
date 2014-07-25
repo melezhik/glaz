@@ -25,7 +25,7 @@ class Host < ActiveRecord::Base
     end
 
     def task metric_id
-        tasks.select{|i| i[:metric_id] == metric_id}.first
+        tasks.select{|i| i[:metric_id] == metric_id }.first
     end
 
     def active_tasks 
@@ -39,6 +39,10 @@ class Host < ActiveRecord::Base
         else
             nil
         end
+    end
+
+    def has_metric? metric
+        true
     end
 
     def metric_timestamp metric
@@ -64,5 +68,19 @@ class Host < ActiveRecord::Base
 
     end
 
+
+    def metrics_flat_list
+        list = []
+        metrics.each do |m| 
+            if m.multi? 
+                m.submetrics.each do |sm| 
+                    list << { :task => task(m.id) , :metric => sm.obj, :multi => true, :group => m.title, :group_metric => sm.metric } 
+                end 
+            else 
+                list << { :task => task(m.id) , :metric => m, :multi => false } 
+            end 
+        end 
+    list
+    end
 
 end
