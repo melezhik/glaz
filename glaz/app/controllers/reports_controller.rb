@@ -62,9 +62,14 @@ class ReportsController < ApplicationController
     def host
         @report = Report.find(params[:id])
         @host = Host.find(params[:host_id])
-        @point = Point.new :host_id => params[:host_id] , :report_id => params[:id]
-        @point.save!
-        flash[:notice] = "host ID :#{params[:host_id]} has been successfully added to report ID : #{params[:id]}" 
+
+        if @report.has_host? @host
+            flash[:warn] = "cannot add host ID:#{params[:host_id]} to report, host is already added!" 
+        else
+            @point = Point.new :host_id => params[:host_id] , :report_id => params[:id]
+            @point.save!
+            flash[:notice] = "host ID :#{params[:host_id]} has been successfully added to report ID : #{params[:id]}" 
+        end
         redirect_to @report
     end
 

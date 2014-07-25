@@ -23,6 +23,10 @@ class Report < ActiveRecord::Base
         list
     end
 
+    def has_host? host
+        hosts.map {|i| i.id }.include? host.id
+    end
+
     def metrics_flat_list 
         list = []
         xpoints.each do |point|
