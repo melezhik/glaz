@@ -1,5 +1,9 @@
 class HostsController < ApplicationController
 
+    skip_before_filter :authenticate_user!, :only => [:synchronize]
+
+    load_and_authorize_resource param_method: :_params
+
     def index
         @hosts = Host.all
     end

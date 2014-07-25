@@ -1,3 +1,5 @@
+require 'role_model'
+
 class User < ActiveRecord::Base
     # Include default devise modules. Others available are:
     # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -16,5 +18,9 @@ class User < ActiveRecord::Base
         self.id = Devise::LDAP::Adapter.get_ldap_param(self.username,"uidnumber").first
     end
 
+    include RoleModel
+
+    roles :admin, :user
+    roles_attribute :roles_mask 
 
 end
