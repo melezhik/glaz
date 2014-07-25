@@ -14,4 +14,8 @@ class Metric < ActiveRecord::Base
     def multi?
         has_sub_metrics?
     end
+
+    def submetrics_ids
+        submetrics.map {|i| i.sub_metric_id }
+    end
 end

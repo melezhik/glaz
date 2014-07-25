@@ -25,6 +25,7 @@ class Host < ActiveRecord::Base
     end
 
     def task metric_id
+        raise "depricated"
         tasks.select{|i| i[:metric_id] == metric_id }.first
     end
 
@@ -42,7 +43,11 @@ class Host < ActiveRecord::Base
     end
 
     def has_metric? metric
-         metrics_ids.include? metric.id
+        if metric.multi?
+            metrics_ids.include? metric.submetrics_ids
+        else
+            metrics_ids.include? metric.id
+        end
     end
 
     def metric_timestamp metric
@@ -71,15 +76,15 @@ class Host < ActiveRecord::Base
 
     def metrics_flat_list
         list = []
-        metrics.each do |m| 
-            if m.multi? 
-                m.submetrics.each do |sm| 
-                    list << { :task => task(m.id) , :metric => sm.obj, :multi => true, :group => m.title, :group_metric => sm.metric } 
-                end 
-            else 
-                list << { :task => task(m.id) , :metric => m, :multi => false } 
-            end 
-        end 
+        tasks.each do |task|
+            if task.metric.multi?
+                task.metric.submetrics.each do |sm|
+                    list << { :task => task , :metric => sm.obj, :multi => true, :group => task.metric.title, :group_metric => sm.metric } 
+                end
+            else
+                list << { :task => task , :metric => task.metric, :multi => false } 
+            end
+        end
         list
     end
 
