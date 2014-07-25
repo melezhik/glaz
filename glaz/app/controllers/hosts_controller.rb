@@ -63,9 +63,13 @@ class HostsController < ApplicationController
     def metric
         @host = Host.find(params[:id])
         @metric = Metric.find(params[:metric_id])
-        @task = Task.new :metric_id => params[:metric_id] , :host_id => params[:id]
-        @task.save!
-        flash[:notice] = "metrics ID :#{params[:metric_id]} has been successfully added to host ID : #{params[:id]}" 
+        if @host.has_metric? @metric
+            flash[:warn] = "cannot add metric ID:#{params[:metric_id]}, metric is already added!" 
+        else
+            @task = Task.new :metric_id => params[:metric_id] , :host_id => params[:id]
+            @task.save!
+            flash[:notice] = "metrics ID :#{params[:metric_id]} has been successfully added to host ID : #{params[:id]}" 
+        end
         redirect_to @host
     end
 
