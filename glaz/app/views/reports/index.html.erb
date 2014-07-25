@@ -1,6 +1,12 @@
 <table class="table-bordered table-striped table">
     <tr>
-            <th colspan=6 >reports list</th>
+        <th colspan=6 ><%= link_to 'New Report', new_report_path %></th>
+    </tr>
+</table>
+
+<table class="table-bordered table-striped table">
+    <tr>
+            <th colspan=6 >Reports List</th>
     </tr>
 
     <% unless @reports.empty? %>
