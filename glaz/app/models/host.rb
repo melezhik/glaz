@@ -24,15 +24,9 @@ class Host < ActiveRecord::Base
         enabled == false
     end
 
-    def task metric_id
-        raise "depricated"
-        tasks.select{|i| i[:metric_id] == metric_id }.first
-    end
-
     def active_tasks 
         tasks.select{|i| i.enabled? }
     end
-
 
     def metric_value metric
         if stat.has_key? "#{metric.id}"
