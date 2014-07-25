@@ -4,9 +4,11 @@ require 'open3'
 class RunTask < Struct.new( :host, :metric, :build, :build_async   )
 
     def run
+
         build_async.log :info, "running #{metric.command_type} command: #{metric.command} for host: #{host.fqdn}"
 
         if metric.command_type == 'ssh'
+            raise "empty ssh command" if metric.command.nil? or  metric.command.empty?
             retval = execute_command "ssh #{host.fqdn} \"#{metric.command}\""
         elsif metric.command_type == 'snmp'
             retval = execute_command metric.command.sub('%host%', host.fqdn)
