@@ -42,7 +42,7 @@ class Host < ActiveRecord::Base
     end
 
     def has_metric? metric
-        true
+         metrics_ids.include? metric.id
     end
 
     def metric_timestamp metric
@@ -80,7 +80,13 @@ class Host < ActiveRecord::Base
                 list << { :task => task(m.id) , :metric => m, :multi => false } 
             end 
         end 
-    list
+        list
+    end
+
+    def metrics_ids
+        list = []
+        metrics_flat_list.each { |i| list << i[:metric].id }
+        list
     end
 
 end

@@ -23,4 +23,17 @@ class Report < ActiveRecord::Base
         xpoints.select{|i| i[:metric_id] == metric_id}.first
     end
 
+    def metrics_flat_list
+        list = []
+        metrics.each do |m| 
+            if m.multi? 
+                m.submetrics.each do |sm| 
+                    list << { :point => xpoint(m.id) , :metric => sm.obj, :multi => true, :group => m.title, :group_metric => sm.metric } 
+                end 
+            else 
+                list << { :point => xpoint(m.id) , :metric => m, :multi => false } 
+            end 
+        end 
+    list
+    end
 end

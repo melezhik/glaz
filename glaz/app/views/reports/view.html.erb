@@ -19,18 +19,6 @@ setTimeout(function(){ window.location.reload(1);}, 5000);
     <% host_list << { :host => h, :point => @report.point(h.id) } %>
 <% end %>
 
-
-<%- m_list = [] %>
-<% @report.metrics.each do |m| %>
-    <% if m.multi? %>
-        <% m.submetrics.each do |sm| %>
-            <%- m_list << { :point => @report.xpoint(m.id) , :metric => sm.obj, :multi => true, :group => m.title, :group_metric => sm.metric } %>
-        <% end %>
-    <% else %>
-        <% m_list << { :point => @report.xpoint(m.id) , :metric => m, :multi => false } %>
-    <% end %>
-<% end %>
-
 <table class="table-striped table-bordered table">
 <tr>
     <th>Metric/Host</th>
@@ -42,21 +30,22 @@ setTimeout(function(){ window.location.reload(1);}, 5000);
 <% end %>
 </tr>
 
-<% m_list.each do |i| %>
+<% @report.metrics_flat_list.each do |i| %>
 <tr>
     <th class="text-info">
         <%= link_to i[:metric].title, metric_path(i[:metric])  %>
     </th>
     <% host_list.each do |j| %>
             <td> 
-                <%= j[:host].metric_value(i[:metric]) %>
-                <% if j[:host].metric_has_timestamp?(i[:metric]) %>
-                    <span class="<%= (j[:host].metric_timestamp(i[:metric]) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
-                        <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago</span>
+                <% if j[:host].has_metric? i[:metric] %>
+                    <%= j[:host].metric_value(i[:metric]) %>
+                    <% if j[:host].metric_has_timestamp?(i[:metric]) %>
+                        <span class="<%= (j[:host].metric_timestamp(i[:metric]) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
+                            <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago</span>
+                    <% end %>
                 <% else %>
-                    <span class="text-danger">unknown metric</span>
+                    <span class="text-danger">?</span>
                 <% end %>
-    
             </td>
     <% end %>
 </tr>
