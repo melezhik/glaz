@@ -10,7 +10,7 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
         if metric.command_type == 'ssh'
             raise "empty ssh command" if metric.command.nil? or  metric.command.empty?
             retval = execute_command "ssh #{host.fqdn} \"#{metric.command}\""
-        elsif metric.command_type == 'snmp'
+        elsif metric.command_type == 'shell'
             retval = execute_command metric.command.sub('%host%', host.fqdn)
         end
 
