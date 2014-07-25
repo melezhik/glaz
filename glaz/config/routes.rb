@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
     
+  devise_for :users
     resources :reports do
         member do
             get 'add_host_form'

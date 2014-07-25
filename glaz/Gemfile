@@ -51,3 +51,9 @@ gem 'delayed_job'
 gem 'delayed_job_active_record'
 gem 'daemons'
 
+gem 'devise'
+gem 'devise_ldap_authenticatable'
+
+gem 'cancancan'
+gem 'role_model'
+
