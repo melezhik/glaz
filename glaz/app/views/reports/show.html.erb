@@ -76,28 +76,26 @@
 </tr>
 <% if @report.has_metrics? %>
 <tr>
-    <th>Name</th>
-    <th>Multi</th>
-    <th>Group</th>
+    <th>Metric Name</th>
+    <th>Link ID</th>
+    <th>Metric ID</th>
+    <th>Multi Metric?</th>
+    <th>Metric Group</th>
+    <th>Metric Group ID</th>
     <th>Actions</th>
 </tr>
 
 
-<%- m_list = [] %>
-<% @report.metrics.each do |m| %>
-    <% if m.multi? %>
-        <% m.submetrics.each do |sm| %>
-            <%- m_list << { :point => @report.xpoint(m.id) , :metric => sm.obj, :multi => true, :group => m.title, :group_metric => sm.metric } %>
-        <% end %>
-    <% else %>
-        <% m_list << { :point => @report.xpoint(m.id) , :metric => m, :multi => false } %>
-    <% end %>
-<% end %>
-
-<% m_list.each do |i| %>
+<% @report.metrics_flat_list.each do |i| %>
     <tr>
         <td> 
             <%= link_to  i[:metric].title, metric_path(i[:metric]), :title => 'show metric data'  %>
+        </td>
+        <td>
+            <%= i[:point].id %>
+        </td>
+        <td>
+            <%= i[:metric].id %>
         </td>
         <td>
             <%= i[:multi] %>
@@ -110,6 +108,13 @@
             <% end %>
         </td>
         <td>
+            <% if i[:multi] %>
+                <%= i[:group_metric].id %>
+            <% else %>
+                ---
+            <% end %>
+        </td>
+        <td>
             <%= link_to 'remove', xpoint_path(i[:point]), :method => :delete, :title => 'remove this metric from report' %>
         </td>
     </tr>
@@ -117,7 +122,7 @@
 </table>
 <% else %>
     <tr>
-        <td colspan=4 > 0 metrics found</td>
+        <td colspan=6 > 0 metrics found</td>
     </tr>
 <% end %>
 
