@@ -88,9 +88,10 @@
              <p class="text-success" ><%= @host.metric_value(i[:metric]) %></p>
         </td>
         <td>
-            <% if @host.metric_has_timestamp?(i[:metric]) %>
-                <%=  time_ago_in_words(@host.metric_timestamp(i[:metric])) %> ago
-            <% end %>
+        <% if @host.metric_has_timestamp?(i[:metric]) %>
+            <span class="<%= (@host.metric_timestamp(i[:metric]) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
+                <%=  time_ago_in_words(@host.metric_timestamp(i[:metric])) %> ago</span>
+        <% end %>
         </td>
         <td>
             <%= link_to  'builds', task_builds_path(i[:task]), :title => 'show builds for metric'  %> |
