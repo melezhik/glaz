@@ -42,9 +42,11 @@ class Ability
        elsif user.has_role? :user
          can :read, :all
          can :synchronize, :all
+         can :view, [Report]
        else
          can :read, :all
          can :synchronize, :all
+         can :view, [Report]
        end
   end
 end

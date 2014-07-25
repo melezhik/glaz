@@ -1,5 +1,7 @@
 class PointsController < ApplicationController
 
+    load_and_authorize_resource param_method: :_params
+
     def destroy
         @point = Point.find(params[:id])
         @point.destroy

@@ -1,5 +1,8 @@
 class ReportsController < ApplicationController
 
+
+    load_and_authorize_resource param_method: :_params
+
     def index
         @reports = Report.all
     end

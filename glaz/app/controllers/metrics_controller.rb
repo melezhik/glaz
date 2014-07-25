@@ -1,5 +1,7 @@
 class MetricsController < ApplicationController
 
+    load_and_authorize_resource param_method: :_params
+
     def index
         @metrics = Metric.all
     end

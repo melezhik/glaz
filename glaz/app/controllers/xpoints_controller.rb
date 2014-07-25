@@ -1,5 +1,7 @@
 class XpointsController < ApplicationController
 
+    load_and_authorize_resource param_method: :_params
+
     def destroy
         @point = Xpoint.find(params[:id])
         @point.destroy
