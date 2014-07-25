@@ -43,6 +43,7 @@ class Ability
          can :read, :all
          can :synchronize, :all
        else
+         can :read, :all
          can :synchronize, :all
        end
   end
