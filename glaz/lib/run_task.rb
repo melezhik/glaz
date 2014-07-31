@@ -7,10 +7,13 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
 
         build_async.log :info, "running #{metric.command_type} command: #{metric.command} for host: #{host.fqdn}"
 
+        raise "empty command" if metric.command.nil? or  metric.command.empty?
+
         if metric.command_type == 'ssh'
-            raise "empty ssh command" if metric.command.nil? or  metric.command.empty?
+	    build_async.log :info, "running command as ssh command"
             retval = execute_command "ssh #{host.fqdn} \"#{metric.command}\""
         elsif metric.command_type == 'shell'
+	    build_async.log :info, "running command as shell command"
             retval = execute_command metric.command.sub('%HOST%', host.fqdn)
         end
 
