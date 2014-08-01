@@ -30,7 +30,7 @@ class Host < ActiveRecord::Base
 
     def metric_value metric
         if stat.has_key? "#{metric.id}"
-            stat["#{metric.id}"]['value']
+            stat["#{metric.id}"]['value'].empty? ? 'undef' : stat["#{metric.id}"]['value']
         else
             nil
         end
@@ -99,4 +99,18 @@ class Host < ActiveRecord::Base
         list
     end
 
+
+    def metric_status metric
+        return -1 unless    has_metric? metric
+        return -2 if        metric_value_diviated? metric
+        return -3 unless    metric_has_timestamp? metric
+        return -4 if        metric_timestamp(metric) < 10.minutes.ago
+        return  1
+    end
+
+    def metric_status_as_text metric
+        a = { -1 => 'danger',  -2 => 'warning', -3 => 'warning', -4 => 'danger', 1 => 'success' }
+        a[ metric_status(metric) ]
+    end
 end
+
