@@ -36,7 +36,7 @@
                 <% if status == -1 %>
                     <span title="status: unknown metric">-</span>
                 <% elsif status == -2 %>
-                    <span title="status: deviated. default value: <%= j[:host].metric_default_value(i[:metric]) %>"><%= j[:host].metric_value(i[:metric]) %></span>
+                    <span title="status: deviated. default value: <%= i[:metric].default_value %>"><%= j[:host].metric_value(i[:metric]) %></span>
                 <% elsif status == -3 %>
                     <span title="status: has no timestamp.">?</span>
                 <% elsif status == -4 %>
