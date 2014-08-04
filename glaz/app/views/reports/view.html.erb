@@ -38,7 +38,7 @@
     </th>
     <% @report.hosts_list.each do |j| %>
             <% status = j[:host].metric_status(i[:metric]);  %> 
-            <td class="text-<%=  j[:host].metric_status_as_text(i[:metric])  %>"> 
+            <th class="text-<%=  j[:host].metric_status_as_text(i[:metric])  %>">
                 <% if status == -1 %>
                     <span title="status: unknown metric">-</span>
                 <% elsif status == -2 %>
@@ -50,7 +50,7 @@
                 <% elsif status == 1 %>
                     <span title="status: ok; last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago"><%= j[:host].metric_value(i[:metric]) %></span>
                 <% end %>
-            </td>
+            </th>
     <% end %>
 </tr>
 <% end %>

@@ -109,7 +109,7 @@ class Host < ActiveRecord::Base
     end
 
     def metric_status_as_text metric
-        a = { -1 => 'danger',  -2 => 'warning', -3 => 'warning', -4 => 'danger', 1 => 'success' }
+        a = { -1 => 'danger',  -2 => 'warning', -3 => 'warning', -4 => 'warning', 1 => 'success' }
         a[ metric_status(metric) ]
     end
 end
