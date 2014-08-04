@@ -8,6 +8,7 @@ Rails.application.routes.draw do
             patch 'host'
             patch 'metric'
             get 'view'
+            post 'synchronize'
         end
     end
 

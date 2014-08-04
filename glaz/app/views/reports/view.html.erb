@@ -8,9 +8,15 @@
 <table class="table-striped table-bordered table">
 <tr>
     <th>Title</th>
+    <th>Actions</th>
 </tr>
 <tr>
-    <td><%= link_to @report.title, report_path(@report)  %></td>
+    <td><strong><%= @report.title %></strong></td>
+    <td>
+         <%= link_to 'edit', report_path(@report), :title => 'edit report attributes'  %> |
+        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST  %>
+    </td>
+</td>
 </tr>
 </table>
 

@@ -1,6 +1,8 @@
 class ReportsController < ApplicationController
 
 
+    skip_before_filter :authenticate_user!, :only => [:synchronize]
+
     load_and_authorize_resource param_method: :_params
 
     def index
@@ -94,6 +96,40 @@ class ReportsController < ApplicationController
             flash[:notice] = "metric ID :#{params[:metric_id]} has been successfully added to report ID : #{params[:id]}" 
         end
         redirect_to @report
+    end
+
+
+    def synchronize
+
+
+        @report = Report.find(params[:id])
+
+        @report.hosts.each.select {|i| i.enabled? }.each  do |host|
+
+            host.active_tasks.each do |task|
+    
+                if task.metric.has_sub_metrics?
+                    logger.info "task has submetrics, running over them"
+                    task.metric.submetrics.each do |sm|
+                        build = task.builds.create :state => 'PENDING'
+                        build.save!
+                        Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, build ) )
+                        logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
+                    end
+                else
+                    logger.info "task has single metric"
+                    build = task.builds.create :state => 'PENDING'
+                    build.save!
+                    Delayed::Job.enqueue( BuildAsync.new( host, task.metric, build ) )
+                    logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
+                end
+            end
+
+        end
+
+        flash[:notice] = "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
+        redirect_to :back
+
     end
 
 private
