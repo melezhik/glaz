@@ -11,7 +11,7 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
 
         if metric.command_type == 'ssh'
 	    build_async.log :info, "running command as ssh command"
-            retval = execute_command "ssh #{host.fqdn} \"#{metric.command}\""
+            retval = execute_command "ssh -o 'StrictHostKeyChecking no'  #{host.fqdn} \"#{metric.command}\""
         elsif metric.command_type == 'shell'
 	    build_async.log :info, "running command as shell command"
             retval = execute_command metric.command.sub('%HOST%', host.fqdn)
