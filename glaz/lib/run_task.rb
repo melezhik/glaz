@@ -19,12 +19,12 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
 
         build.update!(:retval =>  "#{metric.title} : #{retval.join(" ")}")
         build.save!
-        host.reload
-        stat = host.stat
-        stat[metric.id] = { :value => retval.join(" ") , :timestamp =>  Time.now.to_i }
-        build_async.log :info, "update stat: #{metric.title} => #{stat[metric.id][:value]}"
-        host.update!( :data =>  stat.to_json )
-        host.save!
+
+	val = retval.join(" ")
+        stat = host.stats.create( :value => val , :timestamp =>  Time.now.to_i, :metric_id => metric.id )
+	stat.save!
+
+        build_async.log :info, "update stat: #{metric.title} => #{stat.value}"
     end
 
 private

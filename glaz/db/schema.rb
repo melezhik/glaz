@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140725131233) do
+ActiveRecord::Schema.define(version: 20140805101327) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -79,6 +79,17 @@ ActiveRecord::Schema.define(version: 20140725131233) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "stats", force: true do |t|
+    t.text     "value"
+    t.integer  "metric_id"
+    t.integer  "timestamp"
+    t.integer  "host_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "stats", ["host_id"], name: "index_stats_on_host_id", using: :btree
 
   create_table "submetrics", force: true do |t|
     t.integer  "sub_metric_id"

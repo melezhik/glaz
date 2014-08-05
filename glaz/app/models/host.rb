@@ -2,6 +2,8 @@ class Host < ActiveRecord::Base
 
     validates :fqdn, presence: true
 
+    has_many :stats
+
     has_many :tasks
     has_many :metrics, through: :tasks
 
@@ -28,12 +30,17 @@ class Host < ActiveRecord::Base
         tasks.select{|i| i.enabled? }
     end
 
+    def metric_stat metric
+	stats.where(' metric_id = ? ', metric.id ).order( :id ).limit(1).first
+    end
+	
     def metric_value metric
-        if stat.has_key? "#{metric.id}"
-            stat["#{metric.id}"]['value'].empty? ? 'undef' : stat["#{metric.id}"]['value']
-        else
-            nil
-        end
+	stat = metric_stat metric
+	if stat		
+	        stat.value.empty? ? 'undef' : stat.value
+	else
+		nil
+	end
     end
 
     def metric_value_diviated? metric
@@ -56,26 +63,12 @@ class Host < ActiveRecord::Base
     end
 
     def metric_timestamp metric
-        if stat.has_key? "#{metric.id}"
-            Time.at(stat["#{metric.id}"]["timestamp"])
-        else
-            nil
-        end
+	stat = metric_stat metric		
+        Time.at stat.timestamp
     end
 
     def metric_has_timestamp? metric
-        stat.has_key? "#{metric.id}" and stat["#{metric.id}"].has_key? "timestamp"
-    end
-
-
-    def stat 
-
-        if ( data.nil? or data.empty? )
-            Hash.new
-        else
-            (JSON.parse!(data)).to_hash
-        end
-
+	metric_stat metric		
     end
 
 
@@ -112,5 +105,7 @@ class Host < ActiveRecord::Base
         a = { -1 => 'danger',  -2 => 'warning', -3 => 'warning', -4 => 'warning', 1 => 'success' }
         a[ metric_status(metric) ]
     end
+
+    	
 end
 
