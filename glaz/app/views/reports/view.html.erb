@@ -18,7 +18,7 @@
     <th>Metric/Host</th>
 <% @report.hosts_list.each do |i| %>
         <td>
-            <strong class="text-info"><%= link_to  i[:host].fqdn, host_path(i[:host])  %></strong>
+            <strong class="text-info"><%= link_to  i[:host].fqdn, host_path(i[:host]), :title => i[:host].title  %></strong>
             <sub><%= link_to  'sync', synchronize_host_path(i[:host]), :method => :POST, :title => 'request synchronization'  %></sub>
         </td>
 <% end %>
