@@ -31,7 +31,7 @@ class Host < ActiveRecord::Base
     end
 
     def metric_stat metric
-	stats.where(' metric_id = ? ', metric.id ).order( :id ).limit(1).first
+	stats.where(' metric_id = ? ', metric.id ).order( "id DESC"  ).limit(1).first
     end
 	
     def metric_value metric

@@ -17,10 +17,13 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
             retval = execute_command metric.command.sub('%HOST%', host.fqdn)
         end
 
-        build.update!(:retval =>  "#{metric.title} : #{retval.join(" ")}")
+	val = retval.join(" ")
+
+        build_async.log :info, "data returned for #{metric.title}: #{val}"
+
+        build.update!(:retval =>  "#{metric.title} : #{val}")
         build.save!
 
-	val = retval.join(" ")
         stat = host.stats.create( :value => val , :timestamp =>  Time.now.to_i, :metric_id => metric.id )
 	stat.save!
 
