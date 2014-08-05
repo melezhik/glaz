@@ -28,13 +28,20 @@ class ReportsController < ApplicationController
     end
 
     def destroy
+
         @report = Report.find(params[:id])
-        @report.destroy
 
         Point.all.where( ' report_id = ? ', params[:id] ).each do |t|
             logger.debug "remove related point ID: #{t.id}"
             t.destroy            
         end
+
+        Xpoint.all.where( ' report_id = ? ', params[:id] ).each do |t|
+            logger.debug "remove related xpoint ID: #{t.id}"
+            t.destroy            
+        end
+
+        @report.destroy
 
         flash[:notice] = "report ID :#{params[:id]} has been successfully deleted"
         redirect_to reports_url
