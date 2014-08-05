@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140805101327) do
+ActiveRecord::Schema.define(version: 20140805113052) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -46,8 +46,7 @@ ActiveRecord::Schema.define(version: 20140805101327) do
     t.string   "fqdn"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "enabled",                     default: true
-    t.binary   "data",       limit: 16777215
+    t.boolean  "enabled",    default: true
   end
 
   create_table "logs", force: true do |t|
@@ -67,6 +66,7 @@ ActiveRecord::Schema.define(version: 20140805101327) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "command_type",  default: "ssh"
+    t.binary   "handler"
   end
 
   create_table "points", force: true do |t|
@@ -81,7 +81,7 @@ ActiveRecord::Schema.define(version: 20140805101327) do
   end
 
   create_table "stats", force: true do |t|
-    t.text     "value"
+    t.binary   "value",      limit: 16777215
     t.integer  "metric_id"
     t.integer  "timestamp"
     t.integer  "host_id"
