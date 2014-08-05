@@ -18,6 +18,10 @@
     <%= f.label :command %><br>
     <%= f.text_field :command, :size => 100 %>
   </p>
+  <p>
+    <%= f.label :handler %><br>
+    <%= f.text_area :handler, :size => '100x20' %>
+  </p>
   <%= f.select :command_type, options_for_select(['ssh', 'shell' ], :selected => @metric.command_type),  {} %>
   <p>
     <%= f.label :default_value %><br>

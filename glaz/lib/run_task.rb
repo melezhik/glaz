@@ -10,22 +10,31 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
         raise "empty command" if metric.command.nil? or  metric.command.empty?
 
         if metric.command_type == 'ssh'
-	    build_async.log :info, "running command as ssh command"
-            retval = execute_command "ssh -o 'StrictHostKeyChecking no'  #{host.fqdn} \"#{metric.command}\""
+	        build_async.log :info, "running command as ssh command"
+            @data = execute_command "ssh -o 'StrictHostKeyChecking no'  #{host.fqdn} \"#{metric.command}\""
         elsif metric.command_type == 'shell'
-	    build_async.log :info, "running command as shell command"
-            retval = execute_command metric.command.sub('%HOST%', host.fqdn)
+	        build_async.log :info, "running command as shell command"
+            @data = execute_command metric.command.sub('%HOST%', host.fqdn)
         end
 
-	val = retval.join(" ")
+        @retval = @data.join(" ")
 
-        build_async.log :info, "data returned for #{metric.title}: #{val}"
+        build_async.log :info, "data returned for #{metric.title}: #{@retval}"
+        
+        if metric.has_handler?
+            build_async.log :debug, "applying metric handler"
+            self.instance_eval metric.handler
+            build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
+        else
+            build_async.log :debug, "no handler defined for this metric"
+        end
 
-        build.update!(:retval =>  "#{metric.title} : #{val}")
+
+        build.update!(:retval =>  "#{metric.title} : #{@retval}")
         build.save!
 
-        stat = host.stats.create( :value => val , :timestamp =>  Time.now.to_i, :metric_id => metric.id )
-	stat.save!
+        stat = host.stats.create( :value => @retval , :timestamp =>  Time.now.to_i, :metric_id => metric.id )
+        stat.save!
 
         build_async.log :info, "update stat: #{metric.title} => #{stat.value}"
     end

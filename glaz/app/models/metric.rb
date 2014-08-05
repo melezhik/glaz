@@ -22,4 +22,14 @@ class Metric < ActiveRecord::Base
     def has_metric? metric
         submetrics.map{ |i| i.sub_metric_id }.include? metric.id
     end
+
+
+    def has_handler?
+
+        if handler.nil? or handler.empty? 
+            false
+        else
+            true
+        end
+	end	
 end

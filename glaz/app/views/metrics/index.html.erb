@@ -5,13 +5,14 @@
 </table>
 
 <table class="table-bordered table-striped table">
-    <tr><th colspan=5 > Metrics List </th></tr>
+    <tr><th colspan=6 > Metrics List </th></tr>
     <tr>
         <th>title</th>
         <th>command</th>
         <th>command type</th>
         <th>default value</th>
         <th>has sub metrics?</th>
+        <th>has handler?</th>
     </tr>
     <% @metrics.each do |item| %>
     <tr>
@@ -20,6 +21,7 @@
         <td><%= item.command_type %></td>
         <td><%= item.default_value %></td>
         <td><%= item.has_sub_metrics? %></td>
+        <td><%= item.has_handler? %></td>
     </tr>
     <% end %>
 </table>
