@@ -102,8 +102,8 @@ class Host < ActiveRecord::Base
 
     def metric_status metric
         return -1 unless    has_metric? metric
-        return -2 if        metric_value_diviated? metric
         return -3 unless    metric_has_timestamp? metric
+        return -2 if        metric_value_diviated? metric
         return -4 if        metric_timestamp(metric) < 10.minutes.ago
         return  1
     end

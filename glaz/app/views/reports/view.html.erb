@@ -33,7 +33,7 @@
             <% status = j[:host].metric_status(i[:metric]);  %> 
             <th class="text-<%=  j[:host].metric_status_as_text(i[:metric])  %>">
                 <% if status == -1 %>
-                    <span title="status: unknown metric">-</span>
+                    <span title="status: unknown metric">!</span>
                 <% elsif status == -2 %>
                     <span title="status: deviated. default value: <%= i[:metric].default_value %>. last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago"><%= j[:host].metric_value(i[:metric]) %></span>
                 <% elsif status == -3 %>
