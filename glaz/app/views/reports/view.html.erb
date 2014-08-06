@@ -31,7 +31,7 @@
     </th>
     <% @report.hosts_list.each do |j| %>
             <% status = j[:host].metric_status(i[:metric]);  %> 
-            <th class="text-<%=  j[:host].metric_status_as_text(i[:metric])  %>">
+            <th class="<%=  j[:host].metric_status_as_text(i[:metric])  %>">
                 <% if status == -1 %>
                     <span title="status: unknown metric">!</span>
                 <% elsif status == -2 %>
