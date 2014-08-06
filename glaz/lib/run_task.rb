@@ -71,14 +71,14 @@ private
                 i += 1
                 chunk << line
                 if chunk.size > 30
-                    build_async.log :error,  ( chunk.join "" ) if metric.verbose
+                    build_async.log :error,  ( chunk.join "" )
                     chunk = []
                 end
             end
 
             # write first / last chunk
             unless chunk.empty?
-                build_async.log :error,  ( chunk.join "" ) if metric.verbose
+                build_async.log :error,  ( chunk.join "" )
             end
     
             exit_status = wait_thr.value
