@@ -55,7 +55,7 @@ private
                 chunk << line
                 retval << line.chomp
                 if chunk.size > 30
-                    build_async.log :debug,  ( chunk.join "" )
+                    build_async.log :debug,  ( chunk.join "" ) if metric.verbose
                     chunk = []
                     retval << line.chomp
                 end
@@ -63,7 +63,7 @@ private
 
             # write first / last chunk
             unless chunk.empty?
-                build_async.log :debug,  ( chunk.join "" )
+                build_async.log :debug,  ( chunk.join "" ) if metric.verbose
             end
 
             i = 0; chunk = []
@@ -71,14 +71,14 @@ private
                 i += 1
                 chunk << line
                 if chunk.size > 30
-                    build_async.log :error,  ( chunk.join "" )
+                    build_async.log :error,  ( chunk.join "" ) if metric.verbose
                     chunk = []
                 end
             end
 
             # write first / last chunk
             unless chunk.empty?
-                build_async.log :error,  ( chunk.join "" )
+                build_async.log :error,  ( chunk.join "" ) if metric.verbose
             end
     
             exit_status = wait_thr.value

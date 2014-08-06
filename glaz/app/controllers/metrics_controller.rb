@@ -62,6 +62,11 @@ class MetricsController < ApplicationController
 
 
 private
+
+    def validate_handler handler
+        system "ruby -c #{handler}"
+    end
+
     def _params
         params.require(:metric).permit( 
                 :title, :command, :default_value, :command_type, :handler

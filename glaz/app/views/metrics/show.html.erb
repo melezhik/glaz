@@ -1,6 +1,6 @@
 <table class="table-bordered table-striped table">
     <tr>
-        <th colspan=7 >metric summary</th>
+        <th colspan=8 >metric summary</th>
     </tr>
     <tr>
         <th>Title</th>
@@ -8,6 +8,7 @@
         <th>Command Type</th>
         <th>Default Value</th>
         <th>Has Handler?</th>
+        <th>Verbose?</th>
         <th>Sub Metrics</th>
         <th>Actions</th>
     </tr>
@@ -17,6 +18,7 @@
         <td><%= @metric.command_type %></td>
         <td><%= @metric.default_value %></td>
         <td><%= @metric.has_handler? %></td>
+        <td><%= @metric.verbose %></td>
         <td>
             <% if @metric.has_sub_metrics? %>
             <ol>
