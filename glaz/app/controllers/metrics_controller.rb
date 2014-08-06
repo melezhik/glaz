@@ -69,7 +69,10 @@ private
 
     def _params
         params.require(:metric).permit( 
-                :title, :command, :default_value, :command_type, :handler
+                :title, :verbose,
+                :command, :command_type, 
+                :default_value, 
+                :handler
         )
     end
 
