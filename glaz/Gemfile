@@ -57,3 +57,6 @@ gem 'devise_ldap_authenticatable'
 gem 'cancancan'
 gem 'role_model'
 
+gem 'rouge'
+gem 'redcarpet'
+

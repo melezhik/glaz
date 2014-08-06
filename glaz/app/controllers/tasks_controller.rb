@@ -34,14 +34,14 @@ class TasksController < ApplicationController
             @task.metric.submetrics.each do |sm|
                 build = @task.builds.create :state => 'PENDING'
                 build.save!
-                Delayed::Job.enqueue( BuildAsync.new( @task.host, sm.obj, build ) )
+                Delayed::Job.enqueue( BuildAsync.new( @task.host, sm.obj, @task, build ) )
                 logger.info "host ID: #{@task.host.id}, build ID:#{build.id} has been successfully scheduled to synchronization queue"
             end
         else
             logger.info "task has single metric"
             build = @task.builds.create :state => 'PENDING'
             build.save!
-            Delayed::Job.enqueue( BuildAsync.new( @task.host, @task.metric, build ) )
+            Delayed::Job.enqueue( BuildAsync.new( @task.host, @task.metric, @task, build ) )
             logger.info "host ID: #{@task.host.id}, build ID:#{build.id} has been successfully scheduled to synchronization queue"
         end
 

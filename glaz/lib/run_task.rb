@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__),'errors')
 require 'open3'
 
-class RunTask < Struct.new( :host, :metric, :build, :build_async   )
+class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
 
     def run
 
@@ -19,8 +19,6 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
 
         @retval = @data.join(" ")
 
-        build_async.log :info, "data returned for #{metric.title}: #{@retval}"
-        
         if metric.has_handler?
             build_async.log :debug, "applying metric handler"
             self.instance_eval metric.handler
@@ -33,7 +31,7 @@ class RunTask < Struct.new( :host, :metric, :build, :build_async   )
         build.update!(:retval =>  "#{metric.title} : #{@retval}")
         build.save!
 
-        stat = host.stats.create( :value => @retval , :timestamp =>  Time.now.to_i, :metric_id => metric.id )
+        stat = host.stats.create( :value => @retval , :timestamp =>  Time.now.to_i, :metric_id => metric.id, :build_id => build.id, :task_id => task.id )
         stat.save!
 
         build_async.log :info, "update stat: #{metric.title} => #{stat.value}"

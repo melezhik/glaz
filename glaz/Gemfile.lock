@@ -100,7 +100,9 @@ GEM
     rake (10.3.2)
     rdoc (4.1.1)
       json (~> 1.4)
+    redcarpet (3.1.2)
     role_model (0.8.1)
+    rouge (1.6.1)
     sass (3.2.19)
     sass-rails (4.0.3)
       railties (>= 4.0.0, < 5.0)
@@ -158,7 +160,9 @@ DEPENDENCIES
   mysql2
   rails (= 4.1.4)
   rails_layout
+  redcarpet
   role_model
+  rouge
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
   spring

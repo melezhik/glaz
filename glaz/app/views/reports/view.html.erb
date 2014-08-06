@@ -35,13 +35,19 @@
                 <% if status == -1 %>
                     <span title="status: unknown metric">!</span>
                 <% elsif status == -2 %>
-                    <span title="status: deviated. default value: <%= i[:metric].default_value %>. last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago"><%= j[:host].metric_value(i[:metric]) %></span>
+                    <span title="status: deviated. default value: <%= i[:metric].default_value %>. last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago">
+                        <%= link_to j[:host].metric_value(i[:metric]), task_build_path( j[:host].metric_task(i[:metric]), j[:host].metric_build(i[:metric]) )    %>
+                    </span>
                 <% elsif status == -3 %>
                     <span title="status: has no timestamp.">?</span>
                 <% elsif status == -4 %>
-                    <span title="status: outdated. last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago"><%= j[:host].metric_value(i[:metric]) %></span>
+                    <span title="status: outdated. last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago">
+                        <%= link_to j[:host].metric_value(i[:metric]), task_build_path( j[:host].metric_task(i[:metric]), j[:host].metric_build(i[:metric]) )    %>
+                    </span>
                 <% elsif status == 1 %>
-                    <span title="status: ok; last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago"><%= j[:host].metric_value(i[:metric]) %></span>
+                    <span title="status: ok; last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric])) %> ago">
+                        <%= link_to j[:host].metric_value(i[:metric]), task_build_path( j[:host].metric_task(i[:metric]), j[:host].metric_build(i[:metric]) )    %>
+                    </span>
                 <% end %>
             </th>
     <% end %>

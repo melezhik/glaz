@@ -20,7 +20,7 @@
   </p>
   <p>
     <%= f.label :handler %><br>
-    <%= f.text_area :handler, :size => '100x20' %>
+    <%= f.text_area :handler, :size => '100x20', :text => @metric.handler.force_encoding('UTF-8') %>
   </p>
   <%= f.select :command_type, options_for_select(['ssh', 'shell' ], :selected => @metric.command_type),  {} %>
   <p>

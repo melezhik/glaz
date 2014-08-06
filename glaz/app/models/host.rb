@@ -31,16 +31,34 @@ class Host < ActiveRecord::Base
     end
 
     def metric_stat metric
-	stats.where(' metric_id = ? ', metric.id ).order( "id DESC"  ).limit(1).first
+    	stats.where(' metric_id = ? ', metric.id ).order( "id DESC"  ).limit(1).first
     end
 	
     def metric_value metric
-	stat = metric_stat metric
-	if stat		
-	        stat.value.empty? ? 'undef' : stat.value
-	else
-		nil
-	end
+	    stat = metric_stat metric
+	    if stat		
+	        stat.value.empty? ? 'undef' : stat.value.force_encoding('UTF-8')
+	    else
+		    nil
+	    end
+    end
+
+    def metric_build metric
+	    stat = metric_stat metric
+	    if stat		
+	        Build.find stat.build_id
+	    else
+		    nil
+	    end
+    end
+
+    def metric_task metric
+	    stat = metric_stat metric
+	    if stat		
+	        Task.find stat.task_id
+	    else
+		    nil
+	    end
     end
 
     def metric_value_diviated? metric

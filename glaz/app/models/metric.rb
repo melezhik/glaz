@@ -32,4 +32,6 @@ class Metric < ActiveRecord::Base
             true
         end
 	end	
+
+
 end
