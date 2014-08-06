@@ -21,6 +21,7 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
 
         if metric.has_handler?
             build_async.log :debug, "applying metric handler"
+            build_async.log :ruby, "#{metric.handler}"
             self.instance_eval metric.handler
             build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
         else

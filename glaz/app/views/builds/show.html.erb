@@ -50,7 +50,11 @@
             <%= l.level %>
         </td>
         <td>
-            <pre><%= (l.chunk||"").force_encoding("UTF-8") %></pre>
+            <% if l.level == 'ruby' %>
+                <%= markdown "\n    #!ruby\n#{l.chunk.force_encoding('UTF-8').gsub(/^/,'    ' )}" %>
+            <% else %>
+                <pre><%= (l.chunk||"").force_encoding("UTF-8") %></pre>
+            <% end %>
         </td>
     </tr>
 <% end %>
