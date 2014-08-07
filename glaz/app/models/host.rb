@@ -119,8 +119,13 @@ class Host < ActiveRecord::Base
         return  1
     end
 
+    def metric_status_as_color metric
+        a = { -1 => 'Thistle',  -2 => 'Red', -3 => 'PowderBlue', -4 => 'Wheat', 1 => 'Green' }
+        a[ metric_status(metric) ]
+    end
+
     def metric_status_as_text metric
-        a = { -1 => 'danger',  -2 => 'warning', -3 => 'warning', -4 => 'warning', 1 => 'success' }
+        a = { -1 => 'unknown metric',  -2 => 'deviated', -3 => 'has never been successfully cacluated', -4 => 'outdated', 1 => 'ok' }
         a[ metric_status(metric) ]
     end
 

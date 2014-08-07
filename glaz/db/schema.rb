@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140806122130) do
+ActiveRecord::Schema.define(version: 20140807100621) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(version: 20140806122130) do
     t.string   "command_type",  default: "ssh"
     t.binary   "handler"
     t.boolean  "verbose",       default: false
+    t.string   "name"
   end
 
   create_table "points", force: true do |t|

@@ -60,3 +60,6 @@ gem 'role_model'
 gem 'rouge'
 gem 'redcarpet'
 
+
+gem 'terminal-table'
+

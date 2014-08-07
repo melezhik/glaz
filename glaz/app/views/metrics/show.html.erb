@@ -1,9 +1,10 @@
 <table class="table-bordered table-striped table">
     <tr>
-        <th colspan=8 >metric summary</th>
+        <th colspan=9 >metric summary</th>
     </tr>
     <tr>
         <th>Title</th>
+        <th>Name</th>
         <th>Command</th>
         <th>Command Type</th>
         <th>Default Value</th>
@@ -14,6 +15,7 @@
     </tr>
     <tr>
         <td><%= @metric.title %></td>
+        <td><%= @metric.name %></td>
         <td><code><%= @metric.command %></code></td>
         <td><%= @metric.command_type %></td>
         <td><%= @metric.default_value %></td>

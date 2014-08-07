@@ -5,9 +5,10 @@
 </table>
 
 <table class="table-bordered table-striped table">
-    <tr><th colspan=7 > Metrics List </th></tr>
+    <tr><th colspan=8 > Metrics List </th></tr>
     <tr>
         <th>title</th>
+        <th>name</th>
         <th>command</th>
         <th>command type</th>
         <th>default value</th>
@@ -18,6 +19,7 @@
     <% @metrics.each do |item| %>
     <tr>
         <td><%= link_to item.title, metric_path(item), :title => 'edit metric'  %></td>
+        <td><%= item.name %></td>
         <td><strong><code><%= item.command %></code></strong></td>
         <td><%= item.command_type %></td>
         <td><%= item.default_value %></td>
