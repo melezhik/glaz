@@ -47,7 +47,7 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
 
         if task.has_handler?
 
-            build_async.log :info, "metric's handler <#{metric.handler}> is being overriden by tasks's handler: #{task.handler}, handler is taken as <#{task.handler}>"
+            build_async.log :info, "metric's handler is being overriden by tasks's handler"
             handler = task.handler
 
             build_async.log :debug, "applying handler"
@@ -57,7 +57,7 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
 
         elsif metric.has_handler?
 
-            build_async.log :info, "handler is taken as metric's handler: <#{metric.handler}>"
+            build_async.log :info, "handler is taken as metric's handler"
             handler = metric.handler
 
             build_async.log :debug, "applying handler"
