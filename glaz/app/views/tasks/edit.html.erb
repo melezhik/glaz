@@ -20,6 +20,10 @@
   </p>
   <%= f.select :command_type, options_for_select( { :ssh => 'ssh' , :shell => 'shell', :disabled => nil },  @task.command_type  ) %>
   <p>
+    <%= f.label :handler %><br>
+    <%= f.text_area :handler, :size => '100x20', :text => (@task.handler||"").force_encoding('UTF-8') %>
+  </p>
+  <p>
     <%= f.label :enabled %><br>
     <%= f.check_box :enabled, { :value => true , :checked => @task[:enabled], :title => 'enable / disable task synchronization '  }  %>
   </p>

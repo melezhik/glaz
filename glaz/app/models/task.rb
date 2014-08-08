@@ -33,4 +33,8 @@ class Task < ActiveRecord::Base
         ! (command_type.nil? or command_type.empty? )
     end
 
+    def has_handler?
+        ! (handler.nil? or handler.empty? )
+    end
+
 end

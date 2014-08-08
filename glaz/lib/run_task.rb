@@ -29,7 +29,6 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
             fqdn = host.fqdn
         end    
 
-
         build_async.log :info, "running #{command_type} command: #{command} for host: #{fqdn}"
 
         raise "empty command" if command.nil? or  metric.command.empty?
@@ -46,14 +45,31 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
 
         @retval = @data.join(" ")
 
-        if metric.has_handler?
-            build_async.log :debug, "applying metric handler"
-            build_async.log :ruby, "#{metric.handler}"
-            self.instance_eval metric.handler
+        if task.has_handler?
+
+            build_async.log :info, "metric's handler <#{host.handler}> is being overriden by tasks's handler: #{task.handler}, handler is taken as <#{task.handler}>"
+            handler = task.handler
+
+            build_async.log :debug, "applying handler"
+            build_async.log :ruby, "#{handler}"
+            self.instance_eval handler
             build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
+
+        elsif metric.has_handler?
+
+            build_async.log :info, "handler is taken as host's handler: <#{metric.handler}>"
+            handler = metric.handler
+
+            build_async.log :debug, "applying handler"
+            build_async.log :ruby, "#{handler}"
+            self.instance_eval handler
+            build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
+
         else
-            build_async.log :debug, "no handler defined for this metric"
-        end
+
+            build_async.log :debug, "no handler defined"
+
+        end    
 
 
         build.update!(:retval =>  "#{metric.title} : #{@retval}")

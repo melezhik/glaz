@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140808081956) do
+ActiveRecord::Schema.define(version: 20140808091019) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -111,6 +111,7 @@ ActiveRecord::Schema.define(version: 20140808081956) do
     t.string  "fqdn"
     t.string  "command"
     t.string  "command_type"
+    t.binary  "handler"
   end
 
   create_table "users", force: true do |t|
