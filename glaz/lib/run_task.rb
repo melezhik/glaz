@@ -5,8 +5,24 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
 
     def run
 
+        if task.has_command?
+            build_async.log :info, "metric's <#{metric.command}> is being overriden by task's command: #{task.command}, command is taken as <#{task.command}>"
+            command = task.command
+        else
+            build_async.log :info, "command is taken as metric's command: <#{metric.command}>"
+            command = metric.command
+        end    
+
+        if task.has_command_type?
+            build_async.log :info, "metric's <#{metric.command_type}> is being overriden by task's command: #{task.command_type}, command_type is taken as <#{task.command_type}>"
+            command_type = task.command_type
+        else
+            build_async.log :info, "command_type is taken as metric's command_type: <#{metric.command_type}>"
+            command_type = metric.command_type
+        end    
+
         if task.has_fqdn?
-            build_async.log :info, "host's <#{host.fqdn}> is being override by metric's fqdn: #{task.fqdn}, fqdn is taken as <#{task.fqdn}>"
+            build_async.log :info, "host's fqdn <#{host.fqdn}> is being overriden by tasks's fqdn: #{task.fqdn}, fqdn is taken as <#{task.fqdn}>"
             fqdn = task.fqdn
         else
             build_async.log :info, "fqdn is taken as host's fqdn: <#{host.fqdn}>"
@@ -14,16 +30,18 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
         end    
 
 
-        build_async.log :info, "running #{metric.command_type} command: #{metric.command} for host: #{fqdn}"
+        build_async.log :info, "running #{command_type} command: #{command} for host: #{fqdn}"
 
-        raise "empty command" if metric.command.nil? or  metric.command.empty?
+        raise "empty command" if command.nil? or  metric.command.empty?
 
-        if metric.command_type == 'ssh'
+        if command_type == 'ssh'
 	        build_async.log :info, "running command as ssh command"
-            @data = execute_command "ssh -o 'StrictHostKeyChecking no'  #{fqdn} \"#{metric.command}\""
-        elsif metric.command_type == 'shell'
+            @data = execute_command "ssh -o 'StrictHostKeyChecking no'  #{fqdn} \"#{command}\""
+        elsif command_type == 'shell'
 	        build_async.log :info, "running command as shell command"
-            @data = execute_command metric.command.sub('%HOST%', fqdn)
+            @data = execute_command command.sub('%HOST%', fqdn)
+        else
+            raise "unknown command type: #{command_type}"
         end
 
         @retval = @data.join(" ")
