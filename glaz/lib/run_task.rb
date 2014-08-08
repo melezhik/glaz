@@ -5,16 +5,25 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
 
     def run
 
-        build_async.log :info, "running #{metric.command_type} command: #{metric.command} for host: #{host.fqdn}"
+        if task.has_fqdn?
+            build_async.log :info, "host's <#{host.fqdn}> is being override by metric's fqdn: #{task.fqdn}, fqdn is taken as <#{task.fqdn}>"
+            fqdn = task.fqdn
+        else
+            build_async.log :info, "fqdn is taken as host's fqdn: <#{host.fqdn}>"
+            fqdn = host.fqdn
+        end    
+
+
+        build_async.log :info, "running #{metric.command_type} command: #{metric.command} for host: #{fqdn}"
 
         raise "empty command" if metric.command.nil? or  metric.command.empty?
 
         if metric.command_type == 'ssh'
 	        build_async.log :info, "running command as ssh command"
-            @data = execute_command "ssh -o 'StrictHostKeyChecking no'  #{host.fqdn} \"#{metric.command}\""
+            @data = execute_command "ssh -o 'StrictHostKeyChecking no'  #{fqdn} \"#{metric.command}\""
         elsif metric.command_type == 'shell'
 	        build_async.log :info, "running command as shell command"
-            @data = execute_command metric.command.sub('%HOST%', host.fqdn)
+            @data = execute_command metric.command.sub('%HOST%', fqdn)
         end
 
         @retval = @data.join(" ")
