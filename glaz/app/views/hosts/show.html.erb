@@ -68,7 +68,7 @@
         </td>
         <td>
             <% if i[:task].has_fqdn? %>
-            i[:task].fqdn
+            <%= i[:task].fqdn %>
             <% else %>
             fasle
             <% end %>
@@ -121,7 +121,7 @@
 </table>
 <% else %>
     <tr>
-        <td colspan=11 > 0 metrics found</td>
+        <td colspan=12 > 0 metrics found</td>
     </tr>
 <% end %>
 
