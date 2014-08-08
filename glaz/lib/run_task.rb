@@ -6,7 +6,7 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
     def run
 
         if task.has_command?
-            build_async.log :info, "metric's <#{metric.command}> is being overriden by task's command: #{task.command}, command is taken as <#{task.command}>"
+            build_async.log :info, "metric's command <#{metric.command}> is being overriden by task's command: #{task.command}, command is taken as <#{task.command}>"
             command = task.command
         else
             build_async.log :info, "command is taken as metric's command: <#{metric.command}>"
@@ -14,7 +14,7 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
         end    
 
         if task.has_command_type?
-            build_async.log :info, "metric's <#{metric.command_type}> is being overriden by task's command: #{task.command_type}, command_type is taken as <#{task.command_type}>"
+            build_async.log :info, "metric's command type  <#{metric.command_type}> is being overriden by task's command_type: #{task.command_type}, command_type is taken as <#{task.command_type}>"
             command_type = task.command_type
         else
             build_async.log :info, "command_type is taken as metric's command_type: <#{metric.command_type}>"

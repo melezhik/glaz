@@ -26,11 +26,11 @@ class Task < ActiveRecord::Base
     end
 
     def has_command?
-        ! (command.nil?)
+        ! (command.nil? or command.empty? )
     end
 
     def has_command_type?
-        ! (command_type.nil?)
+        ! (command_type.nil? or command_type.empty? )
     end
 
 end
