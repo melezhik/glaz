@@ -63,3 +63,5 @@ gem 'redcarpet'
 
 gem 'terminal-table'
 
+gem 'unicorn'
+
