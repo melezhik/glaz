@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140808074551) do
+ActiveRecord::Schema.define(version: 20140808081956) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -107,8 +107,10 @@ ActiveRecord::Schema.define(version: 20140808074551) do
   create_table "tasks", force: true do |t|
     t.integer "host_id"
     t.integer "metric_id"
-    t.boolean "enabled",   default: true
+    t.boolean "enabled",      default: true
     t.string  "fqdn"
+    t.string  "command"
+    t.string  "command_type"
   end
 
   create_table "users", force: true do |t|

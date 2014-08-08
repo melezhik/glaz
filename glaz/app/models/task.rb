@@ -22,7 +22,11 @@ class Task < ActiveRecord::Base
     end
 
     def has_fqdn?
-        fqdn
+        ! (fqdn.nil?)
+    end
+
+    def has_command?
+        ! (command.nil?)
     end
 
 end

@@ -37,7 +37,7 @@
 
 <table class="table-bordered table-striped table">
 <tr>
-    <th colspan=12 >Metrics</th>
+    <th colspan=13 >Metrics</th>
 </tr>
 <% if @host.has_metrics? %>
 <tr>
@@ -45,6 +45,7 @@
     <th>Metric ID</th>
     <th>Link ID</th>
     <th>Override Fqdn</th>
+    <th>Override Command</th>
     <th>Multi Metric?</th>
     <th>Metric Group</th>
     <th>Metric Group ID</th>
@@ -68,9 +69,16 @@
         </td>
         <td>
             <% if i[:task].has_fqdn? %>
-            <%= i[:task].fqdn %>
+                <%= i[:task].fqdn %>
             <% else %>
-            fasle
+                <%= i[:task].has_fqdn? %>
+            <% end %>
+        </td>
+        <td>
+            <% if i[:task].has_command? %>
+                <%= i[:task].command %>
+            <% else %>
+                <%= i[:task].has_command? %>
             <% end %>
         </td>
         <td>
@@ -121,7 +129,7 @@
 </table>
 <% else %>
     <tr>
-        <td colspan=12 > 0 metrics found</td>
+        <td colspan=13 > 0 metrics found</td>
     </tr>
 <% end %>
 

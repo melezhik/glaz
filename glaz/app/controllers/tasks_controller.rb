@@ -72,7 +72,8 @@ private
 
     def _params
         params.require(:task).permit(
-                :fqdn, :enabled
+                :fqdn, :enabled,
+                :command, :command_type
         )
     end
 
