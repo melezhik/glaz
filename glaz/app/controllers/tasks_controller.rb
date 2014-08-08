@@ -49,4 +49,17 @@ class TasksController < ApplicationController
         redirect_to :back
     end
 
+    def edit
+        @task = Task.find(params[:id])
+    end
+
+private
+
+
+    def _params
+        params.require(:host).permit(
+                :fqdn, :enabled
+        )
+    end
+
 end

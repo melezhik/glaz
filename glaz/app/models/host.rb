@@ -37,7 +37,7 @@ class Host < ActiveRecord::Base
     def metric_value metric
 	    stat = metric_stat metric
 	    if stat		
-	        stat.value.empty? ? 'undef' : stat.value.force_encoding('UTF-8')
+	        (stat.value.nil? || stat.value.empty?) ? 'nil' : stat.value.force_encoding('UTF-8')
 	    else
 		    nil
 	    end

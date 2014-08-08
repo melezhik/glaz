@@ -37,13 +37,14 @@
 
 <table class="table-bordered table-striped table">
 <tr>
-    <th colspan=11 >Metrics</th>
+    <th colspan=12 >Metrics</th>
 </tr>
 <% if @host.has_metrics? %>
 <tr>
     <th>Metric Name</th>
     <th>Metric ID</th>
     <th>Link ID</th>
+    <th>Override Fqdn</th>
     <th>Multi Metric?</th>
     <th>Metric Group</th>
     <th>Metric Group ID</th>
@@ -64,6 +65,13 @@
         </td>
         <td>
             <%= i[:task].id %>
+        </td>
+        <td>
+            <% if i[:task].has_fqdn? %>
+            i[:task].fqdn
+            <% else %>
+            fasle
+            <% end %>
         </td>
         <td>
             <%= i[:multi] %>
@@ -100,6 +108,7 @@
         <td>
             <%= link_to  'builds', task_builds_path(i[:task]), :title => 'show builds for metric'  %> |
             <%= link_to 'synchronize', synchronize_task_path(i[:task]), :method => :POST, :title => 'synchronize metric' %> |
+            <%= link_to 'edit', edit_task_path(i[:task]), :title => 'edit task' %> |
             <% if i[:task].enabled? %>
                 <%= link_to 'disable', disable_task_path(i[:task]), :method => :post, :title => 'remove this metric from synchronazation' %> |
             <% else %>

@@ -20,4 +20,9 @@ class Task < ActiveRecord::Base
     def has_builds?
         builds.size > 0
     end
+
+    def has_fqdn?
+        fqdn
+    end
+
 end
