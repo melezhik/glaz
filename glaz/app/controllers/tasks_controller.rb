@@ -53,11 +53,25 @@ class TasksController < ApplicationController
         @task = Task.find(params[:id])
     end
 
+    def update
+
+        @task = Task.find(params[:id])
+
+        if @task.update _params
+            flash[:notice] = "task ID: #{@task.id} has been successfully updated"
+            redirect_to @task.host
+        else 
+            flash[:alert] = "error has been occured when update task ID: #{@task.id}"
+            render 'edit'
+        end
+
+    end
+
 private
 
 
     def _params
-        params.require(:host).permit(
+        params.require(:task).permit(
                 :fqdn, :enabled
         )
     end
