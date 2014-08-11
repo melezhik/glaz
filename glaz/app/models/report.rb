@@ -16,6 +16,10 @@ class Report < ActiveRecord::Base
         metrics.size != 0
     end
 
+    def has_tags?
+        tags.size != 0
+    end
+
     def hosts_list 
         list = []
         points.each do |point|

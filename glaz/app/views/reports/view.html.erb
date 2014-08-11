@@ -6,8 +6,14 @@
 <tr>
     <td><strong><%= @report.title %></strong></td>
     <td>
-         <%= link_to 'edit', report_path(@report), :title => 'edit report attributes'  %> |
-        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
+        <%= link_to 'edit', report_path(@report), :title => 'edit report attributes'  %> |
+        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %> |
+        <%- if @report.has_tags? %>
+            <%= form_for :report, url: view_report_path(@report), :method => :GET  do |f| %>
+                <%= f.submit :value => 'show tagged versions' %>
+                <%= select_tag :tag_id, options_for_select(@report.tags.map {|i| a= []; a[0] = i.created_at.strftime('%B %d, %Y at %H:%M'); a[1]= i.id;  a   }), {}  %>
+            <% end %>
+        <% end %>
     </td>
 </td>
 </tr>
