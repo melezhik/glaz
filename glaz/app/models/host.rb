@@ -31,11 +31,15 @@ class Host < ActiveRecord::Base
     end
 
     def metric_stat metric, tag_id = nil
-    	stats.where(' metric_id = ? ', metric.id ).order( "id DESC"  ).limit(1).first
+        if tag_id.nil?
+        	stats.where(' metric_id = ? ', metric.id ).order( "id DESC"  ).limit(1).first
+        else
+        	stats.where(' metric_id = ? and tag_id = ? ', metric.id, tag_id ).order( "id DESC"  ).limit(1).first
+        end
     end
 	
     def metric_value metric, tag_id = nil
-	    stat = metric_stat metric
+	    stat = metric_stat metric, tag_id
 	    if stat		
 	        (stat.value.nil? || stat.value.empty?) ? 'nil' : stat.value.force_encoding('UTF-8')
 	    else
@@ -44,7 +48,7 @@ class Host < ActiveRecord::Base
     end
 
     def metric_build metric, tag_id = nil
-	    stat = metric_stat metric
+	    stat = metric_stat metric, tag_id
 	    if stat		
 	        Build.find stat.build_id
 	    else
@@ -53,7 +57,7 @@ class Host < ActiveRecord::Base
     end
 
     def metric_task metric, tag_id = nil
-	    stat = metric_stat metric
+	    stat = metric_stat metric, tag_id
 	    if stat		
 	        Task.find stat.task_id
 	    else
@@ -81,7 +85,7 @@ class Host < ActiveRecord::Base
     end
 
     def metric_timestamp metric, tag_id = nil
-	    stat = metric_stat metric		
+	    stat = metric_stat metric, tag_id		
         Time.at stat.timestamp
     end
 

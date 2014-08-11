@@ -1,10 +1,12 @@
 <table class="table-striped table-bordered table">
 <tr>
     <th>Title</th>
+    <th>Tag ID</th>
     <th>Actions</th>
 </tr>
 <tr>
     <td><strong><%= @report.title %></strong></td>
+    <td><strong><%= @tag_id %></strong></td>
     <td>
         <%= link_to 'edit', report_path(@report), :title => 'edit report attributes'  %> |
         <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %> |
