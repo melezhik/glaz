@@ -118,15 +118,15 @@
             <%= i[:task].enabled %>
         </td>
         <td>
-             <p class="<%= @host.metric_value_diviated?(i[:metric]) ? 'text-danger' : 'text-success' %>" ><%= @host.metric_value(i[:metric]) %></p>
+             <p class="<%= @host.metric_value_diviated?(i[:metric],nil) ? 'text-danger' : 'text-success' %>" ><%= @host.metric_value(i[:metric],nil) %></p>
         </td>
         <td>
              <p><%= i[:metric].default_value %></p>
         </td>
         <td>
-        <% if @host.metric_has_timestamp?(i[:metric]) %>
-            <span class="<%= (@host.metric_timestamp(i[:metric]) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
-                <%=  time_ago_in_words(@host.metric_timestamp(i[:metric])) %> ago</span>
+        <% if @host.metric_has_timestamp?(i[:metric], nil) %>
+            <span class="<%= (@host.metric_timestamp(i[:metric],nil) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
+                <%=  time_ago_in_words(@host.metric_timestamp(i[:metric], nil)) %> ago</span>
         <% end %>
         </td>
         <td>

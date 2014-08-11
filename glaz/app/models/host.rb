@@ -30,11 +30,11 @@ class Host < ActiveRecord::Base
         tasks.select{|i| i.enabled? }
     end
 
-    def metric_stat metric
+    def metric_stat metric, tag_id = nil
     	stats.where(' metric_id = ? ', metric.id ).order( "id DESC"  ).limit(1).first
     end
 	
-    def metric_value metric
+    def metric_value metric, tag_id = nil
 	    stat = metric_stat metric
 	    if stat		
 	        (stat.value.nil? || stat.value.empty?) ? 'nil' : stat.value.force_encoding('UTF-8')
@@ -43,7 +43,7 @@ class Host < ActiveRecord::Base
 	    end
     end
 
-    def metric_build metric
+    def metric_build metric, tag_id = nil
 	    stat = metric_stat metric
 	    if stat		
 	        Build.find stat.build_id
@@ -52,7 +52,7 @@ class Host < ActiveRecord::Base
 	    end
     end
 
-    def metric_task metric
+    def metric_task metric, tag_id = nil
 	    stat = metric_stat metric
 	    if stat		
 	        Task.find stat.task_id
@@ -61,12 +61,12 @@ class Host < ActiveRecord::Base
 	    end
     end
 
-    def metric_value_diviated? metric
+    def metric_value_diviated? metric, tag_id = nil
 
         if metric.default_value.nil? or metric.default_value.empty?
             false
         else
-            mv  = metric_value(metric) || 'NOT-SET'
+            mv  = metric_value(metric, tag_id) || 'NOT-SET'
             dv = metric.default_value
             mv != dv
         end
@@ -80,13 +80,13 @@ class Host < ActiveRecord::Base
         end
     end
 
-    def metric_timestamp metric
-	stat = metric_stat metric		
+    def metric_timestamp metric, tag_id = nil
+	    stat = metric_stat metric		
         Time.at stat.timestamp
     end
 
-    def metric_has_timestamp? metric
-	metric_stat metric		
+    def metric_has_timestamp? metric, tag_id = nil
+    	metric_stat metric		
     end
 
 
@@ -111,22 +111,22 @@ class Host < ActiveRecord::Base
     end
 
 
-    def metric_status metric
+    def metric_status metric, tag_id = nil
         return -1 unless    has_metric? metric
-        return -3 unless    metric_has_timestamp? metric
-        return -2 if        metric_value_diviated? metric
-        return -4 if        metric_timestamp(metric) < 10.minutes.ago
+        return -3 unless    metric_has_timestamp? metric, tag_id
+        return -2 if        metric_value_diviated? metric, tag_id
+        return -4 if        metric_timestamp(metric, tag_id) < 10.minutes.ago
         return  1
     end
 
-    def metric_status_as_color metric
+    def metric_status_as_color metric, tag_id = nil
         a = { -1 => 'Thistle',  -2 => 'Red', -3 => 'PowderBlue', -4 => 'Wheat', 1 => 'Green' }
-        a[ metric_status(metric) ]
+        a[ metric_status(metric, tag_id) ]
     end
 
-    def metric_status_as_text metric
+    def metric_status_as_text metric, tag_id = nil
         a = { -1 => 'unknown metric',  -2 => 'deviated', -3 => 'has never been successfully cacluated', -4 => 'outdated', 1 => 'ok' }
-        a[ metric_status(metric) ]
+        a[ metric_status(metric, tag_id ) ]
     end
 
     	

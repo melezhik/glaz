@@ -21,10 +21,12 @@ class ReportsController < ApplicationController
 
     def show
         @report = Report.find(params[:id])
+        
     end
 
     def view
         @report = Report.find(params[:id])
+        @tag_id =  params[:tag_id]
     end
 
     def destroy
