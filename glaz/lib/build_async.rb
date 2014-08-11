@@ -1,8 +1,8 @@
-class BuildAsync < Struct.new( :host, :metric, :task, :build   )
+class BuildAsync < Struct.new( :host, :metric, :task, :build, :tag   )
 
 
     def perform
-        runner = RunTask.new host, metric, task, build, self
+        runner = RunTask.new host, metric, task, build, tag, self
         runner.run 
     end
 

@@ -6,6 +6,7 @@ class Report < ActiveRecord::Base
     has_many :xpoints
     has_many :metrics, through: :xpoints
 
+    has_many :tags
 
     def has_hosts?
         hosts.size != 0

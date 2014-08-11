@@ -111,6 +111,8 @@ class ReportsController < ApplicationController
 
         @report = Report.find(params[:id])
 
+        tag = @report.tags.create
+
         @report.hosts.each.select {|i| i.enabled? }.each  do |host|
 
             host.active_tasks.each do |task|
@@ -120,14 +122,14 @@ class ReportsController < ApplicationController
                     task.metric.submetrics.each do |sm|
                         build = task.builds.create :state => 'PENDING'
                         build.save!
-                        Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, build ) )
+                        Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, build, tag ) )
                         logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
                     end
                 else
                     logger.info "task has single metric"
                     build = task.builds.create :state => 'PENDING'
                     build.save!
-                    Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, build ) )
+                    Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, build, tag ) )
                     logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
                 end
             end

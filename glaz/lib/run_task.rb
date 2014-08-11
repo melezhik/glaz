@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__),'errors')
 require 'open3'
 
-class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
+class RunTask < Struct.new( :host, :metric, :task, :build, :tag, :build_async   )
 
     def run
 
@@ -77,6 +77,12 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :build_async   )
 
         stat = host.stats.create( :value => @retval , :timestamp =>  Time.now.to_i, :metric_id => metric.id, :build_id => build.id, :task_id => task.id )
         stat.save!
+
+        unless tag.nil?
+            build_async.log :info, "tag stat. tag_id: #{tag.id}"
+            stat.update( :tag_id => tag.id )
+            stat.save!
+        end
 
         build_async.log :info, "update stat: #{metric.title} => #{stat.value}"
     end
