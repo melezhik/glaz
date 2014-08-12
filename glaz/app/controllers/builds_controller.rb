@@ -23,9 +23,15 @@ class BuildsController < ApplicationController
             logger.debug "remove related stat ID: #{s.id}"
             s.destroy            
         end
+
         @build.destroy
         flash[:notice] = "build ID:#{params[:id]} has been successfully removed"
-        redirect_to :back
+
+        if params[:no_redirect]
+            render nothing: true
+        else
+            redirect_to :back 
+        end
     end
 
 end
