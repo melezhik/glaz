@@ -2,13 +2,23 @@
 <tr>
     <th>Report Title</th>
     <th>Report Tag ID</th>
-    <th>Actions</th>
 </tr>
 <tr>
     <td><strong><%= @report.title %></strong></td>
     <td><strong><%= @tag_id %></strong></td>
+</td>
+</tr>
+</table>
+
+<table class="table-striped table-bordered table">
+<tr>
+    <th colspan=2>Actions</th>
+</tr>
+<tr>
     <td>
-        <%= link_to 'edit', report_path(@report), :title => 'edit report attributes'  %> |
+        <%= link_to 'edit', report_path(@report), :title => 'edit report attributes'  %>
+    </td>
+    <td>
         <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
     </td>
 </td>
