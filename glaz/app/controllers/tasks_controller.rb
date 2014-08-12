@@ -3,9 +3,15 @@ class TasksController < ApplicationController
     load_and_authorize_resource param_method: :_params
 
     def destroy
+
         @task = Task.find(params[:id])
-        @task.destroy
-        flash[:notice] = "task ID:#{params[:id]} has been successfully removed"
+
+        if @task.has_builds?
+            flash[:warn] = "task ID:#{params[:id]} has builds, so cannot be removed, remove all task builds first"
+        else
+            @task.destroy
+            flash[:notice] = "task ID:#{params[:id]} has been successfully removed"
+        end
         redirect_to :back
     end
 

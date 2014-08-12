@@ -16,7 +16,7 @@ class BuildsController < ApplicationController
 
     def destroy
 
-        @task = Task.find(params[:task_id])
+        # @task = Task.find(params[:task_id])
         @build = Build.find(params[:id])
 
         Stat.all.where(' build_id = ?', params[:id]).each do |s|
