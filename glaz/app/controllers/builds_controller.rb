@@ -1,5 +1,7 @@
 class BuildsController < ApplicationController
 
+    skip_before_filter :authenticate_user!, :only => [:destroy]
+
     load_and_authorize_resource param_method: :_params
 
     def index
