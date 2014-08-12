@@ -6,7 +6,7 @@
         <td colspan=1 >
             <%= link_to 'run new build', synchronize_task_path(@task), :method => :post %>
         </td>
-        <td colspan=3 >
+        <td colspan=4 >
             <%= link_to 'back to host', host_path(@task.host)  %>
         </td>
     </tr>
@@ -17,6 +17,7 @@
         <th>Duration</th>
         <th>State</th>
         <th>Last Return Value</th>
+        <th>Actions</th>
     </tr>
     <% @builds.each do |item| %>
     <tr>
@@ -25,11 +26,14 @@
         <td><%= item.duration || '?' %> seconds</td>
         <td><%= item.state %></td>
         <td><%= (item.retval||"").force_encoding('UTF-8') %></td>
+        <td>
+            <%= link_to 'delete build', task_build_path(@task, item), :method => :delete %>
+        </td>
     </tr>
     <% end %>
     <% else %>
     <tr>
-        <td colspan=4> no builds found </td>
+        <td colspan=5> no builds found </td>
     <tr>
     <% end %>
 </table>

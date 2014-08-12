@@ -47,6 +47,7 @@ class Ability
          can :read, :all
          can :synchronize, :all
          can :view, [Report]
+         can :destroy, [Build]
        end
   end
 end

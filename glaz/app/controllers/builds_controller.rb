@@ -1,6 +1,6 @@
 class BuildsController < ApplicationController
 
-    skip_before_filter :authenticate_user!, :only => [:destroy]
+    skip_before_filter :authenticate_user!, :only => [ :destroy ]
 
     load_and_authorize_resource param_method: :_params
 
@@ -25,7 +25,7 @@ class BuildsController < ApplicationController
         end
         @build.destroy
         flash[:notice] = "build ID:#{params[:id]} has been successfully removed"
-        redirect_to [@task, :builds]
+        redirect_to :back
     end
 
 end
