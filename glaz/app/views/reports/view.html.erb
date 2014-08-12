@@ -1,7 +1,7 @@
 <table class="table-striped table-bordered table">
 <tr>
-    <th>Title</th>
-    <th>Tag ID</th>
+    <th>Report Title</th>
+    <th>Report Tag ID</th>
     <th>Actions</th>
 </tr>
 <tr>
@@ -9,15 +9,27 @@
     <td><strong><%= @tag_id %></strong></td>
     <td>
         <%= link_to 'edit', report_path(@report), :title => 'edit report attributes'  %> |
-        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %> |
-        <%- if @report.has_tags? %>
-            <%= form_for :report, url: view_report_path(@report), :method => :GET  do |f| %>
-                <%= f.submit :value => 'show tagged versions' %>
-                <%= select_tag :tag_id, options_for_select(@report.tags.reverse.map {|i| a= []; a[0] = i.created_at.strftime('%B %d, %Y at %H:%M'); a[1]= i.id;  a   }), {}  %>
-            <% end %>
-        <% end %>
+        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
     </td>
 </td>
+</tr>
+</table>
+
+<table class="table-striped table-bordered table">
+<tr>
+    <th>Archived Reports</th>
+</tr>
+<tr>
+    <td>
+        <%- if @report.has_tags? %>
+            <%= form_for :report, url: view_report_path(@report), :method => :GET  do |f| %>
+                <%= select_tag :tag_id, options_for_select(@report.tags.reverse.map {|i| a= []; a[0] = i.created_at.strftime('%B %d, %Y at %H:%M'); a[1]= i.id;  a   }), {}  %>
+                <%= f.submit :value => 'view' %>
+            <% end %>
+        <% else %>
+        0 archived reports found
+        <% end %>
+    </td>
 </tr>
 </table>
 
