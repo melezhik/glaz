@@ -90,7 +90,7 @@ class Host < ActiveRecord::Base
     end
 
     def metric_has_timestamp? metric, tag_id = nil
-    	metric_stat metric		
+    	metric_stat metric, tag_id		
     end
 
 

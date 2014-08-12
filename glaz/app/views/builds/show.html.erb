@@ -6,7 +6,10 @@
     <th colspan=1 >
         <%= link_to 'run new build', synchronize_task_path(@build.task), :method => :post %>
     </th>
-    <th colspan=5 >
+    <th colspan=1 >
+        <%= link_to 'delete build', task_build_path(@task, @build), :method => :delete %>
+    </th>
+    <th colspan=4 >
         <%= link_to 'back to builds', task_builds_path(@build.task) %>
     </th>
 </tr>
