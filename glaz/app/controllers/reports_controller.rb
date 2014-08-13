@@ -113,7 +113,11 @@ class ReportsController < ApplicationController
 
         @report = Report.find(params[:id])
 
-        tag = @report.tags.create
+        if params[ :create_tag ]
+            tag = @report.tags.create
+        else
+            tag = nil
+        end
 
         env = {}
         env[ :notify ] = ( params[ :notify ].nil? or params[ :notify ].empty? ) ? false : true
