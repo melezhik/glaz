@@ -27,8 +27,8 @@ class BuildsController < ApplicationController
         @build.destroy
         flash[:notice] = "build ID:#{params[:id]} has been successfully removed"
 
-        if params[:no_redirect]
-            render nothing: true
+        if request.env["HTTP_REFERER"].nil?
+            render  :text => "build ID:#{params[:id]} has been successfully removed\n"
         else
             redirect_to :back 
         end
