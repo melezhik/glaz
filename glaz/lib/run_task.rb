@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__),'errors')
 require 'open3'
 
-class RunTask < Struct.new( :host, :metric, :task, :build, :tag, :build_async   )
+class RunTask < Struct.new( :host, :metric, :task, :build, :tag, :env, :build_async   )
 
     def run
 
@@ -143,6 +143,16 @@ private
 
         retval
 
+    end
+
+
+    def notify subject
+        if env[ :notify ]
+            build_async.log :info, "send notification: <#{subject}>"
+            `echo http://web3-tst5.webdev.x:3000/reports/#{tag.report.id}/view?tag_id=#{tag.id}  | mail -s '#{subject}' melezhik@adriver.ru`
+        else
+            build_async.log :info, "skip send notification, because env[:notify]: #{env[:notify]}"
+        end
     end
 
 end
