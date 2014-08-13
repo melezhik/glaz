@@ -121,7 +121,7 @@ class ReportsController < ApplicationController
 
         @report.hosts.each.select {|i| i.enabled? }.each  do |host|
 
-            host.active_tasks.each do |task|
+            host.active_tasks.each.select{ |t| @report.has_metric? t.metric }.each do |task|
     
                 if task.metric.has_sub_metrics?
                     logger.info "task has submetrics, running over them"
