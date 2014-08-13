@@ -1,14 +1,14 @@
-class BuildAsync < Struct.new( :host, :metric, :task, :build, :tag   )
+class BuildAsync < Struct.new( :host, :metric, :task, :build, :tag, :env   )
 
 
     def perform
-        runner = RunTask.new host, metric, task, build, tag, self
+        runner = RunTask.new host, metric, task, build, tag, env, self
         runner.run 
     end
 
     def before(job) 
         mark_build_as_in_progress
-        log :debug, "scheduled async build ID: #{build.id}"
+        log :debug, "scheduled async build ID: #{build.id}. env: #{env}"
     end
 
     def after(job)
