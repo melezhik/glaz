@@ -145,7 +145,7 @@ class ReportsController < ApplicationController
         flash[:notice] = "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
 
         if request.env["HTTP_REFERER"].nil?
-            render  :text => "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
+            render  :text => "report ID: #{params[:id]} has been successfully scheduled to synchronization queue\n"
         else
             redirect_to :back
         end
