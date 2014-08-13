@@ -27,20 +27,45 @@
 
 <table class="table-striped table-bordered table">
 <tr>
-    <th>Archived Reports</th>
+    <th>Latest Report</th>
 </tr>
 <tr>
     <td>
-        <%- if @report.has_tags? %>
-            <%= form_for :report, url: view_report_path(@report), :method => :GET  do |f| %>
-                <%= select_tag :tag_id, options_for_select(@report.tags.reverse.map {|i| a= []; a[0] = 'ID:' + "#{i.id}" + ' > ' + i.created_at.strftime('%B %d, %Y at %H:%M'); a[1]= i.id;  a   }), {}  %>
-                <%= f.submit :value => 'view' %>
-            <% end %>
-        <% else %>
-        0 archived reports found
+        <%= form_for :report, url: view_report_path(@report), :method => :GET  do |f| %>
+            <%= f.submit :value => 'view' %>
         <% end %>
     </td>
 </tr>
+</table>
+
+<table class="table-striped table-bordered table">
+<tr>
+    <th colspan=2>Archived Reports</th>
+</tr>
+<%- if @report.has_tags? %>
+<tr>
+    <th>
+        ID / Date
+    </th>
+    <th>
+        View
+    </th>
+<tr>
+<tr>
+    <td>
+            <%= form_for :report, url: view_report_path(@report), :method => :GET  do |f| %>
+                <%= select_tag :tag_id, options_for_select(@report.tags.reverse.map {|i| a= []; a[0] = 'ID:' + "#{i.id}" + ' |  ' + i.created_at.strftime('%B %d, %Y at %H:%M'); a[1]= i.id;  a   }), {}  %>
+    </td>
+    <td>
+                <%= f.submit :value => 'view' %>
+            <% end %>
+    </td>
+</tr>
+<% else %>
+<tr>
+    <td collspan=2> 0 archived reports found </td>
+</tr>
+<% end %>
 </table>
 
 <table class="table-striped table-bordered table">
