@@ -49,7 +49,10 @@
             <%= link_to 'delete metric', metric_path(@metric), :method => :DELETE, :title => 'delete this metric' %>
         </td>
         <td>
-            <%= link_to "update metric form file: ", upload_from_file_metric_path(@metric), :method => :POST %> | <span><%= @metric_file_path %></span> 
+            <%= link_to "update metric form local file", upload_from_file_metric_path(@metric), :method => :POST %>
+              <button  data-clipboard-text='<%= @metric_file_path %>' id='d_clip_button' title='Click me to copy to clipboard.'>
+                <b>copy url to clipboard</b>
+              </button>
         </td>
     </tr>
 </table>
@@ -66,16 +69,6 @@
     </tr>
 </table>
 <% end %>
-
-
-
-
-
-<div class='demo-area'>
-  <button class='my_clip_button' data-clipboard-text='<%= @metric_file_path %>' id='d_clip_button' title='Click me to copy to clipboard.'>
-    <b>Copy To Clipboard...</b>
-  </button>
-</div>
 
 <script>
   $(document).ready(function() {
