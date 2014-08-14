@@ -38,6 +38,9 @@ Rails.application.routes.draw do
     end
 
     resources :metrics do
+        member do
+            post 'upload_from_file'
+        end
         resources :submetrics
     end
 
