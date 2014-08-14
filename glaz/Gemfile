@@ -65,3 +65,5 @@ gem 'terminal-table'
 
 gem 'unicorn'
 
+gem 'zeroclipboard-rails'
+

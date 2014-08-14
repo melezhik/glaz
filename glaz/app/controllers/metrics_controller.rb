@@ -16,8 +16,13 @@ class MetricsController < ApplicationController
     end
 
     def show
+
         @metric = Metric.find(params[:id])
+
+        FileUtils.mkdir_p "#{Rails.root.join('tmp')}/hanlders"
         @metric_file_path = "#{Rails.root.join('tmp')}/handlers/#{@metric.name}.rb"
+        File.open(@metric_file_path, 'w') { |file| file.write(@metric.handler.force_encoding('UTF-8')) }
+
     end
 
     def destroy
