@@ -1,5 +1,9 @@
 <%= form_for :metric, url: metrics_path  do |f| %>
   <p>
+    <%= f.label :name %><br>
+    <%= f.text_field :name, :size => 100 %>
+  </p>
+  <p>
     <%= f.label :title %><br>
     <%= f.text_field :title, :size => 100 %>
   </p>
