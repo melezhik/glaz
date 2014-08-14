@@ -35,6 +35,7 @@ class HostsController < ApplicationController
             p.destroy            
         end
 
+
         @host.destroy
         flash[:notice] = "host ID :#{params[:id]} has been successfully deleted"
         redirect_to hosts_url

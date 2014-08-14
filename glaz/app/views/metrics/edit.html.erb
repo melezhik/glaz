@@ -1,3 +1,4 @@
+
 <%= form_for [@metric] do |f| %>
   <% if @metric.errors.any? %>
   <div id="error_explanation">
@@ -28,7 +29,7 @@
   </p>
   <p>
     <%= f.label :handler %><br>
-    <%= f.text_area :handler, :size => '100x20', :text => (@metric.handler||"").force_encoding('UTF-8') %>
+    <%= f.text_area :handler, :size => '100x20', :text => (@metric.handler||"").force_encoding('UTF-8'), :id => 'code' %>
   </p>
   <%= f.select :command_type, options_for_select(['ssh', 'shell' ], :selected => @metric.command_type),  {} %>
   <p>
@@ -39,3 +40,14 @@
     <%= f.submit %>
   </p>
 <% end %>
+
+
+<script>
+      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        mode: "text/x-ruby",
+        tabMode: "indent",
+        matchBrackets: true,
+        indentUnit: 4
+      });
+</script>
+
