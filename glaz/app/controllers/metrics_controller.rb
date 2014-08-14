@@ -17,6 +17,7 @@ class MetricsController < ApplicationController
 
     def show
         @metric = Metric.find(params[:id])
+        @metric_file_path = "#{Rails.root.join('tmp')}/handlers/#{@metric.name}.rb"
     end
 
     def destroy
@@ -74,10 +75,10 @@ class MetricsController < ApplicationController
 
         if @metric.update :handler => source.force_encoding('UTF-8')
             flash[:notice] = "metric ID: #{@metric.id} has been successfully updated"
-            render :edit
+            redirect_to @metric
         else 
             flash[:alert] = "error has been occured when update metric ID: #{@metric.id}"
-            render :edit
+            redirect_to @metric
         end
 
     end
