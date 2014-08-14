@@ -1,6 +1,6 @@
 <table class="table-bordered table-striped table">
     <tr>
-        <th colspan=9 >metric summary</th>
+        <th colspan=8 >metric summary</th>
     </tr>
     <tr>
         <th>Title</th>
@@ -11,7 +11,6 @@
         <th>Has Handler?</th>
         <th>Verbose?</th>
         <th>Sub Metrics</th>
-        <th>Actions</th>
     </tr>
     <tr>
         <td><%= @metric.title %></td>
@@ -32,10 +31,25 @@
             <% else %>
             <% end %>
         </td>
+    </tr>
+</table>
+
+<table class="table-bordered table-striped table">
+    <tr>
+        <th colspan=4 >Actions</th>
+    </tr>
+    <tr>
         <td>
-            <%= link_to 'edit metric', edit_metric_path(@metric), :title => 'edit metric attributes' %> | 
-            <%= link_to 'add sub metric', new_metric_submetric_path(@metric), :title => 'add submetric to this metric' %> | 
+            <%= link_to 'edit metric', edit_metric_path(@metric), :title => 'edit metric attributes' %>
+        </td>
+        <td>
+            <%= link_to 'add sub metric', new_metric_submetric_path(@metric), :title => 'add submetric to this metric' %>
+        </td>
+        <td>
             <%= link_to 'delete metric', metric_path(@metric), :method => :DELETE, :title => 'delete this metric' %>
+        </td>
+        <td>
+            <%= link_to "update metric form file: ", upload_from_file_metric_path(@metric), :method => :POST %> <%= @metric_file_path %>
         </td>
     </tr>
 </table>
