@@ -27,12 +27,6 @@
     <%= f.label :command %><br>
     <%= f.text_field :command, :size => 100 %>
   </p>
-
-  <p> 
-     <%= link_to "update metric form file:", upload_from_file_metric_path(@metric), :method => :POST %>
-     <small><%= @metric_file_path %></small>
-  </p>
-
   <p>
     <%= f.label :handler %><br>
     <%= f.text_area :handler, :size => '100x20', :text => (@metric.handler||"").force_encoding('UTF-8'), :id => 'code' %>
