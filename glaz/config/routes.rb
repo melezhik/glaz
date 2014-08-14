@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
     
-  devise_for :users
+    devise_for :users
+
     resources :reports do
         member do
             get 'add_host_form'
@@ -9,6 +10,7 @@ Rails.application.routes.draw do
             patch 'metric'
             get 'view'
             post 'synchronize'
+            post 'tag'
         end
     end
 

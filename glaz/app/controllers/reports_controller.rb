@@ -154,10 +154,31 @@ class ReportsController < ApplicationController
             redirect_to :back
         end
 
-
     end
 
+    def tag
+    
+        @report = Report.find(params[:id])
+        tag = @report.tags.create
+    
+        @report.metrics_flat_list.each do |m|
+            @report.hosts.each do |h|
+                stat = h.metric_stat m[:metric], nil
+                if stat
+                    stat.update :tag_id => tag.id
+                    stat.save!
+                end
+            end
+        end
+    
+        flash[:notice] = "report ID: #{params[:id]} has been successfully tagged"
+        redirect_to :back
+    
+    end
+    
+
 private
+
     def _params
         params.require(:report).permit( 
                 :title
