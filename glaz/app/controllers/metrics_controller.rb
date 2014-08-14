@@ -58,6 +58,8 @@ class MetricsController < ApplicationController
 
     def edit
         @metric = Metric.find(params[:id])
+        FileUtils.mkdir_p "#{Rails.root.join('tmp')}/hanlders"
+        File.open("#{Rails.root.join('tmp')}/handlers/#{@metric.name}.rb", 'w') { |file| file.write(@metric.handler.force_encoding('UTF-8')) }
     end
 
 
