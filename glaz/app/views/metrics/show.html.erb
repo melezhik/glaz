@@ -36,7 +36,7 @@
 
 <table class="table-bordered table-striped table">
     <tr>
-        <th colspan=4 >Actions</th>
+        <th colspan=3 >Actions</th>
     </tr>
     <tr>
         <td>
@@ -48,22 +48,27 @@
         <td>
             <%= link_to 'delete metric', metric_path(@metric), :method => :DELETE, :title => 'delete this metric' %>
         </td>
-        <td>
-            <%= link_to "update metric form local file", upload_from_file_metric_path(@metric), :method => :POST %>
-              <button  data-clipboard-text='<%= @metric_file_path %>' id='d_clip_button' title='Click me to copy to clipboard.'>
-                <b>copy url to clipboard</b>
-              </button>
-        </td>
     </tr>
 </table>
 
 <% if @metric.has_handler? %>
 <table class="table-bordered table-striped table" >
     <tr>
-        <th>metric handler</th>
+        <th colspan=3>metric handler</th>
     </tr>
     <tr>
         <td>
+            <a href='#' id='d_clip_button' data-clipboard-text='<%= @metric_file_path %>' >copy url to metric handler file to clipboard</a> 
+        </td>
+        <td>
+            <%= link_to "write metric handler to file", write_to_file_metric_path(@metric), :method => :POST, :title => "file path: #{@metric_file_path}" %> 
+        </td>
+        <td>
+            <%= link_to "update metric handler form file", upload_from_file_metric_path(@metric), :method => :POST, :title => "file path: #{@metric_file_path}" %> 
+        </td>
+    </tr>
+    <tr>
+        <td colspan=3>
             <p><%= markdown "\n    #!ruby\n#{@metric.handler.force_encoding('UTF-8').gsub(/^/,'    ' )}" %></p>
         </td>
     </tr>

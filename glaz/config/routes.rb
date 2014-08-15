@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     resources :metrics do
         member do
             post 'upload_from_file'
+            post 'write_to_file'
         end
         resources :submetrics
     end
