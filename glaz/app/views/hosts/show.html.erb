@@ -54,7 +54,7 @@
 
 <table class="table-bordered table-striped table">
 <tr>
-    <th colspan=15 >Metrics</th>
+    <th colspan=14 >Metrics</th>
 </tr>
 <% if @host.has_metrics? %>
 <tr>
@@ -71,7 +71,6 @@
     <th>Enabled</th>
     <th>Current Value</th>
     <th>Default Value</th>
-    <th>TimeStamp</th>
     <th>Actions</th>
 </tr>
 
@@ -138,23 +137,29 @@
 
             <% if @host.has_sub_hosts? %>
             <ol>
-            <% @host.subhosts.each do |sh| %>
-                <li><p><%= @host.metric_value(i[:metric],nil) %></p></li>
+            <% @host.subhosts_list.each do |sh| %>
+                <li>
+                    <strong><%= sh.fqdn %></strong> : <p><%= sh.metric_value(i[:metric],nil) %></p>
+                    <% if sh.metric_has_timestamp?(i[:metric], nil) %>
+                        <span class="<%= (sh.metric_timestamp(i[:metric],nil) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
+                            <%=  time_ago_in_words(sh.metric_timestamp(i[:metric], nil)) %> ago
+                        </span>
+                    <% end %>
+                </li>
             <% end %>
             </ol>
             <% else %>
                 <p><%= @host.metric_value(i[:metric],nil) %></p>
+                    <% if @host.metric_has_timestamp?(i[:metric], nil) %>
+                        <span class="<%= (@host.metric_timestamp(i[:metric],nil) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
+                            <%=  time_ago_in_words(@host.metric_timestamp(i[:metric], nil)) %> ago
+                        </span>
+                    <% end %>
             <% end %>
     
         </td>
         <td>
              <p><%= i[:metric].default_value %></p>
-        </td>
-        <td>
-        <% if @host.metric_has_timestamp?(i[:metric], nil) %>
-            <span class="<%= (@host.metric_timestamp(i[:metric],nil) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
-                <%=  time_ago_in_words(@host.metric_timestamp(i[:metric], nil)) %> ago</span>
-        <% end %>
         </td>
         <td>
             <%= link_to  'builds', task_builds_path(i[:task]), :title => 'show builds for metric'  %> |
@@ -172,7 +177,7 @@
 </table>
 <% else %>
     <tr>
-        <td colspan=15 > 0 metrics found</td>
+        <td colspan=14 > 0 metrics found</td>
     </tr>
 <% end %>
 
