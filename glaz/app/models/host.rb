@@ -47,6 +47,9 @@ class Host < ActiveRecord::Base
         subhosts_ids.include? host.id
     end
 
+    def subhosts_list
+        subhosts.map {|sh| sh.obj }
+    end
 
     def metric_stat metric, tag_id = nil
         if tag_id.nil?

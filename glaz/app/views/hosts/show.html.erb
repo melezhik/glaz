@@ -18,7 +18,7 @@
         <% if @host.has_sub_hosts? %>
         <ol>
         <% @host.subhosts.each do |sh| %>
-            <li><%= link_to sh.obj.title, metric_path(sh.obj) %> - 
+            <li><%= link_to sh.obj.fqdn, metric_path(sh.obj) %> - 
                 <%= link_to 'remove subhost', host_subhost_path(@host,sh), :method => :DELETE, :title => 'remove subhost from this host' %></li>
         <% end %>
         </ol>
