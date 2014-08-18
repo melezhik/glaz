@@ -6,7 +6,7 @@ class SubhostsController < ApplicationController
     def new
         @host = Host.find(params[:host_id])
         @sub_host = @host.subhosts.new
-        @sub_hosts = Host.all.reject { |i| i.multi? }.reject{ |i| @host.has_host? i }.reject {|m| m.id == params[:host_id].to_i}.map { |m| a = []; a << m.title; a << m.id; a  }
+        @sub_hosts = Host.all.reject { |i| i.multi? }.reject{ |i| @host.has_host? i }.reject {|m| m.id == params[:host_id].to_i}.map { |m| a = []; a << m.fqdn; a << m.id; a  }
     end
 
     def create
