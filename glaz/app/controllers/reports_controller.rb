@@ -26,7 +26,7 @@ class ReportsController < ApplicationController
 
     def view
         @report = Report.find(params[:id])
-        @tag_id =  params[:tag_id]
+        @tag_id =  ( params[:tag_id].nil? or params[:tag_id].empty? ) ? nil : params[:tag_id]
     end
 
     def destroy
