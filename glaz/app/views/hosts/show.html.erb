@@ -17,7 +17,7 @@
 
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=4 > Actions </th>
+    <th colspan=5 > Actions </th>
 </tr>
 <tr>
     <td>  
@@ -28,6 +28,9 @@
     </td>
     <td>
         <%= link_to 'edit', edit_host_path(@host), :title => 'edit host attributes' %>
+    </td>
+    <td>
+        <%= link_to 'add host', new_host_subhost_path(@host), :title => 'add subhost' %>
     </td>
     <td>
         <%= link_to 'delete', host_path(@host), :method => :DELETE, :title => 'delete this host' %> 

@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     end
 
     resources :hosts do
+        resources :subhosts
         member do
             get 'add_metric_form'
             patch 'metric'

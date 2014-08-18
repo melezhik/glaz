@@ -1,0 +1,2 @@
+module SubhostsHelper
+end
