@@ -43,7 +43,7 @@
 <tr>
     <td>
             <%= form_for :report, url: view_report_path(@report), :method => :GET  do |f| %>
-                <%= select_tag :tag_id, options_for_select([['Latest', nil]] + @report.tags.reverse.map {|i| a= []; a[0] = 'ID:' + "#{i.id}" + ' |  ' + i.created_at.strftime('%B %d, %Y at %H:%M'); a[1]= i.id;  a   }, :selected => @tag_id ), {}  %>
+                <%= select_tag :tag_id, options_for_select([['Latest', nil]] + @report.tags.reverse.map {|i| a= []; a[0] = 'ID:' + "#{i.id}" + ' |  ' + i.created_at.strftime('%a, %B %d at %H:%M'); a[1]= i.id;  a   }, :selected => @tag_id ), {}  %>
                 <%= f.submit :value => 'view' %>
             <% end %>
     </td>
