@@ -135,7 +135,17 @@
             <%= i[:task].enabled %>
         </td>
         <td>
-             <p class="<%= @host.metric_value_diviated?(i[:metric],nil) ? 'text-danger' : 'text-success' %>" ><%= @host.metric_value(i[:metric],nil) %></p>
+
+            <% if @host.has_sub_hosts? %>
+            <ol>
+            <% @host.subhosts.each do |sh| %>
+                <li><p><%= @host.metric_value(i[:metric],nil) %></p></li>
+            <% end %>
+            </ol>
+            <% else %>
+                <p><%= @host.metric_value(i[:metric],nil) %></p>
+            <% end %>
+    
         </td>
         <td>
              <p><%= i[:metric].default_value %></p>
