@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 20140813101802) do
 
   create_table "metrics", force: true do |t|
     t.string   "title"
-    t.string   "command"
+    t.text     "command"
     t.string   "default_value"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -118,7 +118,7 @@ ActiveRecord::Schema.define(version: 20140813101802) do
     t.integer "metric_id"
     t.boolean "enabled",      default: true
     t.string  "fqdn"
-    t.string  "command"
+    t.text    "command"
     t.string  "command_type"
     t.binary  "handler"
   end
