@@ -1,5 +1,8 @@
 class Host < ActiveRecord::Base
 
+
+    attr_accessor :parent_host
+
     validates :fqdn, presence: true
 
     has_many :stats
@@ -14,6 +17,10 @@ class Host < ActiveRecord::Base
     has_many :xpoints
     has_many :reports, through: :xpoints
 
+
+    def has_parent_host?
+        ! (parent_host.nil? )
+    end
 
     def has_metrics?
         metrics.size != 0
@@ -116,8 +123,12 @@ class Host < ActiveRecord::Base
 
 
     def metrics_flat_list
+
         list = []
-        tasks.each do |task|
+
+        tlist = has_parent_host? ? parent_host.tasks : tasks
+
+        tlist.each do |task|
             if task.metric.multi?
                 task.metric.submetrics.each do |sm|
                     list << { :task => task , :metric => sm.obj, :multi => true, :group => task.metric.title, :group_metric => sm.metric } 
@@ -150,10 +161,10 @@ class Host < ActiveRecord::Base
     end
 
     def metric_status_as_text metric, tag_id = nil
-        a = { -1 => 'unknown metric',  -2 => 'deviated', -3 => 'has never been successfully cacluated', -4 => 'outdated', 1 => 'ok' }
+        a = { -1 => "unknown metric",  -2 => 'deviated', -3 => 'has never been successfully cacluated', -4 => 'outdated', 1 => 'ok' }
         a[ metric_status(metric, tag_id ) ]
     end
 
-    	
+
 end
 

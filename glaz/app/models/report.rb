@@ -23,7 +23,14 @@ class Report < ActiveRecord::Base
     def hosts_list 
         list = []
         points.each do |point|
-                list << { :point => point , :host => point.host }
+                if point.host.multi?
+                    point.host.subhosts_list.each do |h|
+                        h.parent_host = point.host
+                        list << { :point => point , :host => h }
+                    end
+                else
+                    list << { :point => point , :host => point.host }
+                end
         end
         list
     end
