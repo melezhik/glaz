@@ -3,6 +3,7 @@ class Host < ActiveRecord::Base
     validates :fqdn, presence: true
 
     has_many :stats
+    has_many :subhosts
 
     has_many :tasks
     has_many :metrics, through: :tasks
@@ -29,6 +30,23 @@ class Host < ActiveRecord::Base
     def active_tasks 
         tasks.select{|i| i.enabled? }
     end
+
+    def has_sub_hosts?
+        subhosts.size > 0
+    end
+
+    def multi?
+        has_sub_hosts?
+    end
+
+    def subhosts_ids
+        subhosts.map {|i| i.sub_host_id }
+    end
+
+    def has_host? host
+        subhosts_ids.include? host.id
+    end
+
 
     def metric_stat metric, tag_id = nil
         if tag_id.nil?
