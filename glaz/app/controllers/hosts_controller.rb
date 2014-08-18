@@ -88,6 +88,7 @@ class HostsController < ApplicationController
         env[ :rails_root ] = root_url
 
         if @host.enabled?
+
             @host.active_tasks.each do |task|
     
                 if task.metric.has_sub_metrics?

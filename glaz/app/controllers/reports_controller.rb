@@ -74,6 +74,7 @@ class ReportsController < ApplicationController
     end
 
     def host
+
         @report = Report.find(params[:id])
         @host = Host.find(params[:host_id])
 
@@ -85,6 +86,7 @@ class ReportsController < ApplicationController
             flash[:notice] = "host ID :#{params[:host_id]} has been successfully added to report ID : #{params[:id]}" 
         end
         redirect_to @report
+
     end
 
     def add_metric_form
@@ -123,27 +125,28 @@ class ReportsController < ApplicationController
         env[ :notify ] = ( params[ :notify ].nil? or params[ :notify ].empty? ) ? false : true
         env[ :rails_root ] = root_url
 
-        @report.hosts.each.select {|i| i.enabled? }.each  do |host|
-
-            host.active_tasks.each.select{ |t| @report.has_metric? t.metric }.each do |task|
-    
-                if task.metric.has_sub_metrics?
-                    logger.info "task has submetrics, running over them"
-                    task.metric.submetrics.each do |sm|
+        @report.hosts.each.select {|i| i.enabled? }.each  do |h|
+            hlist = h.multi? ? h.subhosts_list : [h]
+            hlist.each do |host|
+                logger.info "going to synchronize host: #{host.fqdn} in report: #{@report.id}"
+                h.active_tasks.each.select{ |t| @report.has_metric? t.metric }.each do |task|
+                    if task.metric.has_sub_metrics?
+                        logger.info "task has submetrics, running over them"
+                        task.metric.submetrics.each do |sm|
+                            build = task.builds.create :state => 'PENDING'
+                            build.save!
+                            Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, build, tag, env ) )
+                            logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
+                        end
+                    else
+                        logger.info "task has single metric"
                         build = task.builds.create :state => 'PENDING'
                         build.save!
-                        Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, build, tag, env ) )
+                        Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, build, tag, env  ) )
                         logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
                     end
-                else
-                    logger.info "task has single metric"
-                    build = task.builds.create :state => 'PENDING'
-                    build.save!
-                    Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, build, tag, env  ) )
-                    logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
                 end
             end
-
         end
 
         flash[:notice] = "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
