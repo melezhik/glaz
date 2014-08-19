@@ -25,10 +25,11 @@ class ReportsController < ApplicationController
     end
 
     def view
+
         @report = Report.find(params[:id])
         @tag_id =  ( params[:tag_id].nil? or params[:tag_id].empty? ) ? nil : params[:tag_id]
-
         @hosts = @report.hosts_list.map { |i|  i[:host]}
+        @metrics =  @report.metrics_flat_list.map {|i| i[:metric]}        
 
 =begin html
 
