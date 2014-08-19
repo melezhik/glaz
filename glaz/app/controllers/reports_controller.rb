@@ -35,6 +35,7 @@ class ReportsController < ApplicationController
         @hosts.each do |h|
             @metrics.each do |m|
                 known = h.metric_known?(m, @tag_id) 
+                never_calculated = h.metric_never_calculated?(m, @tag_id) 
                 item = {
                     :host => h, 
                     :metric => m, 
@@ -42,11 +43,11 @@ class ReportsController < ApplicationController
                     :status => h.metric_status(m, @tag_id), 
                     :status_desc => h.metric_status_as_text(m, @tag_id),  
                     :status_as_color =>  h.metric_status_as_color(m, @tag_id),  
-                    :value => known ? h.metric_value(m, @tag_id) : nil,
+                    :value => known ? ( never_calculated ? '?' : h.metric_value(m, @tag_id) ) :  '?!' ,
                     :build => h.metric_build(m, @tag_id).nil?  ? nil : h.metric_build(m, @tag_id),
                     :task => h.metric_task(m, @tag_id),
                     :default_value => m.default_value,
-                    :timestamp => h.metric_timestamp(m, @tag_id), 
+                    :timestamp => known ? h.metric_timestamp(m, @tag_id) : nil, 
                 }
 
                 if @data.has_key? h.id
