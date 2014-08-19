@@ -156,7 +156,7 @@ class Host < ActiveRecord::Base
     end
 
     def metric_status_as_color metric, tag_id = nil
-        a = { -1 => 'Thistle',  -2 => 'Red', -3 => 'PowderBlue', -4 => 'Wheat', 1 => 'Green' }
+        a = { -1 => 'Thistle',  -2 => 'Red', -3 => 'PowderBlue', -4 => 'Wheat', 1 => '#254117' }
         a[ metric_status(metric, tag_id) ]
     end
 
