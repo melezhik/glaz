@@ -169,5 +169,9 @@ class Host < ActiveRecord::Base
         ! ( metric_status(metric, tag_id) == -1 )
     end
 
+    def metric_never_calculated? metric, tag_id = nil
+        metric_status(metric, tag_id) == -3 
+    end
+
 end
 
