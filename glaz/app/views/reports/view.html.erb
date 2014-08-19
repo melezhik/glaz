@@ -69,12 +69,15 @@
     
         <% h_stat[:stat].each do |s| %>
             <% m = s[:metric] %>
-            <% age = s[:known] ? time_ago_in_words(s[:timestamp]) : nil  %>
+            <% age = ( s[:known] and s[:ever_calculated] ) ? time_ago_in_words(s[:timestamp]) : nil  %>
             <td title="<%= m.title %>. status: <%= s[:status_desc]  %>" >
                 <font  style="background-color:<%= s[:status_as_color] %>" >&nbsp;&nbsp;&nbsp;</font> |
                 <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
                 <% if s[:known]  %>
-                    |  <%= link_to "#{s[:build].id}", task_build_path( s[:task], s[:build] ), :title => 'see log data'  %>
+                    <% if s[:ever_calculated] %>
+                     | <% link_to "#{s[:build].id}", task_build_path( s[:task], s[:build] ), :title => 'see log data'  %>
+                    <% end %>
+
                     <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
                 <% else%>
                     <pre title="status: <%= s[:status_desc]  %>"><%= s[:value] %></pre>

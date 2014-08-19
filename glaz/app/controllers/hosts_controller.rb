@@ -1,6 +1,6 @@
 class HostsController < ApplicationController
 
-    skip_before_filter :authenticate_user!, :only => [:synchronize]
+    skip_before_filter :authenticate_user!, :only => [ :synchronize , :create ]
 
     load_and_authorize_resource param_method: :_params
 
@@ -15,7 +15,13 @@ class HostsController < ApplicationController
     def create
         @host = Host.new _params
         @host.save!
-        redirect_to @host
+
+        if request.env["HTTP_REFERER"].nil?
+            render  :text => "host ID: #{@host.id} has been successfully created \n"
+        else
+            redirect_to @host
+        end
+
     end
 
     def show
