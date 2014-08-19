@@ -74,13 +74,10 @@
                 <font  style="background-color:<%= s[:status_as_color] %>" >&nbsp;&nbsp;&nbsp;</font> |
                 <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
                 <% if s[:known]  %>
-                    <% if s[:ever_calculated] %>
-                     | <% link_to "#{s[:build].id}", task_build_path( s[:task], s[:build] ), :title => 'see log data'  %>
+                    <% unless s[:build].nil? %>
+                        | <%= link_to "#{s[:build].id}", task_build_path( s[:task], s[:build] ), :title => 'see log data'  %>
                     <% end %>
-
                     <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
-                <% else%>
-                    <pre title="status: <%= s[:status_desc]  %>"><%= s[:value] %></pre>
                 <% end %>
             </td>
         <% end %>

@@ -46,7 +46,7 @@ class ReportsController < ApplicationController
                     :status_desc => h.metric_status_as_text(m, @tag_id),  
                     :status_as_color =>  h.metric_status_as_color(m, @tag_id),  
                     :value => known ? ( never_calculated ? '?' : h.metric_value(m, @tag_id) ) :  '?!' ,
-                    :build => h.metric_build(m, @tag_id).nil?  ? nil : h.metric_build(m, @tag_id),
+                    :build => h.metric_build(m, @tag_id),
                     :task => h.metric_task(m, @tag_id),
                     :default_value => m.default_value,
                     :timestamp => ( known && ever_calculated ) ? h.metric_timestamp(m, @tag_id) : nil, 
