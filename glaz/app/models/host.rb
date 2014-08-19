@@ -100,7 +100,7 @@ class Host < ActiveRecord::Base
         else
             mv  = metric_value(metric, tag_id) || 'NOT-SET'
             dv = metric.default_value
-            mv != dv
+            "#{mv.strip}" != "#{dv.strip}"
         end
     end
 
