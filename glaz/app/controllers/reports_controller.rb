@@ -198,8 +198,8 @@ class ReportsController < ApplicationController
         tag = @report.tags.create
     
         @report.metrics_flat_list.each do |m|
-            @report.hosts.each do |h|
-                stat = h.metric_stat m[:metric], nil
+            @report.hosts_list.each do |h|
+                stat = h[:host].metric_stat m[:metric], nil
                 if stat
                     stat.update :tag_id => tag.id
                     stat.save!
