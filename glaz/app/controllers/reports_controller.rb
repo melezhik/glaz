@@ -36,10 +36,12 @@ class ReportsController < ApplicationController
             @metrics.each do |m|
                 known = h.metric_known?(m, @tag_id) 
                 never_calculated = h.metric_never_calculated?(m, @tag_id) 
+                ever_calculated = h.metric_ever_calculated?(m, @tag_id)
                 item = {
                     :host => h, 
                     :metric => m, 
                     :known => known,
+                    :ever_calculated => ever_calculated, 
                     :status => h.metric_status(m, @tag_id), 
                     :status_desc => h.metric_status_as_text(m, @tag_id),  
                     :status_as_color =>  h.metric_status_as_color(m, @tag_id),  
@@ -47,7 +49,7 @@ class ReportsController < ApplicationController
                     :build => h.metric_build(m, @tag_id).nil?  ? nil : h.metric_build(m, @tag_id),
                     :task => h.metric_task(m, @tag_id),
                     :default_value => m.default_value,
-                    :timestamp => known ? h.metric_timestamp(m, @tag_id) : nil, 
+                    :timestamp => ( known && ever_calculated ) ? h.metric_timestamp(m, @tag_id) : nil, 
                 }
 
                 if @data.has_key? h.id
@@ -57,42 +59,6 @@ class ReportsController < ApplicationController
                 end
             end
         end
-
-=begin html
-
-<% @metrics.each do |m| %>
-<tr>
-    <th class="text-info" title="<%= m.title %>" >
-        <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
-    </th>
-    <% @hosts.each do |h| %>
-
-            <% status = h.metric_status(m, @tag_id)  %>
-            <% status_desc = h.metric_status_as_text(m, @tag_id) %>
-            <% value = h.metric_value(m, @tag_id)  %>
-
-            <th><table><tr><td bgcolor="<%=  h.metric_status_as_color(m, @tag_id)  %>" width="10" height="10" title="status: <%= status_desc  %>"></td></tr></table>
-                <% if status == -1 %>
-                    <span title="status: <%= status_desc  %>">?!</span>
-                <% elsif status == -2 %>
-                   <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. default value: <%= m.default_value %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= value %></pre>
-                <% elsif status == -3 %>
-                    <span title="status: <%= status_desc  %>">?</span>
-                <% elsif status == -4 %>
-                    <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= value %></pre>
-                <% elsif status == 1 %>
-                    <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id
-) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= value %></pre>
-                <% end %>
-            </th>
-    <% end %>
-</tr>
-<% end %>
-
-=end html
 
     end
 

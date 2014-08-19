@@ -1,5 +1,6 @@
 class SubhostsController < ApplicationController
 
+    skip_before_filter :authenticate_user!, :only => [ :create ]
 
     load_and_authorize_resource param_method: :_params
 
@@ -22,8 +23,14 @@ class SubhostsController < ApplicationController
             @sub_host = @host.subhosts.create! _params
             @sub_host.save!
         end
+
+        if request.env["HTTP_REFERER"].nil?
+            render  :text => "subhost ID: #{@sub_host.id} has been successfully attached to host ID: #{@host.id} \n"
+        else
+            redirect_to @host
+        end
+
     
-        redirect_to @host
     end
 
     def destroy

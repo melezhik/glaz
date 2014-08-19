@@ -47,6 +47,8 @@ class Ability
          can :read, :all
          can :synchronize, :all
          can :view, [Report]
+         can :create, [Host]
+         can :create, [Subhost]
          can :destroy, [Build]
        end
   end
