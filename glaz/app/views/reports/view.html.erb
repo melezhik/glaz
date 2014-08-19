@@ -58,10 +58,10 @@
 <table class="table-striped table-bordered table">
 <tr>
     <th>Metric/Host</th>
-<% @report.hosts_list.each do |i| %>
+<% @hosts.each do |i| %>
         <td>
-            <strong class="text-info"><%= link_to  i[:host].fqdn, host_path(i[:host]), :title => i[:host].title  %></strong>
-            <sub><%= link_to  'sync', synchronize_host_path(i[:host]), :method => :POST, :title => 'request synchronization'  %></sub>
+            <strong class="text-info"><%= link_to  i.fqdn, host_path(i), :title => i.title  %></strong>
+            <sub><%= link_to  'sync', synchronize_host_path(i), :method => :POST, :title => 'request synchronization'  %></sub>
         </td>
 <% end %>
 </tr>

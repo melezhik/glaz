@@ -1,4 +1,5 @@
 - add comment field to task
 - add deviated status to task
 - synchronize hosts / metrcis should take into account multi hosts
-
+- create host command should support anonimous run
+- reports/viwe action should use JS charts 
