@@ -55,44 +55,41 @@
 <% end %>
 </table>
 
-<table class="table-striped table-bordered table">
-<tr>
-    <th>Metric/Host</th>
-<% @hosts.each do |i| %>
-        <td>
-            <strong class="text-info"><%= link_to  i.fqdn, host_path(i), :title => i.title  %></strong>
-            <sub><%= link_to  'sync', synchronize_host_path(i), :method => :POST, :title => 'request synchronization'  %></sub>
-        </td>
-<% end %>
-</tr>
+<table class="table-bordered table">
 
-<% @metrics.each do |m| %>
-<tr>
-    <th class="text-info" title="<%= m.title %>" >
-        <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
-    </th>
-    <% @hosts.each do |h| %>
-            <% status = h.metric_status(m, @tag_id);  %> 
-            <% status_desc = h.metric_status_as_text(m, @tag_id);  %> 
-            <th><table><tr><td bgcolor="<%=  h.metric_status_as_color(m, @tag_id)  %>" width="10" height="10" title="status: <%= status_desc  %>"></td></tr></table>
-                <% if status == -1 %>
-                    <span title="status: <%= status_desc  %>">?!</span>
-                <% elsif status == -2 %>
-                   <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. default value: <%= m.default_value %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= h.metric_value(m, @tag_id) %></pre>
-                <% elsif status == -3 %>
-                    <span title="status: <%= status_desc  %>">?</span>
-                <% elsif status == -4 %>
-                    <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= h.metric_value(m, @tag_id) %></pre>
-                <% elsif status == 1 %>
-                    <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id
-) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= h.metric_value(m, @tag_id) %></pre>
-                <% end %>
-            </th>
+<% @data.keys.sort.map { |i| @data[i] }.each do |h_stat|  %>
+
+    <% host = h_stat[:host] %>
+
+    <tr>
+        <td>
+            <strong class="text-info"><%= link_to  host.fqdn, host_path(host), :title => host.title  %></strong>
+            <sub><%= link_to  'sync', synchronize_host_path(host), :method => :POST, :title => 'request synchronization'  %></sub>
+        </td>
+    
+        <% h_stat[:stat].each do |s| %>
+            <% m = s[:metric] %>
+            <% age = s[:known] ? time_ago_in_words(s[:timestamp]) : nil  %>
+
+            <td bgcolor="<%=  s[:status_as_color] %>" title="<%= m.title %>. status: <%= s[:status_desc]  %>" >
+                <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
+                        <% if s[:status] == -1 %>
+                            <span title="status: <%= s[:status_desc]  %>"><%= s[:value] %></span>
+                        <% elsif  s[:status] == -2 %>
+                            <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
+                           <small class="text-mute"><%= link_to s[:build].id, task_build_path( s[:task], s[:build] ), :title => 'see log data'  %></small>
+                        <% elsif  s[:status] == -3 %>
+                            <span title="status: <%= s[:status_desc]  %>"><%= s[:value] %></span>
+                        <% elsif  s[:status] == -4 %>
+                            <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
+                            <small class="text-mute"><%= link_to s[:build].id, task_build_path( s[:task], s[:build] ), :title => 'see log data'  %></small>
+                        <% elsif  s[:status] == 1 %>
+                            <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
+                           <small class="text-mute"><%= link_to s[:build].id, task_build_path( s[:task], s[:build] ), :title => 'see log data'  %></small>
+                        <% end %>
+              </td>
+        <% end %>
+    </tr>
     <% end %>
-</tr>
-<% end %>
 </table>
 

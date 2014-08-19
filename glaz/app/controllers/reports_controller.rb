@@ -30,38 +30,66 @@ class ReportsController < ApplicationController
         @tag_id =  ( params[:tag_id].nil? or params[:tag_id].empty? ) ? nil : params[:tag_id]
         @hosts = @report.hosts_list.map { |i|  i[:host]}
         @metrics =  @report.metrics_flat_list.map {|i| i[:metric]}        
+        @data = {}
+        
+        @hosts.each do |h|
+            @metrics.each do |m|
+                known = h.metric_known?(m, @tag_id) 
+                item = {
+                    :host => h, 
+                    :metric => m, 
+                    :known => known,
+                    :status => h.metric_status(m, @tag_id), 
+                    :status_desc => h.metric_status_as_text(m, @tag_id),  
+                    :status_as_color =>  h.metric_status_as_color(m, @tag_id),  
+                    :value => known ? h.metric_value(m, @tag_id) : nil,
+                    :build => h.metric_build(m, @tag_id).nil?  ? nil : h.metric_build(m, @tag_id),
+                    :task => h.metric_task(m, @tag_id),
+                    :default_value => m.default_value,
+                    :timestamp => h.metric_timestamp(m, @tag_id), 
+                }
+
+                if @data.has_key? h.id
+                    @data[h.id][:stat] << item
+                else
+                    @data[h.id] = { :stat => [ item ], :host => h }
+                end
+            end
+        end
 
 =begin html
 
-<% @report.metrics_flat_list.each do |i| %>
+<% @metrics.each do |m| %>
 <tr>
-    <th class="text-info" title="<%= i[:metric].title %>" >
-        <%= link_to i[:metric].name||i[:metric].title, metric_path(i[:metric]), :title => i[:metric].title %>
+    <th class="text-info" title="<%= m.title %>" >
+        <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
     </th>
-    <% @report.hosts_list.each do |j| %>
-            <% status = j[:host].metric_status(i[:metric], @tag_id);  %> 
-            <% status_desc = j[:host].metric_status_as_text(i[:metric], @tag_id);  %> 
-            <th><table><tr><td bgcolor="<%=  j[:host].metric_status_as_color(i[:metric], @tag_id)  %>" width="10" height="10" title="status: <%= status_desc  %>"></td></tr></table>
+    <% @hosts.each do |h| %>
+
+            <% status = h.metric_status(m, @tag_id)  %>
+            <% status_desc = h.metric_status_as_text(m, @tag_id) %>
+            <% value = h.metric_value(m, @tag_id)  %>
+
+            <th><table><tr><td bgcolor="<%=  h.metric_status_as_color(m, @tag_id)  %>" width="10" height="10" title="status: <%= status_desc  %>"></td></tr></table>
                 <% if status == -1 %>
                     <span title="status: <%= status_desc  %>">?!</span>
                 <% elsif status == -2 %>
-                   <small class="text-mute"><%= link_to j[:host].metric_build(i[:metric], @tag_id).id, task_build_path( j[:host].metric_task(i[:metric], @tag_id), j[:host].metric_build(i[:metric], @tag_id) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. default value: <%= i[:metric].default_value %>. last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric], @tag_id)) %> ago" ><%= j[:host].metric_value(i[:metric], @tag_id) %></pre>
+                   <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id) ), :title => 'see log data'    %></small>
+                    <pre  title="status: <%= status_desc  %>. default value: <%= m.default_value %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= value %></pre>
                 <% elsif status == -3 %>
                     <span title="status: <%= status_desc  %>">?</span>
                 <% elsif status == -4 %>
-                    <small class="text-mute"><%= link_to j[:host].metric_build(i[:metric], @tag_id).id, task_build_path( j[:host].metric_task(i[:metric], @tag_id), j[:host].metric_build(i[:metric], @tag_id) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric], @tag_id)) %> ago" ><%= j[:host].metric_value(i[:metric], @tag_id) %></pre>
+                    <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id) ), :title => 'see log data'    %></small>
+                    <pre  title="status: <%= status_desc  %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= value %></pre>
                 <% elsif status == 1 %>
-                    <small class="text-mute"><%= link_to j[:host].metric_build(i[:metric], @tag_id).id, task_build_path( j[:host].metric_task(i[:metric], @tag_id), j[:host].metric_build(i[:metric], @tag_id
+                    <small class="text-mute"><%= link_to h.metric_build(m, @tag_id).id, task_build_path( h.metric_task(m, @tag_id), h.metric_build(m, @tag_id
 ) ), :title => 'see log data'    %></small>
-                    <pre  title="status: <%= status_desc  %>. last update: <%=  time_ago_in_words(j[:host].metric_timestamp(i[:metric], @tag_id)) %> ago" ><%= j[:host].metric_value(i[:metric], @tag_id) %></pre>
+                    <pre  title="status: <%= status_desc  %>. last update: <%=  time_ago_in_words(h.metric_timestamp(m, @tag_id)) %> ago" ><%= value %></pre>
                 <% end %>
             </th>
     <% end %>
 </tr>
 <% end %>
-</table>
 
 =end html
 
