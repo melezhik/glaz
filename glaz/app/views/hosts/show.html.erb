@@ -139,7 +139,7 @@
             <ol>
             <% @host.subhosts_list.each do |sh| %>
                 <li>
-                    <strong><%= sh.fqdn %></strong> : <p><%= sh.metric_value(i[:metric],nil) %></p>
+                    <strong><%= sh.fqdn %></strong> : <pre><%= sh.metric_value(i[:metric],nil) %></pre>
                     <% if sh.metric_has_timestamp?(i[:metric], nil) %>
                         <span class="<%= (sh.metric_timestamp(i[:metric],nil) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
                             <%=  time_ago_in_words(sh.metric_timestamp(i[:metric], nil)) %> ago
@@ -149,7 +149,7 @@
             <% end %>
             </ol>
             <% else %>
-                <p><%= @host.metric_value(i[:metric],nil) %></p>
+                <pre><%= @host.metric_value(i[:metric],nil) %></pre>
                     <% if @host.metric_has_timestamp?(i[:metric], nil) %>
                         <span class="<%= (@host.metric_timestamp(i[:metric],nil) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
                             <%=  time_ago_in_words(@host.metric_timestamp(i[:metric], nil)) %> ago
