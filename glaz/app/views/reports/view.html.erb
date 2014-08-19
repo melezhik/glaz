@@ -70,24 +70,15 @@
         <% h_stat[:stat].each do |s| %>
             <% m = s[:metric] %>
             <% age = s[:known] ? time_ago_in_words(s[:timestamp]) : nil  %>
-
             <td bgcolor="<%=  s[:status_as_color] %>" title="<%= m.title %>. status: <%= s[:status_desc]  %>" >
                 <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
-                        <% if s[:status] == -1 %>
-                            <span title="status: <%= s[:status_desc]  %>"><%= s[:value] %></span>
-                        <% elsif  s[:status] == -2 %>
-                            <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
-                           <small class="text-mute"><%= link_to s[:build].id, task_build_path( s[:task], s[:build] ), :title => 'see log data'  %></small>
-                        <% elsif  s[:status] == -3 %>
-                            <span title="status: <%= s[:status_desc]  %>"><%= s[:value] %></span>
-                        <% elsif  s[:status] == -4 %>
-                            <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
-                            <small class="text-mute"><%= link_to s[:build].id, task_build_path( s[:task], s[:build] ), :title => 'see log data'  %></small>
-                        <% elsif  s[:status] == 1 %>
-                            <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
-                           <small class="text-mute"><%= link_to s[:build].id, task_build_path( s[:task], s[:build] ), :title => 'see log data'  %></small>
-                        <% end %>
-              </td>
+                <% if s[:known]  %>
+                    |  <%= link_to "[#{s[:build].id}]", task_build_path( s[:task], s[:build] ), :title => 'see log data'  %>
+                    <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
+                <% else%>
+                    <pre title="status: <%= s[:status_desc]  %>"><%= s[:value] %></pre>
+                <% end %>
+            </td>
         <% end %>
     </tr>
     <% end %>
