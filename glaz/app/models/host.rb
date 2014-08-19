@@ -165,6 +165,9 @@ class Host < ActiveRecord::Base
         a[ metric_status(metric, tag_id ) ]
     end
 
+    def metric_known? metric, tag_id = nil
+        ! ( metric_status(metric, tag_id) == -1 )
+    end
 
 end
 
