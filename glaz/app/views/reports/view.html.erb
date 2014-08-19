@@ -70,10 +70,11 @@
         <% h_stat[:stat].each do |s| %>
             <% m = s[:metric] %>
             <% age = s[:known] ? time_ago_in_words(s[:timestamp]) : nil  %>
-            <td bgcolor="<%=  s[:status_as_color] %>" title="<%= m.title %>. status: <%= s[:status_desc]  %>" >
+            <td title="<%= m.title %>. status: <%= s[:status_desc]  %>" >
+                <font  style="background-color:<%= s[:status_as_color] %>" >&nbsp;&nbsp;&nbsp;</font> |
                 <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
                 <% if s[:known]  %>
-                    |  <%= link_to "[#{s[:build].id}]", task_build_path( s[:task], s[:build] ), :title => 'see log data'  %>
+                    |  <%= link_to "#{s[:build].id}", task_build_path( s[:task], s[:build] ), :title => 'see log data'  %>
                     <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
                 <% else%>
                     <pre title="status: <%= s[:status_desc]  %>"><%= s[:value] %></pre>
