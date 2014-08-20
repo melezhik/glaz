@@ -27,5 +27,13 @@ test:
   database: db/test.sqlite3
 
 production:
-  <<: *default
-  database: db/production.sqlite3
+   adapter: mysql2
+   encoding: utf8
+   reconnect: true
+   database: glaz
+   pool: 5
+   username: glaz
+   password: glaz
+   host: mysql3.adriver.x
+
+
