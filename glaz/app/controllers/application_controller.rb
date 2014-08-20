@@ -8,8 +8,6 @@ class ApplicationController < ActionController::Base
         redirect_to root_url, :alert => exception.message
     end
 
-    before_filter :miniprofiler
-
     before_action :authenticate_user!
     before_action :configure_permitted_parameters, if: :devise_controller?
 
@@ -24,8 +22,4 @@ class ApplicationController < ActionController::Base
 
 private
 
-    def miniprofiler
-        Rack::MiniProfiler.authorize_request 
-    end
-    
 end
