@@ -43,9 +43,8 @@ test:
 production:
   host: ldap3.x
   port: 389
-  attribute: mail
+  attribute: uid 
   base: "ou=adriver,ou=stuff,o=internest-group"
   admin_user: "cn=soloway-admin,ou=services,o=internest-group"
   admin_password: ieChaen8
   ssl: false
-  # <<: *AUTHORIZATIONS
