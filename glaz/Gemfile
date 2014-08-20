@@ -58,12 +58,10 @@ gem 'role_model'
 gem 'rouge'
 gem 'redcarpet'
 
-
 gem 'terminal-table'
 
 gem 'unicorn'
 
 gem 'zeroclipboard-rails'
 
-gem 'rack-mini-profiler'
 

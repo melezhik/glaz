@@ -29,38 +29,35 @@ class ReportsController < ApplicationController
         @report = Report.find(params[:id])
         @tag_id =  ( params[:tag_id].nil? or params[:tag_id].empty? ) ? nil : params[:tag_id]
 
-        Rack::MiniProfiler.step("fetch hosts") do
-            @hosts = @report.hosts_list.map { |i|  i[:host]}
-        end
-
-        Rack::MiniProfiler.step("fetch metrics") do
-            @metrics =  @report.metrics_flat_list.map {|i| i[:metric]}        
-        end
+        @hosts = @report.hosts_list.map { |i|  i[:host]}
+        @metrics =  @report.metrics_flat_list.map {|i| i[:metric]}        
 
         @data = {}
-        
-        Rack::MiniProfiler.step("generate data") do
         
             @hosts.each do |h|
                 @metrics.each do |m|
                     known = h.metric_known?(m, @tag_id) 
                         
-                    never_calculated = h.metric_never_calculated?(m, @tag_id)
-                    ever_calculated = h.metric_ever_calculated?(m, @tag_id)
+                    @never_calculated = h.metric_never_calculated?(m, @tag_id)
+                    @ever_calculated = h.metric_ever_calculated?(m, @tag_id)
+                    @metric_value = h.metric_value(m, @tag_id)
+                    @metric_status = h.metric_status(m, @tag_id)
+                    @metric_status_as_text = h.metric_status_as_text(m, @tag_id)
+                    @metric_status_as_color = h.metric_status_as_color(m, @tag_id)
 
                     item = {
                         :host => h, 
                         :metric => m, 
                         :known => known,
-                        :ever_calculated => ever_calculated, 
-                        :status => h.metric_status(m, @tag_id), 
-                        :status_desc => h.metric_status_as_text(m, @tag_id),  
-                        :status_as_color =>  h.metric_status_as_color(m, @tag_id),  
-                        :value => known ? ( never_calculated ? '?' : h.metric_value(m, @tag_id) ) :  '?!' ,
+                        :ever_calculated => @ever_calculated, 
+                        :status => @metric_status, 
+                        :status_desc => @metric_status_as_text,  
+                        :status_as_color =>  @metric_status_as_color,
+                        :value => known ? ( @never_calculated ? '?' : @metric_value ) :  '?!' ,
                         :build => h.metric_build(m, @tag_id),
                         :task => h.metric_task(m, @tag_id),
                         :default_value => m.default_value,
-                        :timestamp => ( known && ever_calculated ) ? h.metric_timestamp(m, @tag_id) : nil, 
+                        :timestamp => ( known && @ever_calculated ) ? h.metric_timestamp(m, @tag_id) : nil, 
                     }
     
                     if @data.has_key? h.id
@@ -69,9 +66,8 @@ class ReportsController < ApplicationController
                         @data[h.id] = { :stat => [ item ], :host => h }
                     end
                 end
-            end
 
-        end
+          end
 
     end
 
