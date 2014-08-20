@@ -4,7 +4,6 @@
         process.working_dir = "/home/glaz/projects/glaz/glaz"
         process.start_command = "bin/bundle exec unicorn_rails  -p 3000 -c config/unicorn.rb -D config.ru"
         process.pid_file = "/home/glaz/projects/glaz/glaz/tmp/pids/unicorn.pid"
-        process.group = "glaz"
       end
 
       workers = 5  
@@ -19,6 +18,7 @@
                 process.stop_command = "bin/delayed_job stop -i #{i}"
 
                 process.group = "glaz"
+                process.group = "delayed_job"
 
                 process.start_grace_time    = 10.seconds
                 process.stop_grace_time     = 10.seconds

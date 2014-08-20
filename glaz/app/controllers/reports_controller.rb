@@ -44,8 +44,10 @@ class ReportsController < ApplicationController
             @hosts.each do |h|
                 @metrics.each do |m|
                     known = h.metric_known?(m, @tag_id) 
-                    never_calculated = h.metric_never_calculated?(m, @tag_id) 
+                        
+                    never_calculated = h.metric_never_calculated?(m, @tag_id)
                     ever_calculated = h.metric_ever_calculated?(m, @tag_id)
+
                     item = {
                         :host => h, 
                         :metric => m, 
