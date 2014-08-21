@@ -94,9 +94,6 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
                 build_async.log :info, "data returned after handler: <#{@retval}>"
 
-                build.update!(:retval =>  "#{metric.title} : #{@retval}")
-                build.save!
-
                 stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
                 stat.save!
 
