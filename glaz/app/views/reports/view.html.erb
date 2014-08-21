@@ -15,9 +15,35 @@
     <% @stats.each do  |i| %>
     <tr>
         <td>
-            <%= i %>
+            ID: <%= i.id %>
+        </td>
+        <td>
+            <pre><%= i[:value] %></pre>
         </td>
     <tr>    
     <% end %>
 </table>
 
+
+<!--
+
+mysql> desc stats;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| id         | int(11)      | NO   | PRI | NULL    | auto_increment |
+| value      | mediumblob   | YES  |     | NULL    |                |
+| metric_id  | int(11)      | YES  | MUL | NULL    |                |
+| timestamp  | int(11)      | YES  |     | NULL    |                |
+| host_id    | int(11)      | YES  |     | NULL    |                |
+| created_at | datetime     | YES  |     | NULL    |                |
+| updated_at | datetime     | YES  |     | NULL    |                |
+| task_id    | int(11)      | YES  | MUL | NULL    |                |
+| image_id   | int(11)      | YES  | MUL | NULL    |                |
+| status     | varchar(255) | YES  |     | PENDING |                |
+| deviated   | tinyint(1)   | YES  |     | 0       |                |
+| duration   | int(11)      | YES  |     | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+12 rows in set (0.00 sec)
+
+-->
