@@ -2,8 +2,8 @@
 
       app.process("api") do |process|
         process.working_dir = "/home/glaz/projects/glaz/glaz"
-        process.start_command = "bin/bundle exec unicorn_rails  -p 3000 -c config/unicorn.rb -D config.ru"
-        process.pid_file = "/home/glaz/projects/glaz/glaz/tmp/pids/unicorn.pid"
+        process.start_command = "bin/bundle exec rails server -d"
+        process.pid_file = "/home/glaz/projects/glaz/glaz/tmp/pids/server.pid"
       end
 
       workers = 5  
