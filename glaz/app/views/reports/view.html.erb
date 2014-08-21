@@ -3,22 +3,7 @@
     <th>Report Title</th>
 </tr>
 <tr>
-    <td><strong><%= @report.title %></strong></td>
-</td>
-</tr>
-</table>
-
-<table class="table-striped table-bordered table">
-<tr>
-    <th colspan=2 >Actions</th>
-</tr>
-<tr>
-    <td>
-        <%= link_to 'edit', report_path(@report), :title => 'edit report attributes'  %>
-    </td>
-    <td>
-        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
-    </td>
+    <td><strong><%= link_to @report.title, report_path(@report), :title => 'edit report attributes'  %></strong></td>
 </td>
 </tr>
 </table>
@@ -26,31 +11,13 @@
 
 <table class="table-bordered table">
 
-<% @data.keys.sort.map { |i| @data[i] }.each do |h_stat|  %>
-
-    <% host = h_stat[:host] %>
-
+    
+    <% @stats.each do  |i| %>
     <tr>
         <td>
-            <strong class="text-info"><%= link_to  host.fqdn, host_path(host), :title => host.title  %></strong>
-            <sub><%= link_to  'sync', synchronize_host_path(host), :method => :POST, :title => 'request synchronization'  %></sub>
+            <%= i %>
         </td>
-    
-        <% h_stat[:stat].each do |s| %>
-            <% m = s[:metric] %>
-            <% age = ( s[:known] and s[:ever_calculated] ) ? time_ago_in_words(s[:timestamp]) : nil  %>
-            <td title="<%= m.title %>. status: <%= s[:status_desc]  %>" >
-                <font  style="background-color:<%= s[:status_as_color] %>" >&nbsp;&nbsp;&nbsp;</font> |
-                <%= link_to m.name||m.title, metric_path(m), :title => m.title %>
-                <% if s[:known]  %>
-                    <% unless s[:build].nil? %>
-                        | <%= link_to "#{s[:build].id}", task_build_path( s[:task], s[:build] ), :title => 'see log data'  %>
-                    <% end %>
-                    <pre  title="status: <%= s[:status_desc]  %>. default value: <%= s[:default_value] %>. last update: <%=  age %> ago" ><%= s[:value] %></pre>
-                <% end %>
-            </td>
-        <% end %>
-    </tr>
+    <tr>    
     <% end %>
 </table>
 
