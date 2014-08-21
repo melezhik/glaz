@@ -6,7 +6,7 @@
 
 <table class="table-bordered table-striped table">
     <tr>
-            <th colspan=7 >Reports List</th>
+            <th colspan=8 >Reports List</th>
     </tr>
 
     <% unless @reports.empty? %>
@@ -20,6 +20,9 @@
     <tr>
         <td>
             <%= link_to item.title, view_report_path(item), :title => 'view report data'  %>
+        </td>
+        <td>
+            <%= link_to 'synchronize', synchronize_report_path(item), :title => 'request report synchronization', :method => :POST %>
         </td>
         <td>
             <%= link_to 'images', report_images_path(item), :title => 'view report data' %>
@@ -45,7 +48,7 @@
 
     <% else %>
     <tr>
-        <td colspan=7 >0 reports found</td>
+        <td colspan=8 >0 reports found</td>
     </tr>
     <% end %>
 </table>
