@@ -11,15 +11,14 @@
 
 <table class="table-bordered table">
 
-    
     <% @stats.each do  |i| %>
     <tr>
-        <td>
-            ID: <%= i.id %>
-        </td>
-        <td>
-            <pre><%= i[:value] %></pre>
-        </td>
+    <td>
+        <%= i.host_id %>
+    </td>
+    <td>
+        <pre><%= i[:value] %></pre>
+    </td>
     <tr>    
     <% end %>
 </table>
