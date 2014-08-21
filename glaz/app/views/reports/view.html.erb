@@ -14,10 +14,7 @@
     <% @stats.each do  |i| %>
     <tr>
     <td>
-        <%= i.host_id %>
-    </td>
-    <td>
-        <pre><%= i[:value] %></pre>
+        <pre><%= (i.value||"").force_encoding('UTF-8') %></pre>
     </td>
     <tr>    
     <% end %>
