@@ -3,7 +3,7 @@
     <th>
         Stat Summary
     </th>
-    <th colspan=6 >
+    <th colspan=7 >
         <%= link_to 'back to image', report_image_path(@report, @image) %>
     </th>
 </tr>
@@ -11,6 +11,8 @@
     <th>Stat ID</th>
     <th>Stat Metric ID</th>
     <th>Stat Metric Title</th>
+    <th>Stat Status</th>
+    <th>Stat Duration</th>
     <th>Image ID</th>
     <th>Report ID</th>
     <th>Report Title</th>
@@ -20,6 +22,8 @@
     <td><%= @stat.id %></td>
     <th><%= @stat.metric.id %></th>
     <th><%= @stat.metric.title %></th>
+    <td><%= @stat.status %></td>
+    <td><%= @stat.duration %> sec</td>
     <td><%= @image.id %></td>
     <td><%= @report.id %></td>
     <td><%= @report.title %></td>
@@ -34,20 +38,16 @@
         <th>Level</th>
         <th>Message</th>
     </tr>
-    <% @builds.each do |item| %>
+    <% @logs.each do |item| %>
     <tr>
         <td><%= item.created_at.strftime('%B %d, %Y at %H:%M') %></td>
         <td><%= item.level %></td>
-        <td><%= item.state %></td>
-        <td><%= (item.retval||"").force_encoding('UTF-8') %></td>
-        <td>
-            <%= link_to 'delete build', task_build_path(@task, item), :method => :delete %>
-        </td>
+        <td><%= (item.chunk||'').force_encoding('UTF-8') %></td>
     </tr>
     <% end %>
     <% else %>
     <tr>
-        <td colspan=5> no builds found </td>
+        <td colspan=3> no logs found </td>
     <tr>
     <% end %>
 </table>
