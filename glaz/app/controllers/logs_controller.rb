@@ -6,6 +6,7 @@ class LogsController < ApplicationController
         @report = Report.find(params[:report_id])
         @image = Image.find(params[:image_id])
         @stat = Stat.find(params[:stat_id])
+        @logs = @stat.logs
     end
 
 end
