@@ -31,12 +31,9 @@
 
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=5 > Actions </th>
+    <th colspan=4 > Actions </th>
 </tr>
 <tr>
-    <td>  
-        <%= link_to 'synchronize', synchronize_host_path(@host), :method => :POST, :title => 'synchronize host metrics' %>
-    </td>
     <td>
         <%= link_to 'new metric', add_metric_form_host_path(@host), :title => 'add metric to host' %>
     </td>

@@ -1,12 +1,14 @@
 class Report < ActiveRecord::Base
 
+
+    has_many :images
+
     has_many :points
     has_many :hosts, through: :points
 
     has_many :xpoints
     has_many :metrics, through: :xpoints
 
-    has_many :tags
 
     def has_hosts?
         hosts.size != 0
@@ -16,8 +18,8 @@ class Report < ActiveRecord::Base
         metrics.size != 0
     end
 
-    def has_tags?
-        tags.size != 0
+    def has_images?
+        images.size != 0
     end
 
     def hosts_list 

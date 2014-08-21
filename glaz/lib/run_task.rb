@@ -1,9 +1,12 @@
 require File.join(File.dirname(__FILE__),'errors')
 require 'open3'
 
-class RunTask < Struct.new( :host, :metric, :task, :build, :tag, :env, :build_async   )
+class RunTask < Struct.new( :host, :metric, :task, :build, :stat, :env, :build_async   )
 
     def run
+
+        stat.update( :timestamp =>  Time.now.to_i, :status => 'PROCESSING' )
+        stat.save!
 
         if task.has_command?
             build_async.log :info, "metric's command <#{metric.command}> is being overriden by task's command: #{task.command}, command is taken as <#{task.command}>"
@@ -62,8 +65,25 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :tag, :env, :build_as
 
             build_async.log :debug, "applying handler"
             build_async.log :ruby, "#{handler}"
-            self.instance_eval handler
-            build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
+
+            begin
+                self.instance_eval handler
+
+                build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
+
+                build.update!(:retval =>  "#{metric.title} : #{@retval}")
+                build.save!
+
+                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'OK' )
+                stat.save!
+
+                build_async.log :info, "update stat: #{metric.title} => #{stat.value}"
+
+            rescue Exception => ex
+                build_async.log :error, "handler execution failed. #{ex.class}: #{ex.message}"
+                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_FAILED' )
+                stat.save!
+            end
 
         else
 
@@ -72,19 +92,6 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :tag, :env, :build_as
         end    
 
 
-        build.update!(:retval =>  "#{metric.title} : #{@retval}")
-        build.save!
-
-        stat = host.stats.create( :value => @retval , :timestamp =>  Time.now.to_i, :metric_id => metric.id, :build_id => build.id, :task_id => task.id )
-        stat.save!
-
-        unless tag.nil?
-            build_async.log :info, "tag stat. tag_id: #{tag.id}"
-            stat.update( :tag_id => tag.id )
-            stat.save!
-        end
-
-        build_async.log :info, "update stat: #{metric.title} => #{stat.value}"
     end
 
 private
@@ -134,10 +141,16 @@ private
             unless exit_status.success?
 
             build_async.log :info, "command failed"
+                stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_FAILED' )
+                stat.save!
                 raise "command #{cmd} failed" if raise_ex == true
             end
 
         end
+
+
+        stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_SUCCEED' )
+        stat.save!
 
         build_async.log :info, "command succeeded"
 

@@ -1,0 +1,55 @@
+<table class="table-striped table-bordered table">
+<tr>
+    <th>
+        Image Summary
+    </th>
+    <th>
+        <%= link_to 'back to images', report_images_path(@image) %>
+    </th>
+</tr>
+<tr>
+    <th>ID</th>
+    <th>Date</th>
+</tr>
+
+<tr>
+    <td><%= @image.id %></td>
+    <td><%= @image.created_at.strftime('%B %d, %Y at %H:%M')  %></td>
+</tr>
+</table>
+
+<table class="table-bordered table-striped table">
+<tr>
+    <th colspan=4 >Stats</th>
+</tr>
+<% if @image.has_stats? %>
+<tr>
+    <th>Date</th>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Status</th>
+</tr>
+<% @image.stats.each do |l| %>
+    <tr>
+        <td>
+            <%= l.created_at.strftime('%B %d, %Y at %H:%M') %>
+        </td>
+        <td>
+            <%= l.id %>
+        </td>
+        <td>
+            <%= l.metric.title %>
+        </td>
+        <td>
+            <%= l.status %>
+        </td>
+    </tr>
+<% end %>
+
+<% else %>
+    <tr>
+        <td colspan=4 >no stats found</td>
+    </tr>
+<% end %>
+</table>
+

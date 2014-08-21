@@ -3,3 +3,4 @@
 - synchronize hosts / metrcis should take into account multi hosts
 - create host command should support anonimous run
 - reports/viwe action should use JS charts 
+- synchronize action - print in log information about skiped hosts / metrics ( due to they are disabled )
