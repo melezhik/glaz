@@ -1,3 +1,3 @@
 class Log < ActiveRecord::Base
-  belongs_to :build
+    belongs_to :build
 end

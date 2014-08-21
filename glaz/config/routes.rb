@@ -3,6 +3,13 @@ Rails.application.routes.draw do
     devise_for :users
 
     resources :reports do
+
+        resources :images do
+            resources :stats do
+                resources :logs
+            end
+        end
+
         member do
             get 'add_host_form'
             get 'add_metric_form'
@@ -18,17 +25,10 @@ Rails.application.routes.draw do
     resources :xpoints
 
     resources :tasks do
-
-        resources :builds do
-            resources :logs
-        end
-
         member do
             post 'enable'
             post 'disable'
-            post 'synchronize'
         end
-
     end
 
     resources :hosts do

@@ -1,9 +1,14 @@
-class BuildAsync < Struct.new( :host, :metric, :task, :build, :tag, :env   )
+class BuildAsync < Struct.new( :host, :metric, :task, :build, :stat, :env   )
 
 
     def perform
-        runner = RunTask.new host, metric, task, build, tag, env, self
+
+        stat.update( :timestamp =>  Time.now.to_i, :status => 'PERFORM'  )
+        stat.save!
+
+        runner = RunTask.new host, metric, task, build, stat, env, self
         runner.run 
+
     end
 
     def before(job) 

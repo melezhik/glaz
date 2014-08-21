@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140818120135) do
+ActiveRecord::Schema.define(version: 20140821083904) do
 
   create_table "builds", force: true do |t|
     t.string   "state"
@@ -49,15 +49,26 @@ ActiveRecord::Schema.define(version: 20140818120135) do
     t.boolean  "enabled",    default: true
   end
 
+  create_table "images", force: true do |t|
+    t.boolean  "keep_me",    default: false
+    t.integer  "report_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "images", ["report_id"], name: "index_images_on_report_id", using: :btree
+
   create_table "logs", force: true do |t|
     t.string   "level"
     t.binary   "chunk",      limit: 16777215
     t.integer  "build_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "stat_id"
   end
 
   add_index "logs", ["build_id"], name: "index_logs_on_build_id", using: :btree
+  add_index "logs", ["stat_id"], name: "index_logs_on_stat_id", using: :btree
 
   create_table "metrics", force: true do |t|
     t.string   "title"
@@ -91,10 +102,14 @@ ActiveRecord::Schema.define(version: 20140818120135) do
     t.datetime "updated_at"
     t.integer  "build_id"
     t.integer  "task_id"
-    t.integer  "tag_id"
+    t.integer  "image_id"
+    t.string   "status",                      default: "PENDING"
   end
 
-  add_index "stats", ["host_id"], name: "index_stats_on_host_id", using: :btree
+  add_index "stats", ["build_id"], name: "index_stats_on_build_id", using: :btree
+  add_index "stats", ["image_id"], name: "index_stats_on_images_id", using: :btree
+  add_index "stats", ["metric_id"], name: "index_stats_on_metric_id", using: :btree
+  add_index "stats", ["task_id"], name: "index_stats_on_task_id", using: :btree
 
   create_table "subhosts", force: true do |t|
     t.integer  "host_id"

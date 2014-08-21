@@ -1,13 +1,10 @@
 <table class="table-bordered table-striped table">
     <tr>
         <td colspan=1 >
-            Builds for host <strong><%= @task.host.fqdn %></strong> and metric <strong><%= @task.metric.title %></strong>
-        </td>
-        <td colspan=1 >
-            <%= link_to 'run new build', synchronize_task_path(@task), :method => :post %>
+            Stats for report <strong><%= @report.id %></strong> and image <strong><%= @image.id %></strong>
         </td>
         <td colspan=4 >
-            <%= link_to 'back to host', host_path(@task.host)  %>
+            <%= link_to 'back to image', image_path(@image)  %>
         </td>
     </tr>
     <% if @task.has_builds? %>
