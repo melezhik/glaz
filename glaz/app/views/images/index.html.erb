@@ -9,7 +9,7 @@
             ID
         </th>
         <th>
-            Title
+            Report Title
         </th>
     </tr>
     <tr>
@@ -18,6 +18,8 @@
     </tr>
     
 </table>
+
+<p><%= link_to 'back to report', report_path(@report)  %></p>
 
 <table class="table-bordered table-striped table">
     <% if @report.has_images? %>

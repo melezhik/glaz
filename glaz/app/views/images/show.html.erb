@@ -3,18 +3,20 @@
     <th>
         Image Summary
     </th>
-    <th>
+    <th colspan=2>
         <%= link_to 'back to images', report_images_path(@image) %>
     </th>
 </tr>
 <tr>
-    <th>ID</th>
+    <th>Image ID</th>
     <th>Date</th>
+    <th>Report Title</th>
 </tr>
 
 <tr>
     <td><%= @image.id %></td>
     <td><%= @image.created_at.strftime('%B %d, %Y at %H:%M')  %></td>
+    <th><%= @report.title %></th>
 </tr>
 </table>
 
@@ -35,10 +37,10 @@
             <%= l.created_at.strftime('%B %d, %Y at %H:%M') %>
         </td>
         <td>
-            <%= l.id %>
+            <%= link_to l.id, report_image_stat_logs_path(@report, @image, l), :title => 'see stat log data'  %>
         </td>
         <td>
-            <%= l.metric.title %>
+            <%= link_to l.metric.title, metric_path(l.metric), :title => 'see metric data'  %>
         </td>
         <td>
             <%= l.status %>

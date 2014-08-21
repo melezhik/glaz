@@ -11,4 +11,8 @@ class Stat < ActiveRecord::Base
         Metric.find metric_id
     end
 
+    def has_logs?
+        logs.size > 0
+    end
+
 end

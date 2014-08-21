@@ -6,13 +6,13 @@ class StatsController < ApplicationController
 
     def index
         @report = Report.find(params[:report_id])
-        @image = Task.find(params[:image_id])
+        @image = Image.find(params[:image_id])
         @stats = @image.stats.order( :id => :desc )
     end
     
     def show
         @report = Report.find(params[:report_id])
-        @image = Task.find(params[:image_id])
+        @image = Image.find(params[:image_id])
         @stat = Stat.find(params[:id])
     end
 
