@@ -11,19 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140821083904) do
-
-  create_table "builds", force: true do |t|
-    t.string   "state"
-    t.text     "value",      limit: 16777215
-    t.integer  "task_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "duration"
-    t.binary   "retval",     limit: 16777215
-  end
-
-  add_index "builds", ["task_id"], name: "index_builds_on_task_id", using: :btree
+ActiveRecord::Schema.define(version: 20140821112411) do
 
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",                    default: 0, null: false
@@ -104,6 +92,8 @@ ActiveRecord::Schema.define(version: 20140821083904) do
     t.integer  "task_id"
     t.integer  "image_id"
     t.string   "status",                      default: "PENDING"
+    t.boolean  "deviated",                    default: false
+    t.integer  "duration"
   end
 
   add_index "stats", ["build_id"], name: "index_stats_on_build_id", using: :btree

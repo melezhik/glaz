@@ -15,4 +15,8 @@ class Stat < ActiveRecord::Base
         logs.size > 0
     end
 
+    def deviated?
+        deviated
+    end
+
 end

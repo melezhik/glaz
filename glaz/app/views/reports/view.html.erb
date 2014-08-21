@@ -1,18 +1,16 @@
 <table class="table-striped table-bordered table">
 <tr>
     <th>Report Title</th>
-    <th>Report Tag ID</th>
 </tr>
 <tr>
     <td><strong><%= @report.title %></strong></td>
-    <td><strong><%= @tag_id %></strong></td>
 </td>
 </tr>
 </table>
 
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=3 >Actions</th>
+    <th colspan=2 >Actions</th>
 </tr>
 <tr>
     <td>
@@ -21,39 +19,10 @@
     <td>
         <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
     </td>
-    <td>
-        <% if @tag_id.nil? %>
-            <%= link_to 'archive', tag_report_path(@report), :title => 'archive current report', :method => :POST  %>
-        <% end %>
-    </td>
 </td>
 </tr>
 </table>
 
-<table class="table-striped table-bordered table">
-<tr>
-    <th>Avalable Reports</th>
-</tr>
-<%- if @report.has_tags? %>
-<tr>
-    <th>
-        ID / Date
-    </th>
-<tr>
-<tr>
-    <td>
-            <%= form_for :report, url: view_report_path(@report), :method => :GET  do |f| %>
-                <%= select_tag :tag_id, options_for_select([['Latest', nil]] + @report.tags.reverse.map {|i| a= []; a[0] = 'ID:' + "#{i.id}" + ' |  ' + i.created_at.strftime('%a, %B %d at %H:%M'); a[1]= i.id;  a   }, :selected => @tag_id ), {}  %>
-                <%= f.submit :value => 'view' %>
-            <% end %>
-    </td>
-</tr>
-<% else %>
-<tr>
-    <td> 0 archived reports found </td>
-</tr>
-<% end %>
-</table>
 
 <table class="table-bordered table">
 
