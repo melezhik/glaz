@@ -46,6 +46,11 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
             raise "unknown command type: #{command_type}"
         end
 
+        stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
+        stat.save!
+
+        build_async.log :info, "data returned from command stdout: <#{stat.value}>"
+
         @retval = @data.join(" ")
 
         if task.has_handler?
@@ -55,11 +60,23 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
             build_async.log :debug, "applying handler"
             build_async.log :ruby, "#{handler}"
-            self.instance_eval handler
-            build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
 
-            stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
-            stat.save!
+            begin 
+
+                self.instance_eval handler
+
+                build_async.log :info, "data returned after handler: <#{@retval}>"
+
+                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
+                stat.save!
+
+            rescue Execption => ex
+
+                build_async.log :error, "handler execution failed. #{ex.class}: #{ex.message}"
+                raise "#{ex.class}: #{ex.message}"
+
+            end
+
 
         elsif metric.has_handler?
 
@@ -73,7 +90,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
                 self.instance_eval handler
 
-                build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
+                build_async.log :info, "data returned after handler: <#{@retval}>"
 
                 build.update!(:retval =>  "#{metric.title} : #{@retval}")
                 build.save!
@@ -81,38 +98,41 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
                 stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
                 stat.save!
 
-                build_async.log :info, "update stat: #{metric.title} => #{stat.value}"
-
-                if metric.default_value.nil? or metric.default_value.empty?
-                    stat.update( :deviated => false )
-                    stat.save!
-                    build_async.log :info, "return value is no deviated"
-                else
-                    mv  = stat.value || 'NOT-SET'
-                    dv = metric.default_value
-                    if "#{mv.strip}" != "#{dv.strip}"
-                        stat.update( :deviated => true )
-                        stat.save!
-                        build_async.log :warn, "return value is no deviated"
-                    else
-                        stat.update( :deviated => false )
-                        stat.save!
-                        build_async.log :info, "return value is no deviated"
-                    end
-                end
         
             rescue Exception => ex
+
                 build_async.log :error, "handler execution failed. #{ex.class}: #{ex.message}"
-                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_FAILED' )
-                stat.save!
+                raise "#{ex.class}: #{ex.message}"
+
             end
 
         else
+
+            stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
+            stat.save!
 
             build_async.log :debug, "no handler defined"
 
         end    
 
+
+        if metric.default_value.nil? or metric.default_value.empty?
+            stat.update( :deviated => false )
+            stat.save!
+            build_async.log :info, "return value is no deviated"
+        else
+            mv  = stat.value || 'NOT-SET'
+            dv = metric.default_value
+            if "#{mv.strip}" != "#{dv.strip}"
+                stat.update( :deviated => true )
+                stat.save!
+                build_async.log :warn, "return value is no deviated"
+            else
+                stat.update( :deviated => false )
+                stat.save!
+                build_async.log :info, "return value is no deviated"
+            end
+        end
 
     end
 
