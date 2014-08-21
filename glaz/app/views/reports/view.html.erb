@@ -23,17 +23,17 @@
         <% cur_host = i.host_id %>
         <tr>
             <th><%= i.host.fqdn_short %></th>
-            <td><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td><up><font size=1><%= i.metric.title %></font></up><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
     <% end %>
 
     <% if j > 1 and cur_host == i.host_id %>
-            <td><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
     <% elsif j > 1 and cur_host != i.host_id  %>
             </td>
         </tr>
         <tr>
             <th><%= i.host.fqdn_short %></th>
-            <td><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
             <% cur_host = i.host_id %>
     <% end %>
 

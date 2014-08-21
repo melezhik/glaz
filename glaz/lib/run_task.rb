@@ -48,12 +48,11 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
         @retval = @data.join ""
 
+        build_async.log :info, "data returned from command stdout: <#{@retval}>"
+
         stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
         stat.save!
 
-        build_async.log :info, "data returned from command stdout: <#{@retval}>"
-
-        @retval = @data.join(" ")
 
         if task.has_handler?
 

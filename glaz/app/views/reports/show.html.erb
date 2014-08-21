@@ -13,22 +13,21 @@
 
 <table class="table-striped table-bordered table">
 <tr>
-    <th colspan=6 >Actions</th>
+    <th colspan=7 >Actions</th>
 </tr>
 <tr>
 
     <td>  
         <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
     </td>
-
     <td>  
-        <%= link_to 'edit', edit_report_path(@report), :title => 'edit report attributes' %>
+        <%= link_to 'view', view_report_path(@report), :title => 'view report current image' %>
     </td>
     <td>  
         <%= link_to 'images', report_images_path(@report), :title => 'view report images' %>
     </td>
     <td>  
-        <%= link_to 'view', view_report_path(@report), :title => 'view report current image' %>
+        <%= link_to 'edit', edit_report_path(@report), :title => 'edit report attributes' %>
     </td>
     <td>
         <%= link_to 'add host', add_host_form_report_path(@report), :title => 'add host to report' %>
