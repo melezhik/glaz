@@ -137,21 +137,21 @@ class ReportsController < ApplicationController
 
                         task.metric.submetrics.each do |sm|
 
-                            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => sm.obj.id, :build_id => build.id, :task_id => task.id, :status => 'PENDING' )
+                            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => sm.obj.id, :task_id => task.id, :status => 'PENDING' )
                             stat.save!
 
                             Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, stat, env ) )
-                            logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
+                            logger.info "host ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"        
                         end
                     else
 
                         logger.info "task has single metric"
 
-                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => task.metric.id, :build_id => build.id, :task_id => task.id, :status => 'PENDING' )
+                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => task.metric.id, :task_id => task.id, :status => 'PENDING' )
                         stat.save!
 
                         Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, stat, env  ) )
-                        logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
+                        logger.info "host ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"        
                     end
                 end
             end
