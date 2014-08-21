@@ -1,28 +1,28 @@
-
+<table class="table-bordered table-striped table">
 <tr>
     <th>
         Stat Summary
     </th>
-    <th colspan=5>
+    <th colspan=6 >
         <%= link_to 'back to image', report_image_path(@report, @image) %>
     </th>
 </tr>
 <tr>
     <th>Stat ID</th>
-    <th>Stat Title</th>
+    <th>Stat Metric ID</th>
+    <th>Stat Metric Title</th>
     <th>Image ID</th>
-    <th>Image Title</th>
     <th>Report ID</th>
     <th>Report Title</th>
 </tr>
 
 <tr>
     <td><%= @stat.id %></td>
-    <th><%= @stat.title %></th>
+    <th><%= @stat.metric.id %></th>
+    <th><%= @stat.metric.title %></th>
     <td><%= @image.id %></td>
-    <th><%= @image.title %></th>
     <td><%= @report.id %></td>
-    <th><%= @report.title %></th>
+    <td><%= @report.title %></td>
 </tr>
 </table>
 

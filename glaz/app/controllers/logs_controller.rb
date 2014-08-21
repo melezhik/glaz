@@ -5,7 +5,7 @@ class LogsController < ApplicationController
     def index
         @report = Report.find(params[:report_id])
         @image = Image.find(params[:image_id])
-        @stats = @image.stats.order( :id => :desc )
+        @stat = Stat.find(params[:stat_id])
     end
 
 end
