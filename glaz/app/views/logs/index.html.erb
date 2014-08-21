@@ -45,7 +45,7 @@
     <tr>
         <td><%= item.created_at.strftime('%B %d, %Y at %H:%M') %></td>
         <td><%= item.level %></td>
-        <td><%= (item.chunk||'').force_encoding('UTF-8') %></td>
+        <td><pre><%= (item.chunk||'').force_encoding('UTF-8') %></pre></td>
     </tr>
     <% end %>
     <% else %>

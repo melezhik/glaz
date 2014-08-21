@@ -66,7 +66,6 @@
     <th>Metric Group</th>
     <th>Metric Group ID</th>
     <th>Enabled</th>
-    <th>Current Value</th>
     <th>Default Value</th>
     <th>Actions</th>
 </tr>
@@ -131,36 +130,9 @@
             <%= i[:task].enabled %>
         </td>
         <td>
-
-            <% if @host.has_sub_hosts? %>
-            <ol>
-            <% @host.subhosts_list.each do |sh| %>
-                <li>
-                    <strong><%= sh.fqdn %></strong> : <pre><%= sh.metric_value(i[:metric],nil) %></pre>
-                    <% if sh.metric_has_timestamp?(i[:metric], nil) %>
-                        <span class="<%= (sh.metric_timestamp(i[:metric],nil) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
-                            <%=  time_ago_in_words(sh.metric_timestamp(i[:metric], nil)) %> ago
-                        </span>
-                    <% end %>
-                </li>
-            <% end %>
-            </ol>
-            <% else %>
-                <pre><%= @host.metric_value(i[:metric],nil) %></pre>
-                    <% if @host.metric_has_timestamp?(i[:metric], nil) %>
-                        <span class="<%= (@host.metric_timestamp(i[:metric],nil) <= 10.minutes.ago) ? "text-danger" : "text-muted" %>">
-                            <%=  time_ago_in_words(@host.metric_timestamp(i[:metric], nil)) %> ago
-                        </span>
-                    <% end %>
-            <% end %>
-    
-        </td>
-        <td>
              <p><%= i[:metric].default_value %></p>
         </td>
         <td>
-            <%= link_to  'builds', task_builds_path(i[:task]), :title => 'show builds for metric'  %> |
-            <%= link_to 'synchronize', synchronize_task_path(i[:task]), :method => :POST, :title => 'synchronize metric' %> |
             <%= link_to 'edit', edit_task_path(i[:task]), :title => 'edit task' %> |
             <% if i[:task].enabled? %>
                 <%= link_to 'disable', disable_task_path(i[:task]), :method => :post, :title => 'remove this metric from synchronazation' %> |
