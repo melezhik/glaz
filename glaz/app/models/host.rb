@@ -82,5 +82,9 @@ class Host < ActiveRecord::Base
         list
     end
 
+    def fqdn_short
+        a = fqdn.split '.'
+        a.first
+    end
 end
 

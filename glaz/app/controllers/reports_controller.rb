@@ -137,7 +137,7 @@ class ReportsController < ApplicationController
 
                         task.metric.submetrics.each do |sm|
 
-                            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => sm.obj.id, :task_id => task.id, :status => 'PENDING',  :host_id => h.id )
+                            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => sm.obj.id, :task_id => task.id, :status => 'PENDING',  :host_id => host.id )
                             stat.save!
 
                             Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, stat, env ) )
@@ -147,7 +147,7 @@ class ReportsController < ApplicationController
 
                         logger.info "task has single metric"
 
-                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => task.metric.id, :task_id => task.id, :status => 'PENDING', :host_id => h.id )
+                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => task.metric.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
                         stat.save!
 
                         Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, stat, env  ) )
