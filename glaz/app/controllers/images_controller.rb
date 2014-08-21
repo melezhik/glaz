@@ -10,4 +10,9 @@ class ImagesController < ApplicationController
     end
 
 
+    def show
+        @report = Report.find(params[:report_id])
+        @image = Image.find(params[:id])
+    end
+
 end

@@ -1,0 +1,53 @@
+
+<tr>
+    <th>
+        Stat Summary
+    </th>
+    <th colspan=5>
+        <%= link_to 'back to image', report_image_path(@report, @image) %>
+    </th>
+</tr>
+<tr>
+    <th>Stat ID</th>
+    <th>Stat Title</th>
+    <th>Image ID</th>
+    <th>Image Title</th>
+    <th>Report ID</th>
+    <th>Report Title</th>
+</tr>
+
+<tr>
+    <td><%= @stat.id %></td>
+    <th><%= @stat.title %></th>
+    <td><%= @image.id %></td>
+    <th><%= @image.title %></th>
+    <td><%= @report.id %></td>
+    <th><%= @report.title %></th>
+</tr>
+</table>
+
+
+<table class="table-bordered table-striped table">
+    <% if @stat.has_logs? %>
+    <tr>
+        <th>Date</th>
+        <th>Level</th>
+        <th>Message</th>
+    </tr>
+    <% @builds.each do |item| %>
+    <tr>
+        <td><%= item.created_at.strftime('%B %d, %Y at %H:%M') %></td>
+        <td><%= item.level %></td>
+        <td><%= item.state %></td>
+        <td><%= (item.retval||"").force_encoding('UTF-8') %></td>
+        <td>
+            <%= link_to 'delete build', task_build_path(@task, item), :method => :delete %>
+        </td>
+    </tr>
+    <% end %>
+    <% else %>
+    <tr>
+        <td colspan=5> no builds found </td>
+    <tr>
+    <% end %>
+</table>
