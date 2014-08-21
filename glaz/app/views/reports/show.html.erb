@@ -16,6 +16,11 @@
     <th colspan=6 >Actions</th>
 </tr>
 <tr>
+
+    <td>  
+        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
+    </td>
+
     <td>  
         <%= link_to 'edit', edit_report_path(@report), :title => 'edit report attributes' %>
     </td>

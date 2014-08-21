@@ -1,7 +1,7 @@
 require File.join(File.dirname(__FILE__),'errors')
 require 'open3'
 
-class RunTask < Struct.new( :host, :metric, :task, :build, :stat, :env, :build_async   )
+class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
     def run
 
@@ -58,6 +58,9 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :stat, :env, :build_a
             self.instance_eval handler
             build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
 
+            stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
+            stat.save!
+
         elsif metric.has_handler?
 
             build_async.log :info, "handler is taken as metric's handler"
@@ -67,6 +70,7 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :stat, :env, :build_a
             build_async.log :ruby, "#{handler}"
 
             begin
+
                 self.instance_eval handler
 
                 build_async.log :info, "data returned ( after handler ) for #{metric.title}: #{@retval}"
@@ -74,11 +78,29 @@ class RunTask < Struct.new( :host, :metric, :task, :build, :stat, :env, :build_a
                 build.update!(:retval =>  "#{metric.title} : #{@retval}")
                 build.save!
 
-                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'OK' )
+                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
                 stat.save!
 
                 build_async.log :info, "update stat: #{metric.title} => #{stat.value}"
 
+                if metric.default_value.nil? or metric.default_value.empty?
+                    stat.update( :deviated => false )
+                    stat.save!
+                    build_async.log :info, "return value is no deviated"
+                else
+                    mv  = stat.value || 'NOT-SET'
+                    dv = metric.default_value
+                    if "#{mv.strip}" != "#{dv.strip}"
+                        stat.update( :deviated => true )
+                        stat.save!
+                        build_async.log :warn, "return value is no deviated"
+                    else
+                        stat.update( :deviated => false )
+                        stat.save!
+                        build_async.log :info, "return value is no deviated"
+                    end
+                end
+        
             rescue Exception => ex
                 build_async.log :error, "handler execution failed. #{ex.class}: #{ex.message}"
                 stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_FAILED' )

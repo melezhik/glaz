@@ -25,50 +25,9 @@ class ReportsController < ApplicationController
     end
 
     def view
-
         @report = Report.find(params[:id])
-        @tag_id =  ( params[:tag_id].nil? or params[:tag_id].empty? ) ? nil : params[:tag_id]
-
-        @hosts = @report.hosts_list.map { |i|  i[:host]}
-        @metrics =  @report.metrics_flat_list.map {|i| i[:metric]}        
-
-        @data = {}
-        
-            @hosts.each do |h|
-                @metrics.each do |m|
-                    known = h.metric_known?(m, @tag_id) 
-                        
-                    @never_calculated = h.metric_never_calculated?(m, @tag_id)
-                    @ever_calculated = h.metric_ever_calculated?(m, @tag_id)
-                    @metric_value = h.metric_value(m, @tag_id)
-                    @metric_status = h.metric_status(m, @tag_id)
-                    @metric_status_as_text = h.metric_status_as_text(m, @tag_id)
-                    @metric_status_as_color = h.metric_status_as_color(m, @tag_id)
-
-                    item = {
-                        :host => h, 
-                        :metric => m, 
-                        :known => known,
-                        :ever_calculated => @ever_calculated, 
-                        :status => @metric_status, 
-                        :status_desc => @metric_status_as_text,  
-                        :status_as_color =>  @metric_status_as_color,
-                        :value => known ? ( @never_calculated ? '?' : @metric_value ) :  '?!' ,
-                        :build => h.metric_build(m, @tag_id),
-                        :task => h.metric_task(m, @tag_id),
-                        :default_value => m.default_value,
-                        :timestamp => ( known && @ever_calculated ) ? h.metric_timestamp(m, @tag_id) : nil, 
-                    }
-    
-                    if @data.has_key? h.id
-                        @data[h.id][:stat] << item
-                    else
-                        @data[h.id] = { :stat => [ item ], :host => h }
-                    end
-                end
-
-          end
-
+        @image = @report.images.last
+        @stats = @image.stats
     end
 
     def destroy
@@ -178,26 +137,20 @@ class ReportsController < ApplicationController
 
                         task.metric.submetrics.each do |sm|
 
-                            build = task.builds.create :state => 'PENDING'
-                            build.save!
-
-                            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => sm.obj.id, :build_id => build.id, :task_id => task.id )
+                            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => sm.obj.id, :build_id => build.id, :task_id => task.id, :status => 'PENDING' )
                             stat.save!
 
-                            Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, build, stat, env ) )
+                            Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, stat, env ) )
                             logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
                         end
                     else
 
                         logger.info "task has single metric"
 
-                        build = task.builds.create :state => 'PENDING'
-                        build.save!
-
-                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => task.metric.id, :build_id => build.id, :task_id => task.id )
+                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => task.metric.id, :build_id => build.id, :task_id => task.id, :status => 'PENDING' )
                         stat.save!
 
-                        Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, build, stat, env  ) )
+                        Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, stat, env  ) )
                         logger.info "host ID: #{params[:id]}, build ID:#{build.id} has been successfully scheduled to synchronization queue"        
                     end
                 end
