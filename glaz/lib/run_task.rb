@@ -46,10 +46,12 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
             raise "unknown command type: #{command_type}"
         end
 
+        @retval = @data.join ""
+
         stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
         stat.save!
 
-        build_async.log :info, "data returned from command stdout: <#{stat.value}>"
+        build_async.log :info, "data returned from command stdout: <#{@retval}>"
 
         @retval = @data.join(" ")
 

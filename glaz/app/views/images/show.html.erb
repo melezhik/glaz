@@ -28,18 +28,18 @@
 </tr>
 <% if @image.has_stats? %>
 <tr>
-    <th>Date</th>
     <th>ID</th>
+    <th>Date</th>
     <th>Title</th>
     <th>Status</th>
 </tr>
 <% @image.stats.each do |l| %>
     <tr>
         <td>
-            <%= l.created_at.strftime('%B %d, %Y at %H:%M') %>
+            <%= link_to l.id, report_image_stat_logs_path(@report, @image, l), :title => 'see stat log data'  %>
         </td>
         <td>
-            <%= link_to l.id, report_image_stat_logs_path(@report, @image, l), :title => 'see stat log data'  %>
+            <%= l.created_at.strftime('%B %d, %Y at %H:%M') %>
         </td>
         <td>
             <%= link_to l.metric.title, metric_path(l.metric), :title => 'see metric data'  %>
