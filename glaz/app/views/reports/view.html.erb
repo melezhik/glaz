@@ -19,21 +19,39 @@
     
     <% j += 1 %>
 
+    
+    <% if i[:status] == 'DJ_OK' and  Time.at(i[:timestamp]) > 10.minutes.ago  and i[:deviated] == false %>
+        <% css_class = 'success'  %>
+        <% status = 'ok'  %>
+    <% elsif i[:status] == 'DJ_OK' and  Time.at(i[:timestamp]) <= 10.minutes.ago  and i[:deviated] == false %>
+        <% css_class = 'warning' %>
+        <% status = 'outdated'  %>
+    <% elsif i[:status] == 'DJ_OK' and  Time.at(i[:timestamp]) > 10.minutes.ago  and i[:deviated] == true %>
+        <% css_class = 'warning' %>
+        <% status = 'deviated'  %>
+    <% elsif i[:status].include? 'ERROR'  %>
+        <% css_class = 'danger' %>
+        <% status = i[:status]  %>
+    <% else  %>
+        <% css_class = 'info' %>
+        <% status = i[:status]  %>
+    <% end %>
+
     <% if j == 1 %>
         <% cur_host = i.host_id %>
         <tr>
             <th><%= i.host.fqdn_short %></th>
-            <td><up><font size=1><%= i.metric.title %></font></up><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td title="<%= status %>" class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font></up><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
     <% end %>
 
     <% if j > 1 and cur_host == i.host_id %>
-            <td><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td title="<%= status %>" class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
     <% elsif j > 1 and cur_host != i.host_id  %>
             </td>
         </tr>
         <tr>
             <th><%= i.host.fqdn_short %></th>
-            <td><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td title="<%= status %>"  class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
             <% cur_host = i.host_id %>
     <% end %>
 
