@@ -146,7 +146,7 @@ private
         Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
             i = 0; chunk = []
-            while line = stdout.gets
+            while line = stdout.gets($/)
                 i += 1
                 chunk << line
                 retval << line.chomp
@@ -163,7 +163,7 @@ private
             end
 
             i = 0; chunk = []
-            while line = stderr.gets
+            while line = stderr.gets($/)
                 i += 1
                 chunk << line
                 if chunk.size > 30
