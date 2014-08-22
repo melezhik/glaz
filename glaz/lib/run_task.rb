@@ -151,9 +151,9 @@ private
         retval = []
 
         begin
-            PTY.spawn(cmd) do |cp_out, cp_in, pid|
+            PTY.spawn(cmd) do |r, w, pid|
                   begin
-                       retval << cp_out.readlines
+                       r.each { | line | retval << line  } 
                   rescue Errno::EIO
                   ensure
                         Process.wait(pid)
