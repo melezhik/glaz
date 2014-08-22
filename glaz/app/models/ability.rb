@@ -49,7 +49,7 @@ class Ability
          can :view, [Report]
          can :create, [Host]
          can :create, [Subhost]
-         can :destroy, [Build]
+         can :destroy, [Image]
        end
   end
 end
