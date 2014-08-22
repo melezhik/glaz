@@ -1,5 +1,5 @@
 require File.join(File.dirname(__FILE__),'errors')
-require 'pty'
+require 'open3'
 
 class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
@@ -50,9 +50,9 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
 
         if metric.verbose?
-            build_async.log :info, "data returned from command stdout: <#{@retval}>" 
+            build_async.log :info, "data returned from command stdout:\n<#{@retval}>" 
         else
-            build_async.short_log :info, "data returned from command stdout: <#{@retval}>" 
+            build_async.short_log :info, "data returned from command stdout:\n<#{@retval}>" 
         end
 
         stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
@@ -147,34 +147,36 @@ private
 
         build_async.log :info, "running command: #{cmd}"
 
-
         retval = []
 
-        begin
-            PTY.spawn(cmd) do |r, w, pid|
-                  begin
-                       r.each { | line | retval << line  } 
-                  rescue Errno::EIO
-                  ensure
-                        Process.wait(pid)
-                  end
-           end
+        Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
-       rescue PTY::ChildExited => e
-            build_async.log :debug, "Process exited: #{e.status}"
-       end
+            while line = stdout.gets("\n")
+                retval << line
+            end
+
+            while line = stderr.gets("\n")
+                build_async.log :error,  line
+            end
+
+            exit_status = wait_thr.value
 
 
-          status = $?
-          if status == 0
-                build_async.log :debug, "command successfully executed, exit status: #{status}"
+            if exit_status.success?
+        
+                build_async.log :debug, "command successfully executed, exit status: #{exit_status}"
                 stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
                 stat.save!
-          else
+
+            else
+
                 build_async.log :error, "command unsuccessfully executed, exit status: #{status}"
-                raise "command unsuccessfully executed, exit status: #{status}"
-          end
-        
+                raise "command unsuccessfully executed, exit status: #{exit_status}"
+
+            end
+
+        end
+
         retval
 
     end
