@@ -1,5 +1,6 @@
 require File.join(File.dirname(__FILE__),'errors')
 require 'open3'
+require "pty"  
 
 class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
@@ -48,9 +49,9 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
         @retval = @data.join ""
 
-        build_async.log :info, "data returned from command stdout: <#{@retval}>"
+        build_async.log :info, "data returned from command stdout: <#{@retval}>" if metric.verbose?
 
-        stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
+        stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
         stat.save!
 
 
@@ -132,6 +133,8 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
             end
         end
 
+        build_async.log :info, "final data returned: <#{@retval}>"
+
     end
 
 private
@@ -142,36 +145,27 @@ private
 
         retval = []
 
-        Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
-            stdout.sync = true
-            stderr.sync = true
+        begin  
 
-            while line = stdout.gets()
-                retval << ( line.split("\n") )
-                build_async.log :debug, line if metric.verbose 
-            end
+            PTY.spawn( cmd ) do |r, w, pid|  
+                begin  
+                    r.each do |line| 
+                        retval << line 
+                        build_async.log :debug, line if metric.verbose?
+                    end  
+                rescue Errno::EIO  
+                end  
+            end  
 
-            while line = stderr.gets()
-                build_async.log :error, line 
-            end
+            stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_SUCCEED' )
+            stat.save!
+            build_async.log :info, "command succeeded"
 
-            exit_status = wait_thr.value
-            unless exit_status.success?
-
-            build_async.log :info, "command failed"
-                stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_FAILED' )
-                stat.save!
-                raise "command #{cmd} failed" if raise_ex == true
-            end
-
-        end
-
-
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_SUCCEED' )
-        stat.save!
-
-        build_async.log :info, "command succeeded"
+        rescue PTY::ChildExited => e  
+            build_async.log :info, "The child process exited!"
+        end 
+    
 
         retval
 

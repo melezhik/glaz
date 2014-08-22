@@ -51,8 +51,10 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
 
         chunk = []
 
-        data.(split "\n").each do |line|
+        data.split("\n").each do |line|
+
             chunk << line
+
             if chunk.size > 30
                 log_entry = stat.logs.create!
                 log_entry.update!( { :chunk => (chunk.join ""), :level => level.to_s } )
