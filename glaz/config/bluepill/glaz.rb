@@ -6,7 +6,7 @@
         process.pid_file = "/home/glaz/projects/glaz/glaz/tmp/pids/server.pid"
       end
 
-      workers = 5  
+      workers = ENV['dj_num'] ?  ENV['dj_num'].to_int : 5  
 
       (0...workers).each do |i|
           app.process("delayed_job.#{i}") do |process|
