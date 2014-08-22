@@ -49,7 +49,12 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
         @retval = @data.join ""
 
-        build_async.log :info, "data returned from command stdout: <#{@retval}>" if metric.verbose?
+
+        if metric.verbose?
+            build_async.log :info, "data returned from command stdout: <#{@retval}>" 
+        else
+            build_async.short_log :info, "data returned from command stdout: <#{@retval}>" 
+        end
 
         stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
         stat.save!
@@ -118,7 +123,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
         if metric.default_value.nil? or metric.default_value.empty?
             stat.update( :deviated => false )
             stat.save!
-            build_async.log :info, "return value is no deviated"
+            build_async.log :info, "return value is not deviated"
         else
             mv  = stat.value || 'NOT-SET'
             dv = metric.default_value
@@ -152,20 +157,28 @@ private
                 begin  
                     r.each do |line| 
                         retval << line 
-                        build_async.log :debug, line if metric.verbose?
                     end  
                 rescue Errno::EIO  
-                end  
+                ensure
+                    Process.wait(pid)
+                end
             end  
 
-            stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_SUCCEED' )
-            stat.save!
-            build_async.log :info, "command succeeded"
 
         rescue PTY::ChildExited => e  
-            build_async.log :info, "The child process exited!"
+            build_async.log :info, "The child process exited: #{e.status}"
         end 
     
+        status = $?
+            if status == 0
+            build_async.log :info, "succesffully executed cmd. status: #{status}"
+            stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_SUCCEED' )
+            stat.save!
+        else
+            build_async.log :error, "unsuccesffully executed cmd. status: #{status}"
+            stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_FAIL' )
+            stat.save!
+        end
 
         retval
 

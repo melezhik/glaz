@@ -47,31 +47,44 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
     end
 
     def log level, data
+        _log level, data, nil 
+    end
 
+    def short_log level, data
+        _log level, 'only first 100 lines are shown, set metric verbosity to true to see all data ...', nil 
+        _log level, data, 100
+    end
 
-        chunk = []
+private
+
+    def _log level, data, limit
+
+        chunk = []; i = 0;
 
         data.split("\n").each do |line|
 
-            chunk << line
+            chunk << line; i += 1
+
+            break if limit and i > limit 
 
             if chunk.size > 30
                 log_entry = stat.logs.create!
-                log_entry.update!( { :chunk => (chunk.join ""), :level => level.to_s } )
+                log_entry.update!( { :chunk => (chunk.join "\n"), :level => level.to_s } )
                 log_entry.save!
                 stat.save!
                 chunk = []
             end
+
+    
         end
 
         # write first / last chunk
         unless chunk.empty?
             log_entry = stat.logs.create!
-            log_entry.update!( { :chunk => (chunk.join ""), :level => level.to_s } )
+            log_entry.update!( { :chunk => (chunk.join "\n"), :level => level.to_s } )
             log_entry.save!
             stat.save!
         end
 
     end
-
 end
