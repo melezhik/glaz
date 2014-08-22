@@ -170,7 +170,7 @@ private
 
             else
 
-                build_async.log :error, "command unsuccessfully executed, exit status: #{status}"
+                build_async.log :error, "command unsuccessfully executed, exit status: #{exit_status}"
                 raise "command unsuccessfully executed, exit status: #{exit_status}"
 
             end

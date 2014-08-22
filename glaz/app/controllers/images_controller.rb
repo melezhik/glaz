@@ -15,4 +15,20 @@ class ImagesController < ApplicationController
         @image = Image.find(params[:id])
     end
 
+
+    def destroy
+
+        @report = Report.find(params[:report_id])
+        @image = Image.find(params[:id])
+        @image.destroy
+
+        flash[:notice] = "image ID:#{params[:id]} has been successfully removed"
+
+        if request.env["HTTP_REFERER"].nil?
+            render  :text => "iamge ID:#{params[:id]} has been successfully removed\n"
+        else
+            redirect_to :back 
+        end
+    end
+
 end
