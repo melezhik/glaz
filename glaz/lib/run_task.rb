@@ -1,6 +1,5 @@
 require File.join(File.dirname(__FILE__),'errors')
-require 'open3'
-require "pty"  
+require 'pty'
 
 class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
@@ -148,38 +147,34 @@ private
 
         build_async.log :info, "running command: #{cmd}"
 
+
         retval = []
 
+        begin
+            PTY.spawn(cmd) do |cp_out, cp_in, pid|
+                  begin
+                       retval << cp_out.readlines
+                  rescue Errno::EIO
+                  ensure
+                        Process.wait(pid)
+                  end
+           end
 
-        begin  
-
-            PTY.spawn( cmd ) do |r, w, pid|  
-                begin  
-                    r.each do |line| 
-                        retval << line 
-                    end  
-                rescue Errno::EIO  
-                ensure
-                    Process.wait(pid)
-                end
-            end  
+       rescue PTY::ChildExited => e
+            build_async.log :debug, "Process exited: #{e.status}"
+       end
 
 
-        rescue PTY::ChildExited => e  
-            build_async.log :info, "The child process exited: #{e.status}"
-        end 
-    
-        status = $?
-            if status == 0
-            build_async.log :info, "succesffully executed cmd. status: #{status}"
-            stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_SUCCEED' )
-            stat.save!
-        else
-            build_async.log :error, "unsuccesffully executed cmd. status: #{status}"
-            stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_FAIL' )
-            stat.save!
-        end
-
+          status = $?
+          if status == 0
+                build_async.log :debug, "command successfully executed, exit status: #{status}"
+                stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
+                stat.save!
+          else
+                build_async.log :error, "command unsuccessfully executed, exit status: #{status}"
+                raise "command unsuccessfully executed, exit status: #{status}"
+          end
+        
         retval
 
     end
