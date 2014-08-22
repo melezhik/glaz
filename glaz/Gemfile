@@ -64,4 +64,3 @@ gem 'unicorn'
 
 gem 'zeroclipboard-rails'
 
-

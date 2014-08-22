@@ -61,7 +61,7 @@ private
 
         chunk = []; i = 0;
 
-        data.split("\n").each do |line|
+        data.split(/\n/).each do |line|
 
             chunk << line; i += 1
 
