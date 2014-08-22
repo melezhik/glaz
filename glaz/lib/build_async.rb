@@ -47,10 +47,29 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
     end
 
     def log level, data
-        log_entry = stat.logs.create!
-        log_entry.update!( { :chunk => data, :level => level.to_s } )
-        log_entry.save!
-        stat.save!
+
+
+        chunk = []
+
+        data.(split "\n").each do |line|
+            chunk << line
+            if chunk.size > 30
+                log_entry = stat.logs.create!
+                log_entry.update!( { :chunk => (chunk.join ""), :level => level.to_s } )
+                log_entry.save!
+                stat.save!
+                chunk = []
+            end
+        end
+
+        # write first / last chunk
+        unless chunk.empty?
+            log_entry = stat.logs.create!
+            log_entry.update!( { :chunk => (chunk.join ""), :level => level.to_s } )
+            log_entry.save!
+            stat.save!
+        end
+
     end
 
 end

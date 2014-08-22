@@ -140,43 +140,22 @@ private
 
         build_async.log :info, "running command: #{cmd}"
 
-        chunk = ""
         retval = []
 
         Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
-            i = 0; chunk = []
-            while line = stdout.gets($/)
-                i += 1
-                chunk << line
-                retval << line.chomp
-                if chunk.size > 30
-                    build_async.log :debug,  ( chunk.join "" ) if metric.verbose
-                    chunk = []
-                    retval << line.chomp
-                end
+            stdout.sync = true
+            stderr.sync = true
+
+            while line = stdout.gets()
+                retval << ( line.split("\n") )
+                build_async.log :debug, line if metric.verbose 
             end
 
-            # write first / last chunk
-            unless chunk.empty?
-                build_async.log :debug,  ( chunk.join "" ) if metric.verbose
+            while line = stderr.gets()
+                build_async.log :error, line 
             end
 
-            i = 0; chunk = []
-            while line = stderr.gets($/)
-                i += 1
-                chunk << line
-                if chunk.size > 30
-                    build_async.log :error,  ( chunk.join "" )
-                    chunk = []
-                end
-            end
-
-            # write first / last chunk
-            unless chunk.empty?
-                build_async.log :error,  ( chunk.join "" )
-            end
-    
             exit_status = wait_thr.value
             unless exit_status.success?
 
