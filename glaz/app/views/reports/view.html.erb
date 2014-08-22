@@ -19,6 +19,7 @@
     
     <% j += 1 %>
 
+    <% age = time_ago_in_words(Time.at(i[:timestamp])) %>
     
     <% if i[:status] == 'DJ_OK' and  Time.at(i[:timestamp]) > 10.minutes.ago  and i[:deviated] == false %>
         <% css_class = 'success'  %>
@@ -37,21 +38,22 @@
         <% status = i[:status]  %>
     <% end %>
 
+    <% title = "status: #{status}. updated: #{age} ago" %>
     <% if j == 1 %>
         <% cur_host = i.host_id %>
         <tr>
             <th><%= i.host.fqdn_short %></th>
-            <td title="<%= status %>" class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font></up><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td title="<%= title %>" class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font></up><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
     <% end %>
 
     <% if j > 1 and cur_host == i.host_id %>
-            <td title="<%= status %>" class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td title="<%= title %>" class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
     <% elsif j > 1 and cur_host != i.host_id  %>
             </td>
         </tr>
         <tr>
             <th><%= i.host.fqdn_short %></th>
-            <td title="<%= status %>"  class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+            <td title="<%= title %>"  class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
             <% cur_host = i.host_id %>
     <% end %>
 
