@@ -123,6 +123,8 @@ class ReportsController < ApplicationController
         image = @report.images.create( :keep_me =>  params[ :create_tag ] ? true : false )
         image.save!
 
+        env[ :image_url ] = url_for [ @report, image ]
+
         @report.hosts.each.select {|i| i.enabled? }.each  do |h|
 
             hlist = h.multi? ? h.subhosts_list : [h]
