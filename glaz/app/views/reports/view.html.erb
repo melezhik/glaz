@@ -35,7 +35,7 @@
         <% status = i[:status]  %>
     <% end %>
 
-    <% cols << [ i, "status: #{status}. updated: #{age} ago. default value: #{i[:default_value]} ", css_class ] %>
+    <% cols << [ i, "status: #{status}. updated: #{age} ago. default value: #{i.metric[:default_value]} ", css_class ] %>
 
         <% if ( cols.size > 1 and cols.at(-1)[0].host_id !=  cols.at(-2)[0].host_id )   %>
             <tr>
@@ -44,7 +44,7 @@
                     <% stat = i[0]; title = i[1]; css_class = i[2]; %>
                     <td title="<%= title %>" class="<%= css_class %>">
                         <up><font size=1><%= stat.metric.title %></font></up>
-                        <pre title="< %= title % >"><%= (stat.value||"").force_encoding('UTF-8') %></pre>
+                        <pre title="<%= title %>"><%= (stat.value||"").force_encoding('UTF-8') %></pre>
                     </td>
                 <% end %>
             </tr>
