@@ -139,6 +139,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
         build_async.log :info, "final data returned: <#{@retval}>"
 
+
     end
 
 private
