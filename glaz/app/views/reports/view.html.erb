@@ -11,13 +11,10 @@
 
 <table class="table-bordered table">
 
-    <% j = 0 %>
-
-    <% cur_host = nil %>
+    <% cols = [] %>
 
     <% @stats.each do  |i| %>
     
-    <% j += 1 %>
 
     <% age = time_ago_in_words(Time.at(i[:timestamp])) %>
     
@@ -38,29 +35,21 @@
         <% status = i[:status]  %>
     <% end %>
 
-    <% title = "status: #{status}. updated: #{age} ago" %>
-    <% if j == 1 %>
-        <% cur_host = i.host_id %>
-        <tr>
-            <th width="100"><%= i.host.fqdn_short %></th>
-            <td title="<%= title %>" class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font></up><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
+    <% cols << [ i, "status: #{status}. updated: #{age} ago. default value: #{i[:default_value]} ", css_class ] %>
+
+        <% if ( cols.size > 1 and cols.at(-1)[0].host_id !=  cols.at(-2)[0].host_id )   %>
+            <tr>
+               <th width="100"><%= cols[0][0].host.fqdn_short %></th>
+                <% while ( i = cols.shift and cols.size > 1  ) %>
+                    <% stat = i[0]; title = i[1]; css_class = i[2]; %>
+                    <td title="<%= title %>" class="<%= css_class %>">
+                        <up><font size=1><%= stat.metric.title %></font></up>
+                        <pre title="< %= title % >"><%= (stat.value||"").force_encoding('UTF-8') %></pre>
+                    </td>
+                <% end %>
+            </tr>
+        <% end %>
     <% end %>
-
-    <% if j > 1 and cur_host == i.host_id %>
-            <td title="<%= title %>" class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
-    <% elsif j > 1 and cur_host != i.host_id  %>
-            </td>
-        </tr>
-        <tr>
-            <th  width="100"><%= i.host.fqdn_short %></th>
-            <td title="<%= title %>"  class="<%= css_class %>"><up><font size=1><%= i.metric.title %></font><pre title="status: <%= i.status %>"><%= (i.value||"").force_encoding('UTF-8') %></pre></td>
-            <% cur_host = i.host_id %>
-    <% end %>
-
-    <% end %>
-
-</td></tr>
-
 </table>
 
 
