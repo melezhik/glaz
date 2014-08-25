@@ -1,9 +1,14 @@
 <table class="table-striped table-bordered table">
 <tr>
-    <th>Report Title</th>
+    <th colspan=2>Report Title</th>
 </tr>
 <tr>
-    <td><strong><%= link_to @report.title, report_path(@report), :title => 'edit report attributes'  %></strong></td>
+    <td><strong><%= link_to @report.title, report_path(@report, @image), :title => 'edit report attributes'  %></strong></td>
+    <% if @image.nil? %>
+    <td>no data found</td>
+    <% else %>
+    <td><strong><%= link_to 'Log', stat_report_image_path(@report, @image), :title => 'see log data'  %></strong></td>
+    <% end %>
 </td>
 </tr>
 </table>
