@@ -27,7 +27,7 @@ class ReportsController < ApplicationController
     def view
         @report = Report.find(params[:id])
         @image = @report.images.last
-        @data =  @image.nil? ? [] : @image.data
+        @data =  @image.nil? ?  [] : @image.data
 
     end
 

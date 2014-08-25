@@ -1,4 +1,7 @@
-<table class="table-striped table-bordered table">
+<script src="http://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+
+
+<table class="table-striped table-bordered table" >
 <tr>
     <th colspan=2>Report Title</th>
 </tr>
@@ -14,16 +17,25 @@
 </table>
 
 
-<table class="table-bordered table">
+<table class="table-bordered table sortable">
+
+    <% if @data.size > 0 %>
+        <tr>
+            <th> host / metric</th>
+        <% @data.first[:data].map { |i| i[0].metric }.each do |m| %>
+            <th><%= m.title %></th>
+        <% end %>
+        </tr>
+    <% end %>
 
     <% @data.each do |row| %>
         <tr>
+
            <th width="100"><%= row[:fqdn] %></th>
            <% row[:data].each do |i| %>
                 <% age = time_ago_in_words(Time.at(i[0][:timestamp])) %>
                 <% stat = i[0]; title = i[1]; css_class = i[2]; %>
                 <td title="<%= title %> updated: <%= age %> ago." class="<%= css_class %>">
-                    <up><font size=1><%= stat.metric.title %></font></up>
                     <pre title="<%= title %> updated: <%= age %> ago."><%= (stat.value||"").force_encoding('UTF-8') %></pre>
                 </td>
            <% end %>
