@@ -13,7 +13,7 @@ class ImagesController < ApplicationController
     def show
         @report = Report.find(params[:report_id])
         @image = Image.find(params[:id])
-        @stats = @image.stats
+        @data =  @image.nil? ? [] : @image.data
         render 'reports/view'
     end
 
@@ -21,7 +21,6 @@ class ImagesController < ApplicationController
         @report = Report.find(params[:report_id])
         @image = Image.find(params[:id])
     end
-
 
 
     def destroy
