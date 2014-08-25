@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
         resources :images do
             member do
-                get 'view'
+                get 'stat'
             end
         resources :stats do
                 resources :logs

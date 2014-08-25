@@ -7,7 +7,7 @@
         <%= link_to 'back to images', report_images_path(@report) %>
     </th>
     <th colspan=2>
-        <%= link_to 'view report', view_report_image_path(@report, @image) %>
+        <%= link_to 'image report', report_image_path(@report, @image), :title => 'see image report'  %>
     </th>
 </tr>
 <tr>

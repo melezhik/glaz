@@ -13,14 +13,15 @@ class ImagesController < ApplicationController
     def show
         @report = Report.find(params[:report_id])
         @image = Image.find(params[:id])
-    end
-
-    def view
-        @report = Report.find(params[:report_id])
-        @image = Image.find(params[:id])
         @stats = @image.stats
         render 'reports/view'
     end
+
+    def stat
+        @report = Report.find(params[:report_id])
+        @image = Image.find(params[:id])
+    end
+
 
 
     def destroy
