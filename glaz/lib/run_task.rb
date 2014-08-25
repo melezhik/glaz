@@ -186,7 +186,7 @@ private
         build_async.log :info, "hit notification stage"
         if env[ :notify ]
             build_async.log :info, "send notification: <#{subject}>"
-            cmd = "echo http://web3-tst5.webdev.x:3000/reports/#{tag.report.id}/view?tag_id=#{tag.id}  | mail -s '#{subject}' #{recipients.join ' '}"
+            cmd = "echo #{env[:image_url]}  | mail -s '#{subject}' #{recipients.join ' '}"
             if system(cmd) == true
                 build_async.log :info, "succesffully executed cmd: #{cmd}"
             else
