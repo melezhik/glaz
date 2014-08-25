@@ -26,7 +26,7 @@
     <tr>
         <th>ID</th>
         <th>Date</th>
-        <th>Actions</th>
+        <th colspan=2>Actions</th>
     </tr>
     <% @images.each do |item| %>
     <tr>
@@ -35,11 +35,14 @@
         <td>
             <%= link_to 'delete image', report_image_path(@report, item), :method => :delete %>
         </td>
+        <td>
+            <%= link_to 'view report', view_report_image_path(@report, item) %>
+        </td>
     </tr>
     <% end %>
     <% else %>
     <tr>
-        <td colspan=2> no images found </td>
+        <td colspan=3> no images found </td>
     <tr>
     <% end %>
 </table>

@@ -5,7 +5,10 @@ Rails.application.routes.draw do
     resources :reports do
 
         resources :images do
-            resources :stats do
+            member do
+                get 'view'
+            end
+        resources :stats do
                 resources :logs
             end
         end
