@@ -64,5 +64,3 @@ gem 'unicorn'
 
 gem 'zeroclipboard-rails'
 
-gem 'jquery-tablesorter'
-
