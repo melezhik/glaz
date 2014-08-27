@@ -8,7 +8,7 @@
 
     workers = (ENV['dj_workers']||'2').to_i
 
-    (0..workers).each do |i|
+    (1..workers).each do |i|
 
         app.process("delayed_job.#{i}") do |process|
             process.working_dir = "/home/glaz/projects/glaz/glaz"
