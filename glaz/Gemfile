@@ -60,7 +60,8 @@ gem 'redcarpet'
 
 gem 'terminal-table'
 
-gem 'unicorn'
 
 gem 'zeroclipboard-rails'
+
+gem 'eye'
 
