@@ -3,14 +3,18 @@
 
 <table class="table-striped table-bordered table" >
 <tr>
-    <th colspan=2>Report Title</th>
+    <th>Report Title</th>
+    <th colspan=2>Actions</th>
 </tr>
 <tr>
-    <td><strong><%= link_to @report.title, report_path(@report, @image), :title => 'edit report attributes'  %></strong></td>
+    <th><%= link_to @report.title, report_path(@report, @image), :title => 'edit report attributes'  %></th>
+    <th>  
+        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
+    </th>
     <% if @image.nil? %>
-    <td>no data found</td>
+	    <td>no data found</td>
     <% else %>
-    <td><strong><%= link_to 'Log', stat_report_image_path(@report, @image), :title => 'see log data'  %></strong></td>
+	    <th><%= link_to 'log', stat_report_image_path(@report, @image), :title => 'see log data'  %></th>
     <% end %>
 </td>
 </tr>

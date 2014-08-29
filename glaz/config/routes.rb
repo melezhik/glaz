@@ -53,7 +53,7 @@ Rails.application.routes.draw do
 
 
 
-    root 'hosts#index'
+    root 'reports#index'
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

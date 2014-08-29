@@ -165,7 +165,7 @@ class ReportsController < ApplicationController
         if request.env["HTTP_REFERER"].nil?
             render  :text => "report ID: #{params[:id]} has been successfully scheduled to synchronization queue\n"
         else
-            redirect_to :back
+            redirect_to  url_for([ @report, image ])
         end
 
     end
