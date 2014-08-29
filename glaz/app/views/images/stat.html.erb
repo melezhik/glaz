@@ -27,7 +27,7 @@
 
 <table class="table-bordered table-striped table">
 <tr>
-    <th colspan=4 >Stats</th>
+    <th colspan=5 >Stats</th>
 </tr>
 <% if @image.has_stats? %>
 <tr>
@@ -35,11 +35,12 @@
     <th>Date</th>
     <th>Title</th>
     <th>Status</th>
+    <th>Log</th>
 </tr>
 <% @image.stats.each do |l| %>
     <tr>
         <td>
-            <%= link_to l.id, report_image_stat_logs_path(@report, @image, l), :title => 'see stat log data'  %>
+            <%= l.id  %>
         </td>
         <td>
             <%= l.created_at.strftime('%B %d, %Y at %H:%M') %>
@@ -49,6 +50,9 @@
         </td>
         <td>
             <%= l.status %>
+        </td>
+        <td>
+            <%= link_to 'Log', report_image_stat_logs_path(@report, @image, l), :title => 'see stat log data'  %>
         </td>
     </tr>
 <% end %>
