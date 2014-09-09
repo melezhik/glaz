@@ -187,7 +187,7 @@ private
         build_async.log :info, "hit notification stage"
         if env[ :notify ]
             build_async.log :info, "send notification: <#{subject}>"
-            cmd = "echo #{env[:image_url]}  | mail -s '#{subject}' #{recipients.join ' '}"
+            cmd = "echo #{env[:image_url]}  | mail -s '#{metric.title} : #{subject}' #{recipients.join ' '}"
             if system(cmd) == true
                 build_async.log :info, "succesffully executed cmd: #{cmd}"
             else
