@@ -7,7 +7,7 @@
     <th colspan=2>Actions</th>
 </tr>
 <tr>
-    <th><%= link_to @report.title, report_path(@report, @image), :title => 'edit report attributes'  %></th>
+    <th><%= link_to @report.title, report_path(@report), :title => 'edit report attributes'  %></th>
     <th>  
         <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
     </th>
