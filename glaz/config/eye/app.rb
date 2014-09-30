@@ -12,20 +12,31 @@ Eye.application app do
   stdall "#{cwd}/log/trash.log" # stdout,err logs for processes by default
 
     group 'dj' do
-
-        workers = (ENV['dj_workers']||'2').to_i
-        (1..workers).each do |i|
+            
+        chain grace: 5.seconds
+        workers = (ENV['dj_workers']||'5').to_i
+    
+        (1 .. workers).each do |i|
+    
             process "dj#{i}" do
+    
                 pid_file "tmp/pids/delayed_job.#{i}.pid" # pid_path will be expanded with the working_dir
-                start_command "./bin/delayed_job start -i #{i}"
-                stop_command "./bin/delayed_job stop -i #{i}"
-                daemonize false
+                
+                start_command "rake jobs:work"
+    
+        	    stop_signals [:INT, 30.seconds, :TERM, 10.seconds, :KILL]
+        
+                daemonize true
+        
                 stdall "#{cwd}/log/dj.eye.log"
-                start_timeout 30.seconds
-                stop_timeout 30.seconds
+                
+                env 'http_proxy' => 'http://squid.adriver.x:3128'
+                env 'https_proxy' => 'http://squid.adriver.x:3128'
+                env 'HTTP_PROXY' => 'http://squid.adriver.x:3128'
+                env 'HTTPS_PROXY' => 'http://squid.adriver.x:3128'
+        
             end
         end
-
     end
 
     process :api do
@@ -33,8 +44,6 @@ Eye.application app do
         start_command "rails server -d -P #{cwd}/tmp/pids/server.pid -p #{port}"
         daemonize false
         stdall "#{cwd}/log/api.eye.log"
-        start_timeout 30.seconds
-        stop_timeout 30.seconds
     end
 
 end
