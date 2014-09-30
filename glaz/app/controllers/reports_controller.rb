@@ -126,39 +126,59 @@ class ReportsController < ApplicationController
 
         env[ :image_url ] = url_for [ @report, image ]
 
+
         @report.hosts.each.select {|i| i.enabled? }.each  do |h|
 
             hlist = h.multi? ? h.subhosts_list : [h]
             hlist.each do |host|
 
                 logger.info "going to synchronize host: #{host.fqdn} in report: #{@report.id}"
-                h.active_tasks.each.select{ |t| @report.has_metric? t.metric }.each do |task|
 
-                    if task.metric.has_sub_metrics?
+                # { :point => point , :metric => sm.obj, :multi => true, :group => point.metric.title, :group_metric => sm.metric }
 
-                        logger.info "task has submetrics, running over them"
+                @report.metrics_flat_list.map {|i| i[:metric] }.each do |m|
+                
+                task = nil; metric = nil
 
-                        task.metric.submetrics.each do |sm|
+                h.active_tasks.select { |t| @report.has_metric? t.metric }.each do |t| 
 
-                            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => sm.obj.id, :task_id => task.id, :status => 'PENDING',  :host_id => host.id )
-                            stat.save!
-
-                            Delayed::Job.enqueue( BuildAsync.new( host, sm.obj, task, stat, env ) )
-                            logger.info "host ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"        
+                    if t.metric.has_sub_metrics?
+                        t.metric.submetrics.each do |sm|
+                            if sm.obj.id == m.id
+                                metric = sm.obj
+                                task = t 
+                            end
                         end
                     else
-
-                        logger.info "task has single metric"
-
-                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => task.metric.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
-                        stat.save!
-
-                        Delayed::Job.enqueue( BuildAsync.new( host, task.metric, task, stat, env  ) )
-                        logger.info "host ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"        
+                        if t.metric.id == m.id
+                            task = t 
+                            metric = t.metric
+                        end
                     end
                 end
-            end
+
+                if task.nil?
+
+                    logger.info "unknown metric found for host: #{host.fqdn}, metric: #{m.title}"
+                    stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => nil, :status => 'REPORT_ERROR', :host_id => host.id )
+
+                else
+
+                    stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
+
+                    stat.save!
+    
+                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ) )
+
+                    logger.info "report ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"        
+    
+                end                
+
+                end # next metric
+
+            end # next host
         end
+
 
         flash[:notice] = "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
 

@@ -1,7 +1,7 @@
 class Stat < ActiveRecord::Base
 
 	validates :metric_id, presence: true
-	validates :task_id, presence: true
+	# validates :task_id, presence: true
 
 	belongs_to :image
     has_many :logs, :dependent => :destroy
