@@ -93,7 +93,7 @@ class ReportsController < ApplicationController
 
     def add_metric_form
         @report = Report.find(params[:id])
-        @metrics = Metric.all.map { |i| a = Array.new; a.push "<#{i.title}>"; a.push i.id; a }
+        @metrics = Metric.all.map { |i| a = Array.new; a.push "#{i.title}"; a.push i.id; a }
     end
 
     def metric

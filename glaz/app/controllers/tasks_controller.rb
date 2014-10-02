@@ -6,12 +6,9 @@ class TasksController < ApplicationController
 
         @task = Task.find(params[:id])
 
-        if @task.has_builds?
-            flash[:warn] = "task ID:#{params[:id]} has builds, so cannot be removed, remove all task builds first"
-        else
-            @task.destroy
-            flash[:notice] = "task ID:#{params[:id]} has been successfully removed"
-        end
+        @task.destroy
+
+        flash[:notice] = "task ID:#{params[:id]} has been successfully removed"
         redirect_to :back
     end
 
