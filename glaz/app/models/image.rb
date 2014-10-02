@@ -28,7 +28,7 @@ class Image < ActiveRecord::Base
              elsif i[:status] == 'DJ_OK' and  Time.at(i[:timestamp]) <= 10.minutes.ago  and i[:deviated] == false 
                  css_class = 'warning' 
                  status = 'outdated'  
-             elsif i[:status] == 'DJ_OK' and  Time.at(i[:timestamp]) > 10.minutes.ago  and i[:deviated] == true 
+             elsif i[:status] == 'DJ_OK' and  i[:deviated] == true 
                  css_class = 'danger' 
                  status = 'deviated'  
              elsif i[:status].include? 'ERROR'  
