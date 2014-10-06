@@ -82,21 +82,19 @@ ActiveRecord::Schema.define(version: 20140821112411) do
   end
 
   create_table "stats", force: true do |t|
-    t.binary   "value",      limit: 16777215
+    t.binary   "value",      limit: 2147483647
     t.integer  "metric_id"
     t.integer  "timestamp"
     t.integer  "host_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "build_id"
     t.integer  "task_id"
     t.integer  "image_id"
-    t.string   "status",                      default: "PENDING"
-    t.boolean  "deviated",                    default: false
+    t.string   "status",                        default: "PENDING"
+    t.boolean  "deviated",                      default: false
     t.integer  "duration"
   end
 
-  add_index "stats", ["build_id"], name: "index_stats_on_build_id", using: :btree
   add_index "stats", ["image_id"], name: "index_stats_on_images_id", using: :btree
   add_index "stats", ["metric_id"], name: "index_stats_on_metric_id", using: :btree
   add_index "stats", ["task_id"], name: "index_stats_on_task_id", using: :btree

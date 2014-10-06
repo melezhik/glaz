@@ -1,6 +1,8 @@
 class ReportsController < ApplicationController
 
 
+    include ActionController::Live
+
     skip_before_filter :authenticate_user!, :only => [ :synchronize ]
 
     load_and_authorize_resource param_method: :_params
@@ -29,6 +31,19 @@ class ReportsController < ApplicationController
         @image = @report.images.last
         @data =  @image.nil? ?  [] : @image.data
 
+    end
+
+    def json
+
+        @report = Report.find(params[:id])
+        @image = @report.images.last
+        @data =  @image.nil? ?  [] : @image.data
+        response.headers['Content-Type'] = 'text/event-stream'
+        sse = SSE.new(response.stream, retry: 300, event: "report-json")
+        sse.write({ name: 'John'})
+        #render stream: true
+    ensure
+        sse.close
     end
 
     def destroy
