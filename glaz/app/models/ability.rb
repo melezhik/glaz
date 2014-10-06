@@ -39,16 +39,11 @@ class Ability
 
        if user.has_role? :admin
          can :manage, :all
-       elsif user.has_role? :user
-         can :read, :all
-         can :synchronize, :all
-         can :view, [Report]
        else
          can :read, :all
          can :synchronize, :all
          can :view, [Report]
-         can :create, [Host]
-         can :create, [Subhost]
+         can :stat, [Image]
          can :destroy, [Image]
        end
   end
