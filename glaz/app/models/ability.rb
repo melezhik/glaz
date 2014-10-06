@@ -43,6 +43,7 @@ class Ability
          can :read, :all
          can :synchronize, :all
          can :view, [Report]
+         can :json, [Report]
          can :stat, [Image]
          can :destroy, [Image]
        end
