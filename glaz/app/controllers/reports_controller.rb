@@ -39,8 +39,11 @@ class ReportsController < ApplicationController
         @image = @report.images.last
         @data =  @image.nil? ?  [] : @image.data
         response.headers['Content-Type'] = 'text/event-stream'
+        response.headers['Cache-Control'] = 'no-cache'
+
         sse = SSE.new(response.stream, retry: 300, event: "report-json")
-        sse.write({ name: 'John'})
+        sse.write("hello")
+        sleep 5        
         #render stream: true
     ensure
         sse.close

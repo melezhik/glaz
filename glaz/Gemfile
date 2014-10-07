@@ -65,3 +65,7 @@ gem 'zeroclipboard-rails'
 
 gem 'eye'
 
+gem 'puma'
+
+gem 'unicorn'
+

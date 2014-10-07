@@ -40,8 +40,10 @@ Eye.application app do
     end
 
     process :api do
+
         pid_file "tmp/pids/server.pid"
-        start_command "rails server -d -P #{cwd}/tmp/pids/server.pid -p #{port}"
+        # start_command "rails server -d -P #{cwd}/tmp/pids/server.pid -p #{port}"
+        start_command "puma -C config/puma.rb -d --pidfile #{cwd}/tmp/pids/server.pid"
         daemonize false
         stdall "#{cwd}/log/api.eye.log"
     end
