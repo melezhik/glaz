@@ -9,14 +9,14 @@
 <script>
 
 if (!!window.EventSource) {
-  var source = new EventSource('"/reports/16/json');
+  var source = new EventSource('/reports/16/json');
 } else {
   // Result to xhr polling :(
 }
 
 source.addEventListener('message', function(e) {
   console.log(e.data);
-  alert(e.data);  
+  document.getElementById("result").innerHTML += e.data + "<br>";  
 }, false);
 
 source.addEventListener('open', function(e) {
@@ -27,8 +27,6 @@ source.addEventListener('error', function(e) {
   if (e.readyState == EventSource.CLOSED) {
     // Connection was closed.
   }else{
-  alert('error');  
-  alert(e);  
   }
 }, false);
 

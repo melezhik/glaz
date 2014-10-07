@@ -41,10 +41,11 @@ class ReportsController < ApplicationController
         response.headers['Content-Type'] = 'text/event-stream'
         response.headers['Cache-Control'] = 'no-cache'
 
-        sse = SSE.new(response.stream, retry: 300, event: "report-json")
-        sse.write("hello")
+#        sse = SSE.new(response.stream, retry: 300, event: "report-json")
+        sse = SSE.new(response.stream, retry: 300)
+        sse.write("hello100")
         sleep 5        
-        #render stream: true
+        render nothing: true
     ensure
         sse.close
     end
