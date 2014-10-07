@@ -3,13 +3,37 @@
 <head>
   <meta charset="utf-8" />
 </head>
+
 <body>
-  <script>
-    var source = new EventSource('/reports/16/json');
-    source.onmessage = function(e) {
-      document.body.innerHTML += e.data + '<br>';
-    };
-  </script>
+<div id="result">Here is where the server sent data will appear</div>
+<script>
+
+if (!!window.EventSource) {
+  var source = new EventSource('"/reports/16/json');
+} else {
+  // Result to xhr polling :(
+}
+
+source.addEventListener('message', function(e) {
+  console.log(e.data);
+  alert(e.data);  
+}, false);
+
+source.addEventListener('open', function(e) {
+  // Connection was opened.
+}, false);
+
+source.addEventListener('error', function(e) {
+  if (e.readyState == EventSource.CLOSED) {
+    // Connection was closed.
+  }else{
+  alert('error');  
+  alert(e);  
+  }
+}, false);
+
+
+</script>
 </body>
 </html>
 
