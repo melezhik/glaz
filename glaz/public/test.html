@@ -14,7 +14,7 @@ if (!!window.EventSource) {
   // Result to xhr polling :(
 }
 
-source.addEventListener('message', function(e) {
+source.addEventListener('report-json', function(e) {
   console.log(e.data);
   document.getElementById("result").innerHTML += e.data + "<br>";  
 }, false);
