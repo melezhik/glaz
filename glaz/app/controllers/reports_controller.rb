@@ -43,7 +43,7 @@ class ReportsController < ApplicationController
 
         sse = SSE.new(response.stream, retry: 300, event: "report-json")
 #        sse = SSE.new(response.stream, retry: 300)
-        sse.write("hello100")
+        sse.write(rand(10))
         sleep 5        
         render nothing: true
     ensure
