@@ -20,8 +20,6 @@ class Image < ActiveRecord::Base
             j += 1
             cur_host = i.host if j == 1
 
-            # age = time_ago_in_words(Time.at(i[:timestamp])) 
-            
              if i[:status] == 'DJ_OK' and  Time.at(i[:timestamp]) > 10.minutes.ago  and i[:deviated] == false 
                  css_class = 'success'  
                  status = 'ok'  
@@ -43,7 +41,8 @@ class Image < ActiveRecord::Base
 
              if ( cur_host.id != i.host_id  ) 
 
-		 rows << { :data =>  cols  , :fqdn => cur_host.fqdn }
+		         rows << { :data =>  cols  , :fqdn => cur_host.fqdn }
+
                  logger.info "add #{cols.size} stat entries to report for host #{cur_host.fqdn}"
 
                  cols = [ [ i, "status: #{status}. default value: #{i.metric[:default_value]}. ", css_class ] ] 
@@ -56,20 +55,60 @@ class Image < ActiveRecord::Base
 
         end 
 
-	if rows.size == 0 and cols.size > 0
-		# add stat for first host, for single host reports
-	        rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn } 
-	        logger.info "add #{cols.size} stat entries to report for host #{cols[0][0].host.fqdn}. (first host, single host reports)"
-	elsif rows.size > 0 and cols.size > 0
-		# add stat for last host for multi hosts reports
-	        rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn } 
-	        logger.info "add #{cols.size} stat entries to report for host #{cols[0][0].host.fqdn}. (last host, single host reports)"
-	end
-
+        if rows.size == 0 and cols.size > 0
+	        # add stat for first host, for single host reports
+	            rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn } 
+	            logger.info "add #{cols.size} stat entries to report for host #{cols[0][0].host.fqdn}. (first host, single host reports)"
+        elsif rows.size > 0 and cols.size > 0
+	        # add stat for last host for multi hosts reports
+	            rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn } 
+	            logger.info "add #{cols.size} stat entries to report for host #{cols[0][0].host.fqdn}. (last host, single host reports)"
+        end
+        
         logger.info "#{rows.size} entries found for image ID #{id}"
 
         rows
 
     end
 
+    def data_as_json
+        json = []
+        data.each do |r|
+            row = Hash.new
+            r[:data].each do |c|
+                row[ r[:fqdn] ] = Hash.new
+                row[ r[:fqdn] ][:status] = c[0][:status] 
+                row[ r[:fqdn] ][:created_at] = c[0][:created_at] 
+                row[ r[:fqdn] ][:updated_at] = c[0][:updated_at] 
+                row[ r[:fqdn] ][:deviated] = c[0][:deviated] 
+                row[ r[:fqdn] ][:value] = c[0][:value] 
+                row[ r[:fqdn] ][:title] = c[1] 
+            end
+            json << row
+        end
+    json
+    end
+
 end
+
+=begin comment
+mysql> desc stats;
++------------+--------------+------+-----+---------+----------------+
+| Field      | Type         | Null | Key | Default | Extra          |
++------------+--------------+------+-----+---------+----------------+
+| id         | int(11)      | NO   | PRI | NULL    | auto_increment |
+| value      | mediumblob   | YES  |     | NULL    |                |
+| metric_id  | int(11)      | YES  | MUL | NULL    |                |
+| timestamp  | int(11)      | YES  |     | NULL    |                |
+| host_id    | int(11)      | YES  |     | NULL    |                |
+| created_at | datetime     | YES  |     | NULL    |                |
+| updated_at | datetime     | YES  |     | NULL    |                |
+| task_id    | int(11)      | YES  | MUL | NULL    |                |
+| image_id   | int(11)      | YES  | MUL | NULL    |                |
+| status     | varchar(255) | YES  |     | PENDING |                |
+| deviated   | tinyint(1)   | YES  |     | 0       |                |
+| duration   | int(11)      | YES  |     | NULL    |                |
++------------+--------------+------+-----+---------+----------------+
+12 rows in set (0.00 sec)
+
+=end comment
