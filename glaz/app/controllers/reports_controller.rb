@@ -37,15 +37,21 @@ class ReportsController < ApplicationController
 
         @report = Report.find(params[:id])
         @image = @report.images.last
-        @data =  @image.nil? ?  [] : @image.data
+        json =  @image.nil? ?  [] : @image.data_as_json
+
         response.headers['Content-Type'] = 'text/event-stream'
         response.headers['Cache-Control'] = 'no-cache'
 
-        sse = SSE.new(response.stream, retry: 300, event: "report-json")
-#        sse = SSE.new(response.stream, retry: 300)
-        sse.write(rand(10))
-        sleep 5        
+        sse = SSE.new(response.stream)
+
+        unless @image.nil?
+            sse.write(json, id: @image.id , event: "report-json", retry: 5000 )
+        end
+
+        sleep 1
+
         render nothing: true
+
     ensure
         sse.close
     end

@@ -16,7 +16,11 @@ if (!!window.EventSource) {
 
 source.addEventListener('report-json', function(e) {
   console.log(e.data);
-  document.getElementById("result").innerHTML += e.data + "<br>";  
+ //  document.getElementById("result").innerHTML += e.data + "<br>";  
+
+    var data = JSON.parse(e.data);
+    console.log(data);
+
 }, false);
 
 source.addEventListener('open', function(e) {
@@ -34,4 +38,6 @@ source.addEventListener('error', function(e) {
 </script>
 </body>
 </html>
+
+
 
