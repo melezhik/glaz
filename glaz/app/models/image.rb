@@ -77,6 +77,7 @@ class Image < ActiveRecord::Base
             row = Hash.new
             r[:data].each do |c|
                 row[ r[:fqdn] ] = Hash.new
+                row[ r[:fqdn] ][:name] = c[0].metric.title 
                 row[ r[:fqdn] ][:status] = c[0][:status] 
                 row[ r[:fqdn] ][:created_at] = c[0][:created_at] 
                 row[ r[:fqdn] ][:updated_at] = c[0][:updated_at] 
