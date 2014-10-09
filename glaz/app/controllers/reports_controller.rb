@@ -37,7 +37,7 @@ class ReportsController < ApplicationController
 
         @report = Report.find(params[:id])
         @image = @report.images.last
-        json =  @image.nil? ?  [] : @image.data_as_json
+        json =  @image.nil? ?  {} : @image.data_as_json
 
         response.headers['Content-Type'] = 'text/event-stream'
         response.headers['Cache-Control'] = 'no-cache'
