@@ -73,17 +73,23 @@ class Image < ActiveRecord::Base
 
     def data_as_json
         json = []
+
+        # return { :size => data.size }
+
         data.each do |r|
             row = Hash.new
-            r[:data].each do |c|
-                row[ r[:fqdn] ] = Hash.new
-                row[ r[:fqdn] ][:name] = c[0].metric.title 
-                row[ r[:fqdn] ][:status] = c[0][:status] 
-                row[ r[:fqdn] ][:created_at] = c[0][:created_at] 
-                row[ r[:fqdn] ][:updated_at] = c[0][:updated_at] 
-                row[ r[:fqdn] ][:deviated] = c[0][:deviated] 
-                row[ r[:fqdn] ][:value] = c[0][:value] 
-                row[ r[:fqdn] ][:title] = c[1] 
+            row[ r[:fqdn] ] = Hash.new
+            r[:data].each do |m|
+                row[ r[:fqdn] ][m[0].metric.name] = {}
+                row[ r[:fqdn] ][m[0].metric.name][:title] = m[0].metric.title 
+                row[ r[:fqdn] ][m[0].metric.name][:timestamp] = m[0][:timestamp] 
+                row[ r[:fqdn] ][m[0].metric.name][:status] = m[0][:status] 
+                row[ r[:fqdn] ][m[0].metric.name][:created_at] = m[0][:created_at] 
+                row[ r[:fqdn] ][m[0].metric.name][:updated_at] = m[0][:updated_at] 
+                row[ r[:fqdn] ][m[0].metric.name][:deviated] = m[0][:deviated] 
+                row[ r[:fqdn] ][m[0].metric.name][:value] = m[0][:value] 
+                row[ r[:fqdn] ][m[0].metric.name][:title] = m[1] 
+	            logger.info "add metric #{m[0].metric.name} host #{r[:fqdn]} to json"
             end
             json << row
         end
