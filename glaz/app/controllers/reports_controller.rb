@@ -48,8 +48,6 @@ class ReportsController < ApplicationController
             sse.write(json, id: @image.id , event: "report-json", retry: 5000 )
         end
 
-        sleep 1
-
         render nothing: true
 
     ensure
