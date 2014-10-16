@@ -142,6 +142,21 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
     end
 
+    def notify subject, recipients = []
+        build_async.log :info, "hit notification stage"
+        if env[ :notify ]
+            build_async.log :info, "send notification: <#{subject}>"
+            cmd = "echo #{env[:image_url]}  | mail -s '#{stat.image.report.title} report notification. metric: #{metric.title}. message: #{subject}.' #{recipients.join ' '}"
+            if system(cmd) == true
+                build_async.log :info, "succesffully executed cmd: #{cmd}"
+            else
+                build_async.log :error, "failed execute cmd: #{cmd}"
+            end
+        else
+            build_async.log :info, "skip sending notification, because env[:notify]: #{env[:notify]}"
+        end
+    end
+
 private
 
     def execute_command(cmd, raise_ex = true)
@@ -183,20 +198,6 @@ private
     end
 
 
-    def notify subject, recipients = []
-        build_async.log :info, "hit notification stage"
-        if env[ :notify ]
-            build_async.log :info, "send notification: <#{subject}>"
-            cmd = "echo #{env[:image_url]}  | mail -s '#{stat.image.report.title} report notification. #{metric.title} : #{subject}' #{recipients.join ' '}"
-            if system(cmd) == true
-                build_async.log :info, "succesffully executed cmd: #{cmd}"
-            else
-                build_async.log :error, "failed execute cmd: #{cmd}"
-            end
-        else
-            build_async.log :info, "skip sending notification, because env[:notify]: #{env[:notify]}"
-        end
-    end
 
 end
 
