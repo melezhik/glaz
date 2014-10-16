@@ -38,8 +38,7 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
         stat.update( :timestamp =>  Time.now.to_i, :status => 'DJ_ERROR'  )
         stat.save!
         log  :info, 'start notify to report error'
-        @runner.notify "failed to execute stat for metric: #{ex.class}", %w{ melezhik@adriver.ru }
-        log  :info, 'notification has been successfully finished'
+        @runner.notify "failed to execute stat for metric: #{ex.class}", %w{ app@adriver.ru }
     end
 
     def failure(job)
