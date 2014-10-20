@@ -3,7 +3,6 @@ class Task < ActiveRecord::Base
     belongs_to :host
     belongs_to :metric
 
-    has_many :builds
     
     def enabled?
         enabled == true
@@ -17,9 +16,6 @@ class Task < ActiveRecord::Base
         Metric.find metric_id
     end
 
-    def has_builds?
-        builds.size > 0
-    end
 
     def has_fqdn?
         ! (fqdn.nil? or fqdn.empty?)

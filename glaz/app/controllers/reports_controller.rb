@@ -215,7 +215,7 @@ private
 
     def _params
         params.require(:report).permit( 
-                :title
+                :title, :notify
         )
     end
 
