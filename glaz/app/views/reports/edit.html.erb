@@ -15,6 +15,7 @@
     <%= f.text_field :title, :size => 100 %>
   </p>
   <p>  
+    <%= f.label :layout_type %><br>
     <%= f.select :layout_type, options_for_select( { :table => 'table' , :free => 'free' },  @report.layout_type  ) %>
   </p>  
   <p>
