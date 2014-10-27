@@ -76,7 +76,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
                 stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
                 stat.save!
 
-            rescue Execption => ex
+            rescue Exception => ex
 
                 build_async.log :error, "handler execution failed. #{ex.class}: #{ex.message}"
                 raise "#{ex.class}: #{ex.message}"
