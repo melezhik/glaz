@@ -4,13 +4,15 @@
 <table class="table-striped table-bordered table" >
 <tr>
     <th>Report Title</th>
+    <th>Image Type</th>
     <th colspan=2>Actions</th>
 </tr>
 <tr>
-    <th><%= link_to @report.title, report_path(@report), :title => 'edit report attributes'  %></th>
-    <th>  
+    <td><%= link_to @report.title, report_path(@report), :title => 'edit report attributes'  %></td>
+    <td><%= @image.layout_type  %></td>
+    <td>  
         <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
-    </th>
+    </td>
     <% if @image.nil? %>
 	    <td>no data found</td>
     <% else %>
@@ -20,6 +22,12 @@
 </tr>
 </table>
 
+
+<% if @image.layout_type == 'free' %>
+
+    <pre><%= @image.raw_data %></pre>
+
+<% elsif @image.layout_type == 'table' %>
 
 <table class="table-bordered table sortable">
 
@@ -47,6 +55,9 @@
    <% end %>
 </table>
 
+<% else %>
+    unknown image type - <%= @image.layout_type %>
+<% end %>
 
 <!--
 
