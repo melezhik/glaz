@@ -39,7 +39,7 @@ class ReportsController < ApplicationController
         @image = @report.images.last
         json =  @image.nil? ?  {} : @image.data_as_json
 
-        response.headers['Content-Type'] = 'text/event-stream'
+        response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
         response.headers['Cache-Control'] = 'no-cache'
 
         sse = SSE.new(response.stream)

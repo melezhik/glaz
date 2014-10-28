@@ -61,7 +61,7 @@ class Image < ActiveRecord::Base
 	            logger.info "add #{cols.size} stat entries to report for host #{cols[0][0].host.fqdn}. (first host, single host reports)"
         elsif rows.size > 0 and cols.size > 0
 	        # add stat for last host for multi hosts reports
-	            rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn } 
+	            rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn, :name => cols[0][0].host.title } 
 	            logger.info "add #{cols.size} stat entries to report for host #{cols[0][0].host.fqdn}. (last host, single host reports)"
         end
         
@@ -71,24 +71,68 @@ class Image < ActiveRecord::Base
 
     end
 
+=begin comment
+
+[
+    {
+        name: 'host name1',
+        fqdn: 'ssp.adriver.x',
+        metrics: [
+            {
+                name: 'uptime',
+                attrs: {
+                    "title": "status: outdated. default value: . ",
+                    "timestamp": 1412778863,
+                    "status": "DJ_OK",
+                    "updated_at": "2014-10-08T18:34:23.000+04:00",
+                    "deviated": false,
+                    "value": "100"
+                }
+            },
+            ...
+        ]
+    },
+    ...
+]
+
+=end comment
+
     def data_as_json
-        json = {}
+        json = []
 
         # return { :size => data.size }
 
-        data.each do |r|
-            json[ r[:fqdn] ] = Hash.new
-            r[:data].each do |m|
-                json[ r[:fqdn] ][m[0].metric.name] = Hash.new
-                json[ r[:fqdn] ][m[0].metric.name][:title] = m[0].metric.title 
-                json[ r[:fqdn] ][m[0].metric.name][:timestamp] = m[0][:timestamp] 
-                json[ r[:fqdn] ][m[0].metric.name][:status] = m[0][:status] 
-                json[ r[:fqdn] ][m[0].metric.name][:created_at] = m[0][:created_at] 
-                json[ r[:fqdn] ][m[0].metric.name][:updated_at] = m[0][:updated_at] 
-                json[ r[:fqdn] ][m[0].metric.name][:deviated] = m[0][:deviated] 
-                json[ r[:fqdn] ][m[0].metric.name][:value] = m[0][:value] 
-                json[ r[:fqdn] ][m[0].metric.name][:title] = m[1] 
-	            logger.info "add metric #{m[0].metric.name} host #{r[:fqdn]} to json"
+        data.each do |h|
+
+            hd = Hash.new
+            json << hd
+            hd[:fqdn] = h[:fqdn]
+            hd[:name] = h[:name]
+            hd[:metrics] = Array.new
+    
+            h[:data].each do |m|
+                 mt = Hash.new
+                 hd[:metrics] << mt
+                 mt[:name] = m[0].metric.name
+                 mt[:attrs] = Hash.new
+                 mt[:attrs][:title] = m[0].metric.title
+                 mt[:attrs][:timestamp] = m[0][:timestamp]
+                 mt[:attrs][:status] = m[0][:status]
+                 mt[:attrs][:created_at] = m[0][:created_at]
+                 mt[:attrs][:updated_at] = m[0][:updated_at]
+                 mt[:attrs][:value] = m[0][:value]
+                 mt[:attrs][:info] = m[1]
+
+            #    json[ r[:fqdn] ][m[0].metric.name] = Hash.new
+            #    json[ r[:fqdn] ][m[0].metric.name][:title] = m[0].metric.title 
+            #    json[ r[:fqdn] ][m[0].metric.name][:timestamp] = m[0][:timestamp] 
+            #    json[ r[:fqdn] ][m[0].metric.name][:status] = m[0][:status] 
+            #    json[ r[:fqdn] ][m[0].metric.name][:created_at] = m[0][:created_at] 
+            #    json[ r[:fqdn] ][m[0].metric.name][:updated_at] = m[0][:updated_at] 
+            #    json[ r[:fqdn] ][m[0].metric.name][:deviated] = m[0][:deviated] 
+            #    json[ r[:fqdn] ][m[0].metric.name][:value] = m[0][:value] 
+            #    json[ r[:fqdn] ][m[0].metric.name][:title] = m[1] 
+	        #    logger.info "add metric #{m[0].metric.name} host #{r[:fqdn]} to json"
             end
         end
     json
