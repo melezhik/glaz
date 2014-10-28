@@ -1,3 +1,5 @@
+cwd = File.expand_path(File.join(File.dirname(__FILE__), %w[ ../ ../ ]))
+
 app = :glaz
 
 Eye.config do
