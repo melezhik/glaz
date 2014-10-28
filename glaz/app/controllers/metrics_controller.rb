@@ -17,7 +17,7 @@ class MetricsController < ApplicationController
 
     def show
         @metric = Metric.find(params[:id])
-        @metric_file_path = "#{Rails.root.join('tmp')}/handlers/#{@metric.name}.rb"
+        @metric_file_path = "#{Rails.root.join('tmp')}/handlers/#{@metric.id}.rb"
     end
 
     def destroy
@@ -64,7 +64,7 @@ class MetricsController < ApplicationController
     def write_to_file
         @metric = Metric.find(params[:id])
         FileUtils.mkdir_p "#{Rails.root.join('tmp')}/hanlders"
-        @metric_file_path = "#{Rails.root.join('tmp')}/handlers/#{@metric.name}.rb"
+        @metric_file_path = "#{Rails.root.join('tmp')}/handlers/#{@metric.id}.rb"
         File.open(@metric_file_path, 'w') { |file| file.write((@metric.handler||"").force_encoding('UTF-8')) }
         flash[:notice] = "metric ID: #{@metric.id} has been successfully written to #{@metric_file_path}"
         redirect_to @metric
@@ -75,7 +75,7 @@ class MetricsController < ApplicationController
         @metric = Metric.find(params[:id])
         
         source = ""
-        @metric_file_path = "#{Rails.root.join('tmp')}/handlers/#{@metric.name}.rb"
+        @metric_file_path = "#{Rails.root.join('tmp')}/handlers/#{@metric.id}.rb"
 
         File.open(@metric_file_path, 'r') { |file| source << file.read  }
 
