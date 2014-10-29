@@ -71,41 +71,22 @@ class Image < ActiveRecord::Base
 
     end
 
-=begin comment
-
-[
-    {
-        name: 'host name1',
-        fqdn: 'ssp.adriver.x',
-        metrics: [
-            {
-                name: 'uptime',
-                attrs: {
-                    "title": "status: outdated. default value: . ",
-                    "timestamp": 1412778863,
-                    "status": "DJ_OK",
-                    "updated_at": "2014-10-08T18:34:23.000+04:00",
-                    "deviated": false,
-                    "value": "100"
-                }
-            },
-            ...
-        ]
-    },
-    ...
-]
-
-=end comment
 
     def data_as_json
-        json = []
 
-        # return { :size => data.size }
+        json = { :stat => [] , :report => {} }
+
+        json[ :report ] = {
+            :report_id => report.id,
+            :title => report.title,
+            :image_id => id,
+            :updated_at => stats.max { | a, b| a[:updated_at] <=> b[:updated_at] }[:updated_at]
+        }
 
         data.each do |h|
 
             hd = Hash.new
-            json << hd
+            json[:stat] << hd
             hd[:fqdn] = h[:fqdn]
             hd[:name] = h[:name]
             hd[:metrics] = Array.new
