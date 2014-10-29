@@ -114,7 +114,10 @@ class Image < ActiveRecord::Base
                  mt = Hash.new
                  hd[:metrics] << mt
                  mt[:name] = m[0].metric.name
+                 mt[:title] = m[0].metric.title
                  mt[:attrs] = Hash.new
+                 mt[:attrs][:deviated] = m[0][:deviated]
+                 mt[:attrs][:duration] = m[0][:duration]
                  mt[:attrs][:title] = m[0].metric.title
                  mt[:attrs][:timestamp] = m[0][:timestamp]
                  mt[:attrs][:status] = m[0][:status]
@@ -122,17 +125,6 @@ class Image < ActiveRecord::Base
                  mt[:attrs][:updated_at] = m[0][:updated_at]
                  mt[:attrs][:value] = m[0][:value]
                  mt[:attrs][:info] = m[1]
-
-            #    json[ r[:fqdn] ][m[0].metric.name] = Hash.new
-            #    json[ r[:fqdn] ][m[0].metric.name][:title] = m[0].metric.title 
-            #    json[ r[:fqdn] ][m[0].metric.name][:timestamp] = m[0][:timestamp] 
-            #    json[ r[:fqdn] ][m[0].metric.name][:status] = m[0][:status] 
-            #    json[ r[:fqdn] ][m[0].metric.name][:created_at] = m[0][:created_at] 
-            #    json[ r[:fqdn] ][m[0].metric.name][:updated_at] = m[0][:updated_at] 
-            #    json[ r[:fqdn] ][m[0].metric.name][:deviated] = m[0][:deviated] 
-            #    json[ r[:fqdn] ][m[0].metric.name][:value] = m[0][:value] 
-            #    json[ r[:fqdn] ][m[0].metric.name][:title] = m[1] 
-	        #    logger.info "add metric #{m[0].metric.name} host #{r[:fqdn]} to json"
             end
         end
     json
