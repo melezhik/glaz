@@ -106,6 +106,8 @@ class Image < ActiveRecord::Base
                  mt[:attrs][:updated_at] = m[0][:updated_at]
                  mt[:attrs][:value] = m[0][:value]
                  mt[:attrs][:info] = m[1]
+                 mt[:attrs][:outdated] = Time.at(m[0][:timestamp]) <= 10.seconds.ago
+                 mt[:attrs][:default_value] = m[0].metric.default_value
             end
         end
     json
