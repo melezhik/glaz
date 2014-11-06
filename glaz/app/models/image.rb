@@ -7,6 +7,10 @@ class Image < ActiveRecord::Base
         stats.size > 0
     end
 
+    def outdated?
+
+        created_at <= 3.seconds.ago
+    end
 
     def data
 
