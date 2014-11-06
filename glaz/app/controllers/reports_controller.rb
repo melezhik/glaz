@@ -144,14 +144,35 @@ class ReportsController < ApplicationController
         @image = @report.images.last
     
         if ! @image 
-            #logger.warn "skip sync for report ID:#{params[:id]}, no image found"
-            render nothing: true
+
+            message = "skip sync for report ID:#{params[:id]}, no image found"
+            logger.warn message
+
+            if params[:json_mode]
+                render json: { :message => message, :status => false  }
+            elsif request.env["HTTP_REFERER"].nil?
+                render  :text => "#{message}\n"
+            else
+                redirect_to  url_for([ @report, image ])
+            end
+
             return
         end
 
         if  ! @image.outdated?
-            logger.warn "skip sync for report ID:#{params[:id]}, image found is fresh enough - #{@image[:created_at]}"
-            render nothing: true
+
+            message = "skip sync for report ID:#{params[:id]}, image found is fresh enough - #{@image[:created_at]}"
+
+            logger.warn message
+
+            if params[:json_mode]
+                render json: { :message => message, :status => false }
+            elsif request.env["HTTP_REFERER"].nil?
+                render  :text => "#{message}\n"
+            else
+                redirect_to  url_for([ @report, image ])
+            end
+
             return
         end
 
@@ -218,10 +239,13 @@ class ReportsController < ApplicationController
         end
 
 
-        flash[:notice] = "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
+        message = "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
+        flash[:notice] = message
 
-        if request.env["HTTP_REFERER"].nil?
-            render  :text => "report ID: #{params[:id]} has been successfully scheduled to synchronization queue\n"
+        if params[:json_mode]
+            render json: { :message => message, :status => true  }
+        elsif request.env["HTTP_REFERER"].nil?
+            render  :text => "#{message}\n"
         else
             redirect_to  url_for([ @report, image ])
         end
