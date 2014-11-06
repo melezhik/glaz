@@ -138,7 +138,22 @@ class ReportsController < ApplicationController
     def synchronize
 
 
+        
         @report = Report.find(params[:id])
+
+        @image = @report.images.last
+    
+        if ! @image 
+            #logger.warn "skip sync for report ID:#{params[:id]}, no image found"
+            render nothing: true
+            return
+        end
+
+        if  ! @image.outdated?
+            logger.warn "skip sync for report ID:#{params[:id]}, image found is fresh enough - #{@image[:created_at]}"
+            render nothing: true
+            return
+        end
 
         env = {}
         env[ :notify ] = ( params[ :notify ].nil? or params[ :notify ].empty? ) ? false : true
