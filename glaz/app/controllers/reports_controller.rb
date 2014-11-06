@@ -36,8 +36,20 @@ class ReportsController < ApplicationController
     def json
 
         @report = Report.find(params[:id])
-        @image = @report.images.last
-        json =  @image.nil? ?  {} : @image.data_as_json
+        json = {}
+        image_id = nil
+
+        begin
+            @image = @report.images.last
+            json = @image.data_as_json unless @image.nil? 
+            image_id = @image.id unless @image.nil?
+            json[:status] = 'OK'
+            json[:error_message] = nil
+        rescue Exception => e
+            logger.error "report json data error. report ID: #{params[:id]}, image ID:#{image_id}. #{e.class}: #{e.message}"
+            json[:status] = 'FAIL'
+            json[:error_message] = e.message
+        end
 
         response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
         response.headers['Cache-Control'] = 'no-cache'
@@ -45,7 +57,7 @@ class ReportsController < ApplicationController
         sse = SSE.new(response.stream)
 
         unless @image.nil?
-            sse.write(json, id: @image.id , event: "report-json", retry: 5000 )
+            sse.write(json, id: image_id , event: "report-json", retry: 5000 )
         end
 
         render nothing: true

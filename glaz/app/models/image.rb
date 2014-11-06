@@ -9,7 +9,7 @@ class Image < ActiveRecord::Base
 
     def outdated?
 
-        created_at <= 3.seconds.ago
+        created_at <= 10.seconds.ago
     end
 
     def data
