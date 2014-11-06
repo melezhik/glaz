@@ -153,7 +153,8 @@ class ReportsController < ApplicationController
             elsif request.env["HTTP_REFERER"].nil?
                 render  :text => "#{message}\n"
             else
-                redirect_to  url_for([ @report, image ])
+                flash[:warn] = message
+                redirect_to  url_for(@report)
             end
 
             return
@@ -170,7 +171,8 @@ class ReportsController < ApplicationController
             elsif request.env["HTTP_REFERER"].nil?
                 render  :text => "#{message}\n"
             else
-                redirect_to  url_for([ @report, image ])
+                flash[:warn] = message
+                redirect_to  url_for([ @report, @image ])
             end
 
             return
@@ -247,7 +249,7 @@ class ReportsController < ApplicationController
         elsif request.env["HTTP_REFERER"].nil?
             render  :text => "#{message}\n"
         else
-            redirect_to  url_for([ @report, image ])
+            redirect_to  url_for([ @report, @image ])
         end
 
     end
