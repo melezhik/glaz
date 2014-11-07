@@ -14,7 +14,7 @@ Eye.application app do
     group 'dj' do
             
         chain grace: 5.seconds
-        workers = (ENV['dj_workers']||'5').to_i
+        workers = (ENV['dj_workers']||'10').to_i
     
         (1 .. workers).each do |i|
     

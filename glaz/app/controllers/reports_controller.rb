@@ -179,7 +179,7 @@ class ReportsController < ApplicationController
             logger.warn message
 
             if params[:json_mode]
-                render json: { :message => message, :status => false }
+                render json: { :message => message, :status => true }
             elsif request.env["HTTP_REFERER"].nil?
                 render  :text => "#{message}\n"
             else
