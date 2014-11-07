@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140821112411) do
+ActiveRecord::Schema.define(version: 20141027101614) do
 
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",                    default: 0, null: false
@@ -38,10 +38,13 @@ ActiveRecord::Schema.define(version: 20140821112411) do
   end
 
   create_table "images", force: true do |t|
-    t.boolean  "keep_me",    default: false
+    t.boolean  "keep_me",     default: false
     t.integer  "report_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "layout_type", default: "table"
+    t.binary   "raw_data"
+    t.binary   "handler"
   end
 
   add_index "images", ["report_id"], name: "index_images_on_report_id", using: :btree
@@ -79,6 +82,8 @@ ActiveRecord::Schema.define(version: 20140821112411) do
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "layout_type", default: "table"
+    t.binary   "handler"
   end
 
   create_table "stats", force: true do |t|
