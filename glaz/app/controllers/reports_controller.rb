@@ -27,9 +27,31 @@ class ReportsController < ApplicationController
     end
 
     def view
+
         @report = Report.find(params[:id])
         @image = @report.images.last
         @data =  @image.nil? ?  [] : @image.data
+
+        if @image.has_handler?
+
+            handler = @image.handler
+
+            logger.info "applying image handler"
+
+            begin 
+
+                self.instance_eval handler
+                logger.info "successfully executed report handler"
+
+            rescue Exception => ex
+
+                logger.error "handler execution failed. #{ex.class}: #{ex.message}"
+                # raise "#{ex.class}: #{ex.message}"
+
+            end
+        else
+            logger.info "report has no handler"
+        end
 
     end
 
@@ -194,7 +216,12 @@ class ReportsController < ApplicationController
         env[ :notify ] = ( params[ :notify ].nil? or params[ :notify ].empty? ) ? false : true
         env[ :rails_root ] = root_url
 
-        image = @report.images.create( :keep_me =>  params[ :create_tag ] ? true : false )
+        image = @report.images.create( 
+            :keep_me =>  params[ :create_tag ] ? true : false,
+            :layout_type => @report.layout_type,
+            :handler => @report.handler
+        )
+
         image.save!
 
         env[ :image_url ] = url_for [ @report, image ]
@@ -291,7 +318,9 @@ private
 
     def _params
         params.require(:report).permit( 
-                :title
+                :title,
+                :layout_type,
+                :handler
         )
     end
 

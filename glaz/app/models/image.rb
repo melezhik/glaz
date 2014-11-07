@@ -1,6 +1,8 @@
 class Image < ActiveRecord::Base
 
+
     belongs_to :report
+
     has_many :stats, :dependent => :destroy
 
     def has_stats?
@@ -10,6 +12,16 @@ class Image < ActiveRecord::Base
     def outdated?
 
         created_at <= 30.seconds.ago
+    end
+
+    def has_handler?
+
+        if handler.nil? or handler.empty? 
+            false
+        else
+            true
+        end
+
     end
 
     def data
