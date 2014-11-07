@@ -6,8 +6,8 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
         stat.update( :timestamp =>  Time.now.to_i, :status => 'DJ_PERFORM'  )
         stat.save!
 
-        runner = RunTask.new host, metric, task, stat, env, self
-        runner.run 
+        @runner = RunTask.new host, metric, task, stat, env, self
+        @runner.run 
 
     end
 
@@ -37,6 +37,8 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
         log  :error, ex.backtrace
         stat.update( :timestamp =>  Time.now.to_i, :status => 'DJ_ERROR'  )
         stat.save!
+        log  :info, 'start notify to report error'
+        @runner.notify "failed to execute stat for metric: #{ex.class}", %w{ app@adriver.ru }
     end
 
     def failure(job)

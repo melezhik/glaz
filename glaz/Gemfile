@@ -67,5 +67,8 @@ gem 'eye'
 
 gem 'puma'
 
+<<<<<<< HEAD
 gem 'unicorn'
 
+=======
+>>>>>>> ad58c131af202e1788472c6c87a7d06102694a0d

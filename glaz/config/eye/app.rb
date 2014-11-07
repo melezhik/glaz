@@ -1,5 +1,5 @@
 cwd = File.expand_path(File.join(File.dirname(__FILE__), %w[ ../ ../ ]))
-port = 3000
+
 app = :glaz
 
 Eye.config do
@@ -24,7 +24,7 @@ Eye.application app do
                 
                 start_command "rake jobs:work"
     
-        	    stop_signals [:INT, 30.seconds, :TERM, 10.seconds, :KILL]
+                stop_signals [:INT, 30.seconds, :TERM, 10.seconds, :KILL]
         
                 daemonize true
         
@@ -34,6 +34,7 @@ Eye.application app do
                 env 'https_proxy' => 'http://squid.adriver.x:3128'
                 env 'HTTP_PROXY' => 'http://squid.adriver.x:3128'
                 env 'HTTPS_PROXY' => 'http://squid.adriver.x:3128'
+                env 'adriver_leadstat_pass' => 'TSwccpzFfvFvwFhe'
         
             end
         end
@@ -49,3 +50,4 @@ Eye.application app do
     end
 
 end
+
