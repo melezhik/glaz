@@ -61,6 +61,7 @@ private
 
     def _log level, data, limit
 
+        return
         chunk = []; i = 0;
 
         data.split(/\n/).each do |line|
