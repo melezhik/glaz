@@ -11,7 +11,7 @@
     <td><%= link_to @report.title, report_path(@report), :title => 'edit report attributes'  %></td>
     <td><%= @image.layout_type  %></td>
     <td>  
-        <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
+        <%= link_to 'synchronize', synchronize_report_path(@report, :no_cache => true ), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
     </td>
     <% if @image.nil? %>
 	    <td>no data found</td>

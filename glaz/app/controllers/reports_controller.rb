@@ -32,7 +32,7 @@ class ReportsController < ApplicationController
         @image = @report.images.last
         @data =  @image.nil? ?  [] : @image.data
 
-        if @image.has_handler?
+        if ! @image.nil? and @image.has_handler? and params[:no_cache].nil?
 
             handler = @image.handler
 
@@ -59,7 +59,7 @@ class ReportsController < ApplicationController
 
         @report = Report.find(params[:id])
         json = {}
-        image_id = nil
+        image_id = 0
 
         begin
             @image = @report.images.last
@@ -79,7 +79,8 @@ class ReportsController < ApplicationController
         sse = SSE.new(response.stream)
 
         unless @image.nil?
-            sse.write(json, id: image_id , event: "report-json", retry: 5000 )
+            sse.write(json, id: image_id , event: "report-json", retry: 100 )
+            logger.warn "successfully return json"
         end
 
         render nothing: true
@@ -172,114 +173,121 @@ class ReportsController < ApplicationController
     def synchronize
 
 
+        @@stat ||= Hash.new
         
         @report = Report.find(params[:id])
 
-        @image = @report.images.last
-    
-        if ! @image 
+    	if @@stat.has_key? @report.id
 
-            message = "skip sync for report ID:#{params[:id]}, no image found"
-            logger.warn message
-
-            if params[:json_mode]
-                render json: { :message => message, :status => false  }
-            elsif request.env["HTTP_REFERER"].nil?
-                render  :text => "#{message}\n"
-            else
-                flash[:warn] = message
-                redirect_to  url_for(@report)
-            end
-
-            return
-        end
-
-        if  ! @image.outdated?
-
-            message = "skip sync for report ID:#{params[:id]}, image found is fresh enough - #{@image[:created_at]}"
-
-            logger.warn message
-
-            if params[:json_mode]
-                render json: { :message => message, :status => true }
-            elsif request.env["HTTP_REFERER"].nil?
-                render  :text => "#{message}\n"
-            else
-                flash[:warn] = message
-                redirect_to  url_for([ @report, @image ])
-            end
-
-            return
-        end
-
-        env = {}
-        env[ :notify ] = ( params[ :notify ].nil? or params[ :notify ].empty? ) ? false : true
-        env[ :rails_root ] = root_url
-
-        image = @report.images.create( 
-            :keep_me =>  params[ :create_tag ] ? true : false,
-            :layout_type => @report.layout_type,
-            :handler => @report.handler
-        )
-
-        image.save!
-
-        env[ :image_url ] = url_for [ @report, image ]
-
-
-        @report.hosts.each.select {|i| i.enabled? }.each  do |h|
-
-            hlist = h.multi? ? h.subhosts_list : [h]
-            hlist.each do |host|
-
-                logger.info "going to synchronize host: #{host.fqdn} in report: #{@report.id}"
-
-                # { :point => point , :metric => sm.obj, :multi => true, :group => point.metric.title, :group_metric => sm.metric }
-
-                @report.metrics_flat_list.map {|i| i[:metric] }.each do |m|
-                
-                task = nil; metric = nil
-
-                h.active_tasks.select { |t| @report.has_metric? t.metric }.each do |t| 
-
-                    if t.metric.has_sub_metrics?
-                        t.metric.submetrics.each do |sm|
-                            if sm.obj.id == m.id
-                                metric = sm.obj
-                                task = t 
-                            end
-                        end
-                    else
-                        if t.metric.id == m.id
-                            task = t 
-                            metric = t.metric
-                        end
-                    end
+	        @image = @report.images.last
+            logger.warn "using cached report stat, set cache to false to rebuild stat structure!"
+		    @@stat[@report.id].each do |s|
+			    host = s[0]
+    			metric = s[1]
+	    		task = s[2]
+		    	stat = s[3]
+			    env = s[4]
+                unless stat[:status] == 'REPORT_ERROR'
+                    stat.reload
+                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ) ) 
+                    logger.warn "report ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"
                 end
+		    end
 
-                if task.nil?
+	    else
 
-                    logger.info "unknown metric found for host: #{host.fqdn}, metric: #{m.title}"
-                    stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => nil, :status => 'REPORT_ERROR', :host_id => host.id )
+        	@@stat[@report.id] = []
+	        @image = @report.images.last
 
-                else
-
-                    stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
-
-                    stat.save!
+        	if  ! @image.nil? and ! @image.outdated?
+	
+            		message = "skip sync for report ID:#{params[:id]}, image found is fresh enough - #{@image[:created_at]}"
+	
+            		logger.warn message
+	
+            		if params[:json_mode]
+                		render json: { :message => message, :status => true }
+            		elsif request.env["HTTP_REFERER"].nil?
+                		render  :text => "#{message}\n"
+            		else
+                		flash[:warn] = message
+                		redirect_to  url_for([ @report, @image ])
+            		end
+	
+            		return
+        	end
+	
+        	env = {}
+        	env[ :notify ] = ( params[ :notify ].nil? or params[ :notify ].empty? ) ? false : true
+        	env[ :rails_root ] = root_url
+	
+        	@image = @report.images.create( 
+            		:keep_me =>  params[ :create_tag ] ? true : false,
+            		:layout_type => @report.layout_type,
+            		:handler => @report.handler
+        	)
+	
+        	@image.save!
+	
+        	env[ :image_url ] = url_for [ @report, @image ]
+	
+        	@report.hosts.each.select {|i| i.enabled? }.each  do |h|
+	
+                hlist = h.multi? ? h.subhosts_list : [h]
+            	hlist.each do |host|
+	
+                    logger.info "going to synchronize host: #{host.fqdn} in report: #{@report.id}"
+	    
+                    # { :point => point , :metric => sm.obj, :multi => true, :group => point.metric.title, :group_metric => sm.metric }
+	    
+                    @report.metrics_flat_list.map {|i| i[:metric] }.each do |m|
+                
+                	    task = nil; metric = nil
     
-                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ) )
-
-                    logger.info "report ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"        
+                	    h.active_tasks.select { |t| @report.has_metric? t.metric }.each do |t| 
     
-                end                
+                    		    if t.metric.has_sub_metrics?
+                        		    t.metric.submetrics.each do |sm|
+                            	        if sm.obj.id == m.id
+                                	        metric = sm.obj
+                                	        task = t 
+                            	        end
+                        		    end
+                    		    else
+                        	        if t.metric.id == m.id
+                                        task = t 
+                            		    metric = t.metric
+                        	        end
+                    		    end
+                	    end # next task
+    
+                	    if task.nil?
+    
+                            logger.info "unknown metric found for host: #{host.fqdn}, metric: #{m.title}"
+                            stat = @image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => nil, :status => 'REPORT_ERROR', :host_id => host.id )
+    
+                	    else
+    
+                            stat = @image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
+                            stat.save!
+        
+	                        Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ) )
+        
+	        	    	    @@stat[@report.id] << [ host, metric, task, stat, env ]
+	    
+                    	    logger.info "report ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"        
+        
+                	    end                
+    
+                    end # next metric
+	    
+                end # next host
 
-                end # next metric
+        end # next host
 
-            end # next host
-        end
+    end # end if
 
-
+    
         message = "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
         flash[:notice] = message
 

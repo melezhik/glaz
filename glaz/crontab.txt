@@ -1,0 +1,64 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+
+
+
+# every night delete old stat
+
+0 0 * * * mysql -u glaz -pglaz glaz -h mysql3.adriver.x -sNe 'select report_id, ID from images where updated_at < NOW() - INTERVAL 1 MONTH' | perl -i -p -e 's{(\d+)\s+(\d+)}{curl -X DELETE -f http://glaz.adriver.x/reports/$1/images/$2  }' | /bin/bash
+
+
+# checks
+## ssp site zone, 8:00 morning
+0 8 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/10/synchronize' -d 'notify=1'  -o /dev/null  -s 
+
+## ad-delegator-woman, 9:00 morning
+#0 9 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/14/synchronize' -d 'notify=1'  -o /dev/null  -s 
+
+## адмитад, каждый час, в конце часа
+#50 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/12/synchronize' -d 'notify=1'  -o /dev/null  -s 
+
+## soloway reports, every day, 12.00
+0 13 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/21/synchronize' -d 'notify=1'  -o /dev/null  -s 
+
+## check  jc-wheezy.x, pinto.webdev.x disk space and free inodes , every day, midnight
+0 0 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/24/synchronize' -d 'notify=1'  -o /dev/null  -s 
+
+## check adriver lead stat recalc every halve an hour 
+0,30 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/26/synchronize' -d 'notify=1' -o /dev/null  -s 
+
+## check leadstat restapi every 15 minutes
+*/15 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/28/synchronize' -d 'notify=1' -o /dev/null  -s 
+
+## check requests to web2.adriver.x:5000  every 10 minutes
+*/10 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/29/synchronize' -d 'notify=1' -o /dev/null  -s 
+
+## check gb20-queue health every 15 minutes
+*/15 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/6/synchronize' -d 'notify=1' -o /dev/null  -s 
+
+
+
+
+
+
+
