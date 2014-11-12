@@ -225,7 +225,7 @@ class ReportsController < ApplicationController
 
         @@cache ||= Hash.new
 
-        if @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"][:updated_at] > 10.seconds.ago
+        if @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"][:updated_at] > 5.seconds.ago
             s = @@cache["#{host_id}:#{metric_id}"]
             cached = true
             sync = false
@@ -273,11 +273,12 @@ class ReportsController < ApplicationController
 
                 json = Hash.new
                 json[:value] = s.nil? ? nil : s.value
-                json[:outdated] = s.nil? ? true : ( s[:updated_at] < 10.seconds.ago)
+                json[:outdated] = s.nil? ? true : ( s[:updated_at] < 5.seconds.ago)
                 json[:sync] = sync
                 json[:cached] = cached               
                 json[:id] = s.nil? ? nil : s.id
                 json[:status] = s.nil? ? nil : s.status
+                json[:deviated] = s.nil? ? nil : s.deviated
 
                 sse.write(json, event: "stat", retry: 1000 )
                 render nothing: true
