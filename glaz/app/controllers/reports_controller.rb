@@ -219,11 +219,42 @@ class ReportsController < ApplicationController
         host_id = params[:host_id]
         metric_id = params[:metric_id]
         task_id = params[:task_id]
+        image_id = params[:image_id]
 
-        s = Stat.order( updated_at: :desc ).find_by(task_id: task_id, host_id: host_id, metric_id: metric_id)
 
+
+        @@cache ||= Hash.new
+
+        if @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"][:updated_at] > 10.seconds.ago
+            s = @@cache["#{host_id}:#{metric_id}"]
+            cached = true; sync = false;
+        else
+
+            s = Stat.order( updated_at: :desc ).find_by(task_id: task_id, host_id: host_id, metric_id: metric_id )
+
+            if s.nil?
+                    sync = true
+            else
+
+                @@cache["#{host_id}:#{metric_id}"] = s
+                cached = false
+    
+                if @@cache["#{host_id}:#{metric_id}"][:updated_at] > 5.seconds.ago   
+                    sync = false
+                else
+                    sync = true
+                end
+            end        
+        end
+
+        if sync == true
+            image = Image.find(image_id)
+            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => metric_id, :task_id => task_id, :status => 'PENDING', :host_id => host_id )
+            Delayed::Job.enqueue( BuildAsync.new( Host.find(host_id), Metric.find(metric_id), Task.find(task_id), stat, {}  ) )
+        end
+        
         if params[:debug]
-            render :text => "h:#{host_id} m:#{metric_id} t:#{task_id} stat_id:#{s.id}. value:#{s.value}. status:#{s.status}. updated_at: #{s.updated_at.strftime '%H:%M:%S'}\n"
+            render :text => "h:#{host_id} m:#{metric_id} t:#{task_id} stat_id:#{s.id}. value:#{s.value}. status:#{s.status}. updated_at: #{s.updated_at.strftime '%H:%M:%S'} cached: #{cached}. sync:#{sync}\n"
         else
         end
 
