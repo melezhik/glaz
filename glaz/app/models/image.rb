@@ -112,7 +112,7 @@ class Image < ActiveRecord::Base
                  mt[:id] = m[0].metric.id
                  mt[:task_id] = m[0][:task_id]
                  mt[:name] = m[0].metric.title
-                 mt[:stat_url] = "/reports/#{report.id}/stat/?host_id=#{hd[:id]}&metric_id=#{mt[:id]}&task_id=#{mt[:task_id]}"
+                 mt[:stat_url] = "/reports/#{report.id}/stat/?image_id=#{id}&host_id=#{hd[:id]}&metric_id=#{mt[:id]}&task_id=#{mt[:task_id]}"
             end
         end
     json
