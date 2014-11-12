@@ -73,11 +73,11 @@ class Image < ActiveRecord::Base
 
         if rows.size == 0 and cols.size > 0
 	        # add stat for first host, for single host reports
-	            rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn } 
+	            rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn, :name => cols[0][0].host.title, :id =>  cols[0][0].host.id  } 
 	            logger.info "add #{cols.size} stat entries to report for host #{cols[0][0].host.fqdn}. (first host, single host reports)"
         elsif rows.size > 0 and cols.size > 0
 	        # add stat for last host for multi hosts reports
-	            rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn, :name => cols[0][0].host.title } 
+	            rows << { :data =>  cols  , :fqdn => cols[0][0].host.fqdn, :name => cols[0][0].host.title, :id =>  cols[0][0].host.id } 
 	            logger.info "add #{cols.size} stat entries to report for host #{cols[0][0].host.fqdn}. (last host, single host reports)"
         end
         
@@ -88,42 +88,30 @@ class Image < ActiveRecord::Base
     end
 
 
-    def data_as_json
+    def schema
 
-        json = { :stat => [] , :report => {} }
+        json = { :schema => [] , :report => {} }
 
         json[ :report ] = {
             :report_id => report.id,
             :title => report.title,
-            :image_id => id,
-            :updated_at => stats.max { | a, b| a[:updated_at] <=> b[:updated_at] }[:updated_at]
+            :image_id => id
         }
 
         data.each do |h|
 
             hd = Hash.new
-            json[:stat] << hd
+            json[:schema] << hd
+            hd[:id]   = h[:id]
             hd[:fqdn] = h[:fqdn]
-            hd[:name] = h[:name]
             hd[:metrics] = Array.new
     
             h[:data].each do |m|
                  mt = Hash.new
                  hd[:metrics] << mt
-                 mt[:name] = m[0].metric.name
-                 mt[:title] = m[0].metric.title
-                 mt[:attrs] = Hash.new
-                 mt[:attrs][:deviated] = m[0][:deviated]
-                 mt[:attrs][:duration] = m[0][:duration]
-                 mt[:attrs][:title] = m[0].metric.title
-                 mt[:attrs][:timestamp] = m[0][:timestamp]
-                 mt[:attrs][:status] = m[0][:status]
-                 mt[:attrs][:created_at] = m[0][:created_at]
-                 mt[:attrs][:updated_at] = m[0][:updated_at]
-                 mt[:attrs][:value] = m[0][:value]
-                 mt[:attrs][:info] = m[1]
-                 mt[:attrs][:outdated] = Time.at(m[0][:timestamp]) <= 10.seconds.ago
-                 mt[:attrs][:default_value] = m[0].metric.default_value
+                 mt[:id] = m[0].metric.id
+                 mt[:task_id] = m[0][:task_id]
+                 mt[:name] = m[0].metric.title
             end
         end
     json
