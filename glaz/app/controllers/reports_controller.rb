@@ -227,17 +227,24 @@ class ReportsController < ApplicationController
 
         if @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"][:updated_at] > 10.seconds.ago
             s = @@cache["#{host_id}:#{metric_id}"]
-            cached = true; sync = false;
+            cached = true
+            sync = false
         else
 
             s = Stat.order( updated_at: :desc ).find_by(task_id: task_id, host_id: host_id, metric_id: metric_id )
 
             if s.nil?
                     sync = true
+                    cached = false
             else
 
                 @@cache["#{host_id}:#{metric_id}"] = s
-                cached = false
+
+                if  @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"][:updated_at] > 5.seconds.ago
+                    cached = false
+                else
+                    cached = true
+                end 
     
                 if @@cache["#{host_id}:#{metric_id}"][:updated_at] > 5.seconds.ago   
                     sync = false
@@ -256,6 +263,32 @@ class ReportsController < ApplicationController
         if params[:debug]
             render :text => "h:#{host_id} m:#{metric_id} t:#{task_id} stat_id:#{s.id}. value:#{s.value}. status:#{s.status}. updated_at: #{s.updated_at.strftime '%H:%M:%S'} cached: #{cached}. sync:#{sync}\n"
         else
+
+            begin
+
+                response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
+                response.headers['Cache-Control'] = 'no-cache'
+
+                sse = SSE.new(response.stream)
+
+                json = Hash.new
+                json[:value] = s.nil? ? nil : s.value
+                json[:outdated] = s.nil? ? true : ( s[:updated_at] < 10.seconds.ago)
+                json[:sync] = sync
+                json[:cached] = cached               
+                json[:id] = s.nil? ? nil : s.id
+                json[:status] = s.nil? ? nil : s.status
+
+                sse.write(json, event: "stat", retry: 1000 )
+                render nothing: true
+    
+
+            ensure
+
+                sse.close
+
+            end
+
         end
 
     end
