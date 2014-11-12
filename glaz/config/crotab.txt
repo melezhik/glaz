@@ -25,33 +25,36 @@
 
 # every night delete old stat
 
-0 0 * * * mysql -u glaz -pglaz glaz -h mysql3.adriver.x -sNe 'select report_id, ID from images where updated_at < NOW() - INTERVAL 1 MONTH' | perl -i -p -e 's{(\d+)\s+(\d+)}{curl -X DELETE -f http://moon5.adriver.x:3000/reports/$1/images/$2 --no-proxy http://moon5.adriver.x:3000 }' | /bin/bash
+0 0 * * * mysql -u glaz -pglaz glaz -h mysql3.adriver.x -sNe 'select report_id, ID from images where updated_at < NOW() - INTERVAL 1 MONTH' | perl -i -p -e 's{(\d+)\s+(\d+)}{curl -X DELETE -f http://glaz.adriver.x/reports/$1/images/$2  }' | /bin/bash
 
 
 # checks
 ## ssp site zone, 8:00 morning
-0 8 * * * curl --no-proxy moon5.adriver.x:3000 -f -X POST 'http://moon5.adriver.x:3000/reports/10/synchronize' -d 'notify=1'  -o /dev/null  -s 
+0 8 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/10/synchronize' -d 'notify=1'  -o /dev/null  -s 
 
 ## ad-delegator-woman, 9:00 morning
-0 9 * * * curl --no-proxy moon5.adriver.x:3000 -f -X POST 'http://moon5.adriver.x:3000/reports/14/synchronize' -d 'notify=1'  -o /dev/null  -s 
+#0 9 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/14/synchronize' -d 'notify=1'  -o /dev/null  -s 
 
 ## адмитад, каждый час, в конце часа
-50 * * * * curl --no-proxy moon5.adriver.x:3000 -f -X POST 'http://moon5.adriver.x:3000/reports/12/synchronize' -d 'notify=1'  -o /dev/null  -s 
+#50 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/12/synchronize' -d 'notify=1'  -o /dev/null  -s 
 
 ## soloway reports, every day, 12.00
-0 12 * * * curl --no-proxy moon5.adriver.x:3000 -f -X POST 'http://moon5.adriver.x:3000/reports/21/synchronize' -d 'notify=1'  -o /dev/null  -s 
+0 13 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/21/synchronize' -d 'notify=1'  -o /dev/null  -s 
 
 ## check  jc-wheezy.x, pinto.webdev.x disk space and free inodes , every day, midnight
-0 0 * * * curl --no-proxy moon5.adriver.x:3000 -f -X POST 'http://moon5.adriver.x:3000/reports/24/synchronize' -d 'notify=1'  -o /dev/null  -s 
+0 0 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/24/synchronize' -d 'notify=1'  -o /dev/null  -s 
 
 ## check adriver lead stat recalc every halve an hour 
-0,30 * * * * curl --no-proxy moon5.adriver.x:3000 -f -X POST 'http://moon5.adriver.x:3000/reports/26/synchronize' -d 'notify=1' -o /dev/null  -s 
+0,30 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/26/synchronize' -d 'notify=1' -o /dev/null  -s 
 
 ## check leadstat restapi every 15 minutes
-*/15 * * * * curl --no-proxy moon5.adriver.x:3000 -f -X POST 'http://moon5.adriver.x:3000/reports/28/synchronize' -d 'notify=1' -o /dev/null  -s 
+*/15 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/28/synchronize' -d 'notify=1' -o /dev/null  -s 
 
-## check gb20, queue state every 15 minutes
-*/15 * * * * curl --no-proxy moon5.adriver.x:3000 -f -X POST 'http://moon5.adriver.x:3000/reports/6/synchronize' -d 'notify=1' -o /dev/null  -s 
+## check requests to web2.adriver.x:5000  every 10 minutes
+*/10 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/29/synchronize' -d 'notify=1' -o /dev/null  -s 
+
+## check gb20-queue health every 15 minutes
+*/15 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/6/synchronize' -d 'notify=1' -o /dev/null  -s 
 
 
 
