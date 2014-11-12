@@ -11,7 +11,7 @@ class Image < ActiveRecord::Base
 
     def outdated?
 
-        created_at <= 5.seconds.ago
+        created_at <= 10.seconds.ago
     end
 
     def has_handler?
@@ -36,10 +36,10 @@ class Image < ActiveRecord::Base
             j += 1
             cur_host = i.host if j == 1
 
-             if i[:status] == 'DJ_OK' and  Time.at(i[:updated_at]) > 10.seconds.ago  and i[:deviated] == false 
+             if i[:status] == 'DJ_OK' and  Time.at(i[:updated_at]) > 10.minutes.ago  and i[:deviated] == false 
                  css_class = 'success'  
                  status = 'ok'  
-             elsif i[:status] == 'DJ_OK' and  Time.at(i[:updated_at]) <= 10.seconds.ago  and i[:deviated] == false 
+             elsif i[:status] == 'DJ_OK' and  Time.at(i[:updated_at]) <= 10.minutes.ago  and i[:deviated] == false 
                  css_class = 'warning' 
                  status = 'outdated'  
              elsif i[:status] == 'DJ_OK' and  i[:deviated] == true 
