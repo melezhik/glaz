@@ -3,7 +3,7 @@ class ReportsController < ApplicationController
 
     include ActionController::Live
 
-    skip_before_filter :authenticate_user!, :only => [ :synchronize ]
+    skip_before_filter :authenticate_user!, :only => [ :synchronize, :stat, :schema ]
 
     load_and_authorize_resource param_method: :_params
 
@@ -53,41 +53,6 @@ class ReportsController < ApplicationController
             logger.info "report has no handler"
         end
 
-    end
-
-    def json
-
-        @report = Report.find(params[:id])
-        json = {}
-        image_id = 0
-        logger.warn "request json"
-
-        begin
-            @image = @report.images.last
-            json = @image.data_as_json unless @image.nil? 
-            image_id = @image.id unless @image.nil?
-            json[:status] = 'OK'
-            json[:error_message] = nil
-        rescue Exception => e
-            logger.error "report json data error. report ID: #{params[:id]}, image ID:#{image_id}. #{e.class}: #{e.message}"
-            json[:status] = 'FAIL'
-            json[:error_message] = e.message
-        end
-
-        response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
-        response.headers['Cache-Control'] = 'no-cache'
-
-        sse = SSE.new(response.stream)
-
-        unless @image.nil?
-            sse.write(json, id: image_id , event: "report-json", retry: 100 )
-            logger.warn "successfully return json"
-        end
-
-        render nothing: true
-
-    ensure
-        sse.close
     end
 
     def destroy
@@ -170,6 +135,20 @@ class ReportsController < ApplicationController
         redirect_to @report
     end
 
+
+    def schema
+
+        @report = Report.find(params[:id])
+
+        @image = @report.images.create :layout_type => @report.layout_type, :handler => @report.handler
+
+        @image.save!
+
+        _schema @report, @image
+
+        render json: @image.schema
+
+    end
 
     def synchronize
 

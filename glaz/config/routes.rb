@@ -19,7 +19,8 @@ Rails.application.routes.draw do
             patch 'host'
             patch 'metric'
             get 'view'
-            get 'json'
+            get 'schema'
+            get 'stat'
             post 'synchronize'
             post 'tag'
         end
