@@ -57,7 +57,7 @@ class Image < ActiveRecord::Base
 
              if ( cur_host.id != i.host_id  ) 
 
-		         rows << { :data =>  cols  , :fqdn => cur_host.fqdn }
+		         rows << { :data =>  cols  , :fqdn => cur_host.fqdn, :name => cols[0][0].host.title, :id =>  cols[0][0].host.id  }
 
                  logger.info "add #{cols.size} stat entries to report for host #{cur_host.fqdn}"
 
@@ -112,6 +112,7 @@ class Image < ActiveRecord::Base
                  mt[:id] = m[0].metric.id
                  mt[:task_id] = m[0][:task_id]
                  mt[:name] = m[0].metric.title
+                 mt[:stat_url] = "/reports/#{report.id}/stat/?host_id=#{hd[:id]}&metric_id=#{mt[:id]}"
             end
         end
     json
