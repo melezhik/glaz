@@ -32,7 +32,7 @@ class ReportsController < ApplicationController
         @image = @report.images.last
         @data =  @image.nil? ?  [] : @image.data
 
-        if ! @image.nil? and @image.has_handler? and params[:no_cache].nil?
+        if ! @image.nil? and @image.has_handler?
 
             handler = @image.handler
 
@@ -173,7 +173,6 @@ class ReportsController < ApplicationController
 
     def synchronize
 
-        @@stat ||= Hash.new
         @report = Report.find(params[:id])
 	    @image = @report.images.last
 
@@ -209,58 +208,10 @@ class ReportsController < ApplicationController
 
         env[ :image_url ] = url_for [ @report, @image ]
 
-        @report.hosts.each.select {|i| i.enabled? }.each  do |h|
-
-            hlist = h.multi? ? h.subhosts_list : [h]
-            hlist.each do |host|
-
-                logger.info "going to synchronize host: #{host.fqdn} in report: #{@report.id}"
-	
-                # { :point => point , :metric => sm.obj, :multi => true, :group => point.metric.title, :group_metric => sm.metric }
-	
-                @report.metrics_flat_list.map {|i| i[:metric] }.each do |m|
-            
-                	task = nil; metric = nil
-
-                	h.active_tasks.select { |t| @report.has_metric? t.metric }.each do |t| 
-
-                    		if t.metric.has_sub_metrics?
-                        		t.metric.submetrics.each do |sm|
-                            	    if sm.obj.id == m.id
-                                	    metric = sm.obj
-                                	    task = t 
-                            	    end
-                        		end
-                    		else
-                        	    if t.metric.id == m.id
-                                    task = t 
-                            		metric = t.metric
-                        	    end
-                    		end
-                	end # next task
-
-                	if task.nil?
-
-                        logger.info "unknown metric found for host: #{host.fqdn}, metric: #{m.title}"
-                        stat = @image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => nil, :status => 'REPORT_ERROR', :host_id => host.id )
-
-                	else
-
-                        stat = @image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
-                        stat.save!
-    
-	                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ) )
-    
-                    	logger.info "report ID: #{params[:id]}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"        
-    
-                	end                
-
-                end # next metric
-	
-            end # next host
-
-        end # next host
-
+        _schema @report, @image, env do | host, metric, task, stat |
+            Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ) )
+            logger.info "report ID: #{@report.id}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"  
+        end
 
         message = "report ID: #{params[:id]} has been successfully scheduled to synchronization queue"
         flash[:notice] = message
@@ -305,5 +256,62 @@ private
                 :handler
         )
     end
+
+    def _schema report, image, env = {}
+
+
+        report.hosts.each.select {|i| i.enabled? }.each  do |h|
+
+            hlist = h.multi? ? h.subhosts_list : [h]
+            hlist.each do |host|
+
+                logger.debug "schema create. add host: #{host.fqdn}. report ID: #{@report.id}"
+	
+                # { :point => point , :metric => sm.obj, :multi => true, :group => point.metric.title, :group_metric => sm.metric }
+	
+                report.metrics_flat_list.map {|i| i[:metric] }.each do |m|
+            
+                	task = nil; metric = nil
+
+                	h.active_tasks.select { |t| report.has_metric? t.metric }.each do |t| 
+
+                    		if t.metric.has_sub_metrics?
+                        		t.metric.submetrics.each do |sm|
+                            	    if sm.obj.id == m.id
+                                	    metric = sm.obj
+                                	    task = t 
+                            	    end
+                        		end
+                    		else
+                        	    if t.metric.id == m.id
+                                    task = t 
+                            		metric = t.metric
+                        	    end
+                    		end
+                	end # next task
+
+                	if task.nil?
+
+                        logger.warn "schema create. unknown metric found for host: #{host.fqdn}, metric: #{m.title}"
+                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => nil, :status => 'REPORT_ERROR', :host_id => host.id )
+                        logger.debug "schema create. metric ID: #{m.id} host ID: #{host.id}"
+
+                	else
+
+                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
+                        stat.save!
+                        logger.debug "schema create. metric ID: #{m.id} metric title: #{m.title} task ID: #{task.id} host ID: #{host.id}"
+                        yield host, metric, task, stat, env if block_given?
+
+                	end                
+
+                end # next metric
+	
+            end # next host
+
+        end # next host
+
+    end # end method
+
 
 end
