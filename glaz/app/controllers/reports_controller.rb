@@ -211,6 +211,19 @@ class ReportsController < ApplicationController
 
     end
 
+
+    def stat
+
+        @report = Report.find(params[:id])
+
+        host_id = params[:host_id]
+        metric_id = params[:metric_id]
+        task_id = params[:task_id]
+
+        render :text => "h:#{host_id} m:#{metric_id} t:#{task_id}\n"
+
+    end
+
     def tag
     
         @report = Report.find(params[:id])
