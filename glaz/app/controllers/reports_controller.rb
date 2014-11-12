@@ -146,7 +146,13 @@ class ReportsController < ApplicationController
 
         _schema @report, @image
 
-        render json: @image.schema
+        s = @image.schema
+
+        if params[:debug]
+            render json: JSON.pretty_generate(s)
+        else
+            render json: s
+        end
 
     end
 
