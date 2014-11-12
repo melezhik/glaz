@@ -220,7 +220,12 @@ class ReportsController < ApplicationController
         metric_id = params[:metric_id]
         task_id = params[:task_id]
 
-        render :text => "h:#{host_id} m:#{metric_id} t:#{task_id}\n"
+        s = Stat.order( updated_at: :desc ).find_by(task_id: task_id, host_id: host_id, metric_id: metric_id)
+
+        if params[:debug]
+            render :text => "h:#{host_id} m:#{metric_id} t:#{task_id} stat_id:#{s.id}. value:#{s.value}. status:#{s.status}. updated_at: #{s.updated_at.strftime '%H:%M:%S'}\n"
+        else
+        end
 
     end
 
