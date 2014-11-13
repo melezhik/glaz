@@ -135,6 +135,20 @@ class ReportsController < ApplicationController
         redirect_to @report
     end
 
+    def rt
+
+        @report = Report.find(params[:id])
+
+        @image = @report.images.create :layout_type => @report.layout_type, :handler => @report.handler
+
+        @image.save!
+
+        _schema @report, @image
+
+        @schema = @image.schema
+
+    end
+
 
     def schema
 
@@ -224,7 +238,7 @@ class ReportsController < ApplicationController
 
         cach_treshold = 5.seconds.ago
         sync_treshold = 5.seconds.ago
-        
+        sse_retry = 1000
 
         @@cache ||= Hash.new
 
@@ -282,10 +296,10 @@ class ReportsController < ApplicationController
                 json[:status] = s.status
                 json[:deviated] = s.deviated
 
-                sse.write(json, event: "stat", retry: 1000 )
+                sse.write(json, event: "stat", retry: sse_retry )
                 render nothing: true
     
-
+                logger.info "stat ok. ID:#{json[:id]}"
             ensure
 
                 sse.close

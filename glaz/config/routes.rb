@@ -19,6 +19,7 @@ Rails.application.routes.draw do
             patch 'host'
             patch 'metric'
             get 'view'
+            get 'rt'
             get 'schema'
             get 'stat'
             post 'synchronize'
