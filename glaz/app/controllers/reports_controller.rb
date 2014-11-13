@@ -222,42 +222,44 @@ class ReportsController < ApplicationController
         image_id = params[:image_id]
 
 
+        cach_treshold = 5.seconds.ago
+        sync_treshold = 5.seconds.ago
+        
 
         @@cache ||= Hash.new
 
-        if @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"][:updated_at] > 5.seconds.ago
-            s = @@cache["#{host_id}:#{metric_id}"]
+        if @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"].reload[:updated_at] > cach_treshold
             cached = true
             sync = false
         else
 
-            s = Stat.order( updated_at: :desc ).find_by(task_id: task_id, host_id: host_id, metric_id: metric_id )
+            # lookup new stat in database:
 
-            if s.nil?
-                    sync = true
-                    cached = false
+            s_new = Stat.order( updated_at: :desc ).find_by(task_id: task_id, host_id: host_id, metric_id: metric_id )
+
+            if  s_new[:updated_at] > cach_treshold
+                # update cache
+                @@cache["#{host_id}:#{metric_id}"] = s_new
+                cached = false
             else
+                @@cache["#{host_id}:#{metric_id}"] ||= s_new
+                cached = true
+            end 
 
-                @@cache["#{host_id}:#{metric_id}"] = s
+            if @@cache["#{host_id}:#{metric_id}"][:updated_at] > sync_treshold   
+                sync = false
+            else
+                sync = true
+            end
 
-                if  @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"][:updated_at] > 5.seconds.ago
-                    cached = false
-                else
-                    cached = true
-                end 
-    
-                if @@cache["#{host_id}:#{metric_id}"][:updated_at] > 5.seconds.ago   
-                    sync = false
-                else
-                    sync = true
-                end
-            end        
         end
 
+        @@cache["#{host_id}:#{metric_id}"].reload
+        s = @@cache["#{host_id}:#{metric_id}"]
+
         if sync == true
-            image = Image.find(image_id)
-            stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => metric_id, :task_id => task_id, :status => 'PENDING', :host_id => host_id )
-            Delayed::Job.enqueue( BuildAsync.new( Host.find(host_id), Metric.find(metric_id), Task.find(task_id), stat, {}  ) )
+            s.update :status => 'PENDING'; s.save!
+            Delayed::Job.enqueue( BuildAsync.new( Host.find(host_id), Metric.find(metric_id), Task.find(task_id), s , {}  ) )
         end
         
         if params[:debug]
@@ -272,13 +274,13 @@ class ReportsController < ApplicationController
                 sse = SSE.new(response.stream)
 
                 json = Hash.new
-                json[:value] = s.nil? ? nil : s.value
-                json[:outdated] = s.nil? ? true : ( s[:updated_at] < 5.seconds.ago)
+                json[:value] = s.value
+                json[:outdated] = s[:updated_at] < 5.seconds.ago
                 json[:sync] = sync
                 json[:cached] = cached               
-                json[:id] = s.nil? ? nil : s.id
-                json[:status] = s.nil? ? nil : s.status
-                json[:deviated] = s.nil? ? nil : s.deviated
+                json[:id] = s.id
+                json[:status] = s.status
+                json[:deviated] = s.deviated
 
                 sse.write(json, event: "stat", retry: 1000 )
                 render nothing: true
