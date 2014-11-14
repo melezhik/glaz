@@ -1,6 +1,6 @@
  <script>
-    var source = new EventSource('/reports/<%= @schema[:report][:report_id] %>/stat/?image_id=<%= @schema[:report][:image_id] %>');
-    source.addEventListener('stat', function(e) {
+    var source = new EventSource('/reports/<%= @schema[:report][:report_id] %>/stat/');
+    source.addEventListener("stat", function(e) {
       var data = JSON.parse(e.data);
       document.getElementById(data.stat_id).innerHTML = data.value;
       // alert(data.value)

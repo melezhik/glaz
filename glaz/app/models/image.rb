@@ -112,7 +112,7 @@ class Image < ActiveRecord::Base
                  mt[:name] = m[0].metric.title
                  mt[:id] = m[0].metric_id
                  mt[:task_id] = m[0].task_id
-                 mt[:stat_id] = m[0].id
+                 mt[:stat_id] = "#{mt[:id]}_#{hd[:id]}"
             end
         end
     json
