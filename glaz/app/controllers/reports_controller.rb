@@ -229,7 +229,7 @@ class ReportsController < ApplicationController
     def stat
 
         @report = Report.find(params[:id])
-        @image = Image.find(params[:image_id])
+        # @image = Image.find(params[:image_id])
 
         cach_treshold = 1.seconds.ago
         sse_retry = 100
@@ -237,39 +237,43 @@ class ReportsController < ApplicationController
 
         response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
         response.headers['Cache-Control'] = 'no-cache'
+        response.headers['Connection'] = 'keep-alive'
+
         # render nothing: true
 
-        @@cache ||= Hash.new
+#        @@cache ||= Hash.new
 
 #        while true 
+
+        @image = @report.images.last
 
         @image.schema[:schema].each do |h|
             
             h[:metrics].each do |m|
                 cach_k = m[:stat_id]
-                if @@cache.has_key? cach_k
+                #if @@cache.has_key? cach_k
 
-                    s = @@cache[cach_k]
+                 #   s = @@cache[cach_k]
 
                     #logger.warn "use cached stat stat_id: #{s[:id]} ... "
 
-                    if @@cache[cach_k][:updated_at]  <= cach_treshold 
-                        #logger.warn "delete stat in cache ... "
-                        @@cache.delete cach_k 
-                    end
-                else
+                  #  if @@cache[cach_k][:updated_at]  <= cach_treshold 
+                   #     #logger.warn "delete stat in cache ... "
+                   #     @@cache.delete cach_k 
+                   # end
+               # else
 
                     #logger.warn "lookup stat in database ... "
                     s  = Stat.order( created_at: :desc ).find_by(task_id: m[:task_id], host_id: h[:id], metric_id: m[:id] )
                     s[:value] =  (0...8).map { (65 + rand(26)).chr }.join; s[:value] <<  `date`.chomp;
-                    @@cache[cach_k] = s
+                  #  @@cache[cach_k] = s
     
-                end 
+               # end 
 
                 json = Hash.new
                 json[:value] = s.value
                 json[:outdated] = s[:updated_at] < 5.seconds.ago
-                json[:stat_id] = s.id
+                json[:stat_id] = "#{s.metric_id}_#{s.host_id}"
                 json[:deviated] = s.deviated
 
                 begin
