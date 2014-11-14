@@ -4,7 +4,7 @@ threads Integer(ENV['MIN_THREADS']  || 1), Integer(ENV['MAX_THREADS'] || 16)
 preload_app!
 
 rackup      DefaultRackup
-environment ENV['RACK_ENV'] || 'development'
+environment ENV['RAILS_ENV'] || 'development'
 
 if ( ! ( ENV['RAILS_ENV'].nil? ) and  ENV['RAILS_ENV'] == 'production' )
     port 3000 

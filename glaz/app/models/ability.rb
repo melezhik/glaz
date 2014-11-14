@@ -45,6 +45,7 @@ class Ability
          can :view, [Report]
          can :stat, [Report]
          can :schema, [Report]
+         can :rt, [Report]
          can :stat, [Image]
          can :destroy, [Image]
        end
