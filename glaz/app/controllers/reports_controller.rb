@@ -3,7 +3,7 @@ class ReportsController < ApplicationController
 
     include ActionController::Live
 
-    skip_before_filter :authenticate_user!, :only => [ :synchronize, :stat, :schema ]
+    skip_before_filter :authenticate_user!, :only => [ :synchronize, :stat, :schema, :rt ]
 
     load_and_authorize_resource param_method: :_params
 
@@ -229,84 +229,68 @@ class ReportsController < ApplicationController
     def stat
 
         @report = Report.find(params[:id])
+        @image = Image.find(params[:image_id])
 
-        host_id = params[:host_id]
-        metric_id = params[:metric_id]
-        task_id = params[:task_id]
-        image_id = params[:image_id]
+        cach_treshold = 1.seconds.ago
+        sse_retry = 100
+        sse = SSE.new(response.stream)
 
-
-        cach_treshold = 5.seconds.ago
-        sync_treshold = 5.seconds.ago
-        sse_retry = 1000
+        response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
+        response.headers['Cache-Control'] = 'no-cache'
+        # render nothing: true
 
         @@cache ||= Hash.new
 
-        if @@cache.has_key? "#{host_id}:#{metric_id}" and @@cache["#{host_id}:#{metric_id}"].reload[:updated_at] > cach_treshold
-            cached = true
-            sync = false
-        else
+#        while true 
 
-            # lookup new stat in database:
+        @image.schema[:schema].each do |h|
+            
+            h[:metrics].each do |m|
+                cach_k = m[:stat_id]
+                if @@cache.has_key? cach_k
 
-            s_new = Stat.order( updated_at: :desc ).find_by(task_id: task_id, host_id: host_id, metric_id: metric_id )
+                    s = @@cache[cach_k]
 
-            if  s_new[:updated_at] > cach_treshold
-                # update cache
-                @@cache["#{host_id}:#{metric_id}"] = s_new
-                cached = false
-            else
-                @@cache["#{host_id}:#{metric_id}"] ||= s_new
-                cached = true
-            end 
+                    #logger.warn "use cached stat stat_id: #{s[:id]} ... "
 
-            if @@cache["#{host_id}:#{metric_id}"][:updated_at] > sync_treshold   
-                sync = false
-            else
-                sync = true
-            end
+                    if @@cache[cach_k][:updated_at]  <= cach_treshold 
+                        #logger.warn "delete stat in cache ... "
+                        @@cache.delete cach_k 
+                    end
+                else
 
-        end
-
-        @@cache["#{host_id}:#{metric_id}"].reload
-        s = @@cache["#{host_id}:#{metric_id}"]
-
-        if sync == true
-            s.update :status => 'PENDING'; s.save!
-            Delayed::Job.enqueue( BuildAsync.new( Host.find(host_id), Metric.find(metric_id), Task.find(task_id), s , {}  ) )
-        end
-        
-        if params[:debug]
-            render :text => "h:#{host_id} m:#{metric_id} t:#{task_id} stat_id:#{s.id}. value:#{s.value}. status:#{s.status}. updated_at: #{s.updated_at.strftime '%H:%M:%S'} cached: #{cached}. sync:#{sync}\n"
-        else
-
-            begin
-
-                response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
-                response.headers['Cache-Control'] = 'no-cache'
-
-                sse = SSE.new(response.stream)
+                    #logger.warn "lookup stat in database ... "
+                    s  = Stat.order( created_at: :desc ).find_by(task_id: m[:task_id], host_id: h[:id], metric_id: m[:id] )
+                    s[:value] =  (0...8).map { (65 + rand(26)).chr }.join; s[:value] <<  `date`.chomp;
+                    @@cache[cach_k] = s
+    
+                end 
 
                 json = Hash.new
                 json[:value] = s.value
                 json[:outdated] = s[:updated_at] < 5.seconds.ago
-                json[:sync] = sync
-                json[:cached] = cached               
-                json[:id] = s.id
-                json[:status] = s.status
+                json[:stat_id] = s.id
                 json[:deviated] = s.deviated
 
-                sse.write(json, event: "stat", retry: sse_retry )
-                render nothing: true
-    
-                logger.info "stat ok. ID:#{json[:id]}"
-            ensure
+                begin
 
-                sse.close
+                    sse.write(json, event: "stat", retry: sse_retry )
+                    #logger.warn "retrun stat ... "
 
-            end
+                rescue IOError
 
-        end
+
+                end
+
+            end # next m
+            
+        end # next h
+
+      #end # end while true
+
+    ensure
+
+    sse.close
 
     end
 
