@@ -8,14 +8,18 @@
 
   </script>
 
-<ul>
+<table class="table-bordered table-striped table">
+    <% i = 0 %>
+    <tr>
 <% @schema[:schema].each do |h| %>
-    <ol>
      <% h[:metrics].each do |m| %> 
-     <%= h[:fqdn] %> , <%= m[:name] %><pre id="<%= m[:stat_id] %>"></pre><br>
-
-
-    <% end %>
-    </ol>
+     <td id="<%= m[:stat_id] %>"></td>
+     <% i += 1 %>
+     <%= "#{ i >= 9 ? raw('</tr><tr>') : ''  }" %>   
+         <% if i >= 9 %>
+            <% i = 0 %>
+        <% end %>
+     <% end %>
 <% end %>
-</ul>
+</tr>
+</table>
