@@ -275,6 +275,10 @@ class ReportsController < ApplicationController
                 json[:outdated] = s[:updated_at] < 5.seconds.ago
                 json[:stat_id] = "#{s.metric_id}_#{s.host_id}"
                 json[:deviated] = s.deviated
+                json[:status] = s.status
+                json[:create_at] = s.created_at
+                json[:updated_at] = s.updated_at
+                json[:duration] = s.duration
 
                 begin
 
