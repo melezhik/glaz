@@ -14,10 +14,10 @@
 <% @schema[:schema].each do |h| %>
      <% h[:metrics].each do |m| %> 
      <td id="<%= m[:stat_id] %>"></td>
-     <% i += 1 %>
-     <%= "#{ i >= 9 ? raw('</tr><tr>') : ''  }" %>   
+         <% i += 1 %>
          <% if i >= 9 %>
             <% i = 0 %>
+            </tr><tr>
         <% end %>
      <% end %>
 <% end %>
