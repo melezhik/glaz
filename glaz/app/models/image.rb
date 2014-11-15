@@ -11,7 +11,8 @@ class Image < ActiveRecord::Base
 
     def outdated?
 
-        created_at <= 10.seconds.ago
+        # created_at <= 10.seconds.ago
+        true
     end
 
     def has_handler?

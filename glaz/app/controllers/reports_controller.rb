@@ -208,7 +208,7 @@ class ReportsController < ApplicationController
         env[ :image_url ] = url_for [ @report, @image ]
 
         _schema @report, @image, env do | host, metric, task, stat |
-            Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ) )
+            Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ), :queue => "#{metric.id}:#{host.id}" )
             logger.info "report ID: #{@report.id}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"  
         end
 
