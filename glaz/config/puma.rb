@@ -5,6 +5,8 @@ preload_app!
 
 rackup      DefaultRackup
 environment ENV['RAILS_ENV'] || 'development'
+#environment 'production'
+
 
 if ( ! ( ENV['RAILS_ENV'].nil? ) and  ENV['RAILS_ENV'] == 'production' )
     port 3000 

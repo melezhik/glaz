@@ -232,7 +232,7 @@ class ReportsController < ApplicationController
         # @image = Image.find(params[:image_id])
 
         cach_treshold = 1.seconds.ago
-        sse_retry = 100
+        sse_retry = 5000
         sse = SSE.new(response.stream)
 
         response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
@@ -272,8 +272,8 @@ class ReportsController < ApplicationController
 
                 json = Hash.new
                 json[:value] = s.value
-                json[:outdated] = s[:updated_at] < 5.seconds.ago
-                json[:stat_id] = "#{s.metric_id}_#{s.host_id}"
+                json[:outdated] = s[:updated_at] < 10.seconds.ago
+                json[:stat_id] = "#{@report.id}:#{s[:host_id]}:#{s[:metric_id]}"
                 json[:deviated] = s.deviated
                 json[:status] = s.status
                 json[:create_at] = s.created_at
