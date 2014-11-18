@@ -262,7 +262,7 @@ class ReportsController < ApplicationController
                 json[:status] = s.status
                 json[:create_at] = s.created_at
                 json[:updated_at] = s.updated_at
-                json[:duration] = s.duration
+                json[:duration] = "#{s.duration || 0} secs"
 
                 begin
                     sse.write(json, event: "stat" )
@@ -303,7 +303,7 @@ class ReportsController < ApplicationController
                     host = Host.find h[:id]
                     task = Task.find m[:task_id]
                     metric = Metric.find m[:metric_id]
-                    stat.update :duration => nil, :status => 'PENDING'
+                    stat.update :created_at => stat.updated_at, :status => 'PENDING'
                     stat.save!
                     Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, {}  ), :queue => m[:stat_id] )
                     schedulled = true
