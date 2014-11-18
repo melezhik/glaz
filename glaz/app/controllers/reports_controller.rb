@@ -139,11 +139,13 @@ class ReportsController < ApplicationController
 
         @report = Report.find(params[:id])
 
-        @image = @report.images.create :layout_type => @report.layout_type, :handler => @report.handler
+        @image = @report.images.last
 
-        @image.save!
-
-        _schema @report, @image
+        if  @image.nil?
+            @image = @report.images.create :layout_type => @report.layout_type, :handler => @report.handler
+            @image.save!
+            _schema @report, @image
+        end
 
         @schema = @image.schema
 
@@ -154,11 +156,13 @@ class ReportsController < ApplicationController
 
         @report = Report.find(params[:id])
 
-        @image = @report.images.create :layout_type => @report.layout_type, :handler => @report.handler
+        @image = @report.images.last
 
-        @image.save!
-
-        _schema @report, @image
+        if  @image.nil? or params[:create]
+            @image = @report.images.create :layout_type => @report.layout_type, :handler => @report.handler
+            @image.save!
+            _schema @report, @image
+        end
 
         s = @image.schema
 
@@ -258,7 +262,7 @@ class ReportsController < ApplicationController
                 json[:duration] = s.duration
 
                 begin
-                    sse.write(json, event: "stat", retry: sse_retry )
+                    sse.write(json, event: "stat" )
                 rescue IOError
 
                 end
