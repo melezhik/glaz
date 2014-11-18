@@ -3,10 +3,9 @@ threads Integer(ENV['MIN_THREADS']  || 1), Integer(ENV['MAX_THREADS'] || 16)
 
 preload_app!
 
-rackup      DefaultRackup
-environment 'development'
-
-port 3002
+rackup          DefaultRackup
+environment     'production'
+port            3000 
 
 on_worker_boot do
   # worker specific setup
