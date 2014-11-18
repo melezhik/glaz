@@ -290,12 +290,20 @@ class ReportsController < ApplicationController
 
                 sync_cnt = Delayed::Job.where( queue: m[:stat_id] ).count
         
-                sse.write({ :stat_id => m[:stat_id] , :count => sync_cnt }, event: 'sync', retry: sse_retry )
 
                 if sync_cnt == 0
-                    stat = Stat.find(m[:id])
-                    #Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, {}  ), :queue => stat_id )
+                    stat = Stat.find m[:id]
+                    host = Host.find h[:id]
+                    task = Task.find m[:task_id]
+                    metric = Metric.find m[:metric_id]
+                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, {}  ), :queue => m[:stat_id] )
+                    schedulled = true
+                else
+                    schedulled = false
                 end
+
+                sse.write({ :stat_id => m[:stat_id] , :count => sync_cnt, :schedulled => schedulled }, event: 'sync', retry: sse_retry )
+
             end
         end
             
