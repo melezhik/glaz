@@ -245,7 +245,7 @@ class ReportsController < ApplicationController
             h[:metrics].each do |m|
 
                 s  = Stat.order( created_at: :desc ).find_by(task_id: m[:task_id], host_id: h[:id], metric_id: m[:metric_id] )
-                s[:value] =  (0...8).map { (65 + rand(26)).chr }.join; s[:value] <<  `date`.chomp;
+                # s[:value] =  (0...8).map { (65 + rand(26)).chr }.join; s[:value] <<  `date`.chomp;
 
                 json = Hash.new
                 json[:value] = s.value
