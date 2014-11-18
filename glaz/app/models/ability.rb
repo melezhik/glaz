@@ -41,7 +41,8 @@ class Ability
          can :manage, :all
        else
          can :read, :all
-         can :synchronize, :all
+         can :synchronize, [Report]
+         can :sync, [Report]
          can :view, [Report]
          can :stat, [Report]
          can :schema, [Report]
