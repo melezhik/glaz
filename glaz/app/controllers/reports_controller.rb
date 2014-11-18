@@ -3,7 +3,7 @@ class ReportsController < ApplicationController
 
     include ActionController::Live
 
-    skip_before_filter :authenticate_user!, :only => [ :synchronize, :stat, :schema, :rt ]
+    skip_before_filter :authenticate_user!, :only => [ :synchronize, :sync, :stat, :schema, :rt ]
 
     load_and_authorize_resource param_method: :_params
 
@@ -208,7 +208,7 @@ class ReportsController < ApplicationController
         env[ :image_url ] = url_for [ @report, @image ]
 
         _schema @report, @image, env do | host, metric, task, stat |
-            Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ), :queue => "#{metric.id}:#{host.id}" )
+            Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ), :queue => "#{@report.id}:#{metric.id}:#{host.id}" )
             logger.info "report ID: #{@report.id}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"  
         end
 
@@ -298,7 +298,39 @@ class ReportsController < ApplicationController
 
     ensure
 
-    sse.close
+        sse.close
+
+    end
+
+    def sync
+
+        @report = Report.find(params[:id])
+        sse_retry = 5000
+        sse = SSE.new(response.stream)
+        response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
+        response.headers['Cache-Control'] = 'no-cache'
+        response.headers['Connection'] = 'keep-alive'
+
+        @image = @report.images.last
+
+        @image.schema[:schema].each do |h|
+            
+            h[:metrics].each do |m|
+
+                stat_id = "#{@report.id}:#{h[:id]}:#{m[:id]}"
+
+                sync_cnt = Delayed::Job.where( queue: stat_id ).count
+        
+                sse.write({ :stat_id => stat_id , :count => sync_cnt }, event: 'sync', retry: sse_retry )
+            end
+        end
+            
+
+        sse.write({}, event: 'sync', retry: sse_retry )
+
+    ensure
+
+        sse.close
 
     end
 

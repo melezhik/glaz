@@ -23,6 +23,7 @@ Rails.application.routes.draw do
             get 'schema'
             get 'stat'
             post 'synchronize'
+            get 'sync'
             post 'tag'
         end
     end
