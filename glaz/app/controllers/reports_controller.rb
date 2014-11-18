@@ -254,7 +254,7 @@ class ReportsController < ApplicationController
 
                 json = Hash.new
                 json[:value] = s.value
-                json[:outdated] = s[:updated_at] < 5.seconds.ago
+                json[:outdated] = s[:updated_at] < 1.minute.ago
                 json[:timestamp] = s[:timestamp]
                 json[:relative_time] =  time_ago_in_words(s[:updated_at]) + ' ago '
                 json[:stat_id] = m[:stat_id]
