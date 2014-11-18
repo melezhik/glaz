@@ -229,7 +229,6 @@ class ReportsController < ApplicationController
     def stat
 
         @report = Report.find(params[:id])
-        # @image = Image.find(params[:image_id])
 
         cach_treshold = 1.seconds.ago
         sse_retry = 5000
@@ -239,41 +238,19 @@ class ReportsController < ApplicationController
         response.headers['Cache-Control'] = 'no-cache'
         response.headers['Connection'] = 'keep-alive'
 
-        # render nothing: true
-
-#        @@cache ||= Hash.new
-
-#        while true 
-
         @image = @report.images.last
 
         @image.schema[:schema].each do |h|
             
             h[:metrics].each do |m|
-                cach_k = m[:stat_id]
-                #if @@cache.has_key? cach_k
 
-                 #   s = @@cache[cach_k]
-
-                    #logger.warn "use cached stat stat_id: #{s[:id]} ... "
-
-                  #  if @@cache[cach_k][:updated_at]  <= cach_treshold 
-                   #     #logger.warn "delete stat in cache ... "
-                   #     @@cache.delete cach_k 
-                   # end
-               # else
-
-                    #logger.warn "lookup stat in database ... "
-                    s  = Stat.order( created_at: :desc ).find_by(task_id: m[:task_id], host_id: h[:id], metric_id: m[:id] )
-                    s[:value] =  (0...8).map { (65 + rand(26)).chr }.join; s[:value] <<  `date`.chomp;
-                  #  @@cache[cach_k] = s
-    
-               # end 
+                s  = Stat.order( created_at: :desc ).find_by(task_id: m[:task_id], host_id: h[:id], metric_id: m[:metric_id] )
+                s[:value] =  (0...8).map { (65 + rand(26)).chr }.join; s[:value] <<  `date`.chomp;
 
                 json = Hash.new
                 json[:value] = s.value
                 json[:outdated] = s[:updated_at] < 10.seconds.ago
-                json[:stat_id] = "#{@report.id}:#{s[:host_id]}:#{s[:metric_id]}"
+                json[:stat_id] = m[:stat_id]
                 json[:deviated] = s.deviated
                 json[:status] = s.status
                 json[:create_at] = s.created_at
@@ -281,20 +258,14 @@ class ReportsController < ApplicationController
                 json[:duration] = s.duration
 
                 begin
-
                     sse.write(json, event: "stat", retry: sse_retry )
-                    #logger.warn "retrun stat ... "
-
                 rescue IOError
-
 
                 end
 
             end # next m
             
         end # next h
-
-      #end # end while true
 
     ensure
 
@@ -317,11 +288,14 @@ class ReportsController < ApplicationController
             
             h[:metrics].each do |m|
 
-                stat_id = "#{@report.id}:#{h[:id]}:#{m[:id]}"
-
-                sync_cnt = Delayed::Job.where( queue: stat_id ).count
+                sync_cnt = Delayed::Job.where( queue: m[:stat_id] ).count
         
-                sse.write({ :stat_id => stat_id , :count => sync_cnt }, event: 'sync', retry: sse_retry )
+                sse.write({ :stat_id => m[:stat_id] , :count => sync_cnt }, event: 'sync', retry: sse_retry )
+
+                if sync_cnt == 0
+                    stat = Stat.find(m[:id])
+                    #Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, {}  ), :queue => stat_id )
+                end
             end
         end
             

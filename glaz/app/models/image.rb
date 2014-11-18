@@ -111,7 +111,8 @@ class Image < ActiveRecord::Base
                  mt = Hash.new
                  hd[:metrics] << mt
                  mt[:name] = m[0].metric.title
-                 mt[:id] = m[0].metric_id
+                 mt[:id] = m[0].id
+                 mt[:metric_id] = m[0].metric_id
                  mt[:task_id] = m[0].task_id
                  mt[:stat_id] = "#{report.id}:#{m[0][:host_id]}:#{m[0][:metric_id]}"
             end
