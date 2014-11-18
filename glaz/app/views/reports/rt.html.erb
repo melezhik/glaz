@@ -2,8 +2,17 @@
     var source = new EventSource('/reports/<%= @schema[:report][:report_id] %>/stat/');
     source.addEventListener("stat", function(e) {
       var data = JSON.parse(e.data);
-      document.getElementById(data.stat_id).innerHTML = data.value;
+      document.getElementById(data.stat_id).innerHTML = data.value + ' (' + data.relative_time + ' ) ';
       // alert(data.value)
+    }, false);
+
+  </script>
+
+ <script>
+    var source = new EventSource('/reports/<%= @schema[:report][:report_id] %>/sync/');
+    source.addEventListener("sync", function(e) {
+      var data = JSON.parse(e.data);
+      console(data)
     }, false);
 
   </script>

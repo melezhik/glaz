@@ -1,5 +1,6 @@
 class ReportsController < ApplicationController
 
+    include ActionView::Helpers::DateHelper
 
     include ActionController::Live
 
@@ -253,7 +254,9 @@ class ReportsController < ApplicationController
 
                 json = Hash.new
                 json[:value] = s.value
-                json[:outdated] = s[:updated_at] < 10.seconds.ago
+                json[:outdated] = s[:updated_at] < 5.seconds.ago
+                json[:timestamp] = s[:timestamp]
+                json[:relative_time] =  time_ago_in_words(s[:updated_at]) + ' ago '
                 json[:stat_id] = m[:stat_id]
                 json[:deviated] = s.deviated
                 json[:status] = s.status
@@ -300,6 +303,8 @@ class ReportsController < ApplicationController
                     host = Host.find h[:id]
                     task = Task.find m[:task_id]
                     metric = Metric.find m[:metric_id]
+                    stat.update :duration => nil, :status => 'PENDING'
+                    stat.save!
                     Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, {}  ), :queue => m[:stat_id] )
                     schedulled = true
                 else
