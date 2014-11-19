@@ -46,7 +46,7 @@ end
 
 
 gem 'delayed_job'
-gem 'delayed_job_active_record'
+# gem 'delayed_job_active_record'
 gem 'daemons'
 
 gem 'devise'
@@ -67,3 +67,6 @@ gem 'eye'
 
 gem 'puma'
 
+gem 'time_ago_in_words'
+
+gem 'delayed_job_active_record', github: 'ndbroadbent/delayed_job_active_record', branch: :fix_locking_issues

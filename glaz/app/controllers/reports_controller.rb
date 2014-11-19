@@ -236,7 +236,7 @@ class ReportsController < ApplicationController
         @report = Report.find(params[:id])
 
         cach_treshold = 1.seconds.ago
-        sse_retry = 5000
+        sse_retry = 100
         sse = SSE.new(response.stream)
 
         response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
@@ -249,14 +249,14 @@ class ReportsController < ApplicationController
             
             h[:metrics].each do |m|
 
-                s  = Stat.order( created_at: :desc ).find_by(task_id: m[:task_id], host_id: h[:id], metric_id: m[:metric_id] )
+                s  = Stat.order( timestamp: :desc ).find_by(task_id: m[:task_id], host_id: h[:id], metric_id: m[:metric_id] )
                 # s[:value] =  (0...8).map { (65 + rand(26)).chr }.join; s[:value] <<  `date`.chomp;
 
                 json = Hash.new
                 json[:value] = s.value
-                json[:outdated] = s[:updated_at] < 1.minute.ago
+                json[:outdated] = s[:created_at] < 8.seconds.ago
                 json[:timestamp] = s[:timestamp]
-                json[:relative_time] =  time_ago_in_words(s[:updated_at]) + ' ago '
+                json[:relative_time] =  time_ago_in_words(Time.at(s[:timestamp]), include_seconds: true) + ' ago '
                 json[:stat_id] = m[:stat_id]
                 json[:deviated] = s.deviated
                 json[:status] = s.status
@@ -265,7 +265,7 @@ class ReportsController < ApplicationController
                 json[:duration] = "#{s.duration || 0} secs"
 
                 begin
-                    sse.write(json, event: "stat" )
+                    sse.write(json, event: "stat", retry: sse_retry )
                 rescue IOError
 
                 end
@@ -283,7 +283,8 @@ class ReportsController < ApplicationController
     def sync
 
         @report = Report.find(params[:id])
-        sse_retry = 5000
+        sse_retry = 100
+
         sse = SSE.new(response.stream)
         response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
         response.headers['Cache-Control'] = 'no-cache'
@@ -296,15 +297,17 @@ class ReportsController < ApplicationController
             h[:metrics].each do |m|
 
                 sync_cnt = Delayed::Job.where( queue: m[:stat_id] ).count
+                stat = Stat.find m[:id]
         
 
                 if sync_cnt == 0
-                    stat = Stat.find m[:id]
                     host = Host.find h[:id]
                     task = Task.find m[:task_id]
                     metric = Metric.find m[:metric_id]
-                    stat.update :created_at => stat.updated_at, :status => 'PENDING'
+                    stat.update :timestamp =>  Time.now.to_i, :status => 'PENDING'
+                    #stat.update :value => "*#{stat[:value]}" unless stat[:value].nil?
                     stat.save!
+
                     Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, {}  ), :queue => m[:stat_id] )
                     schedulled = true
                 else
