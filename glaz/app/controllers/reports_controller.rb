@@ -262,7 +262,7 @@ class ReportsController < ApplicationController
                 json[:status] = s.status
                 json[:create_at] = s.created_at
                 json[:updated_at] = s.updated_at
-                json[:duration] = "#{s.duration || 0} secs"
+                json[:duration] = "#{ ( Time.now - s[:created_at] ).to_i } seconds took for this request"
 
                 begin
                     sse.write(json, event: "stat", retry: sse_retry )
