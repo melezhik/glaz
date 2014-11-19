@@ -3,7 +3,7 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
 
     def perform
 
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'DJ_PERFORM'  )
+        stat.update( :status => 'DJ_PERFORM'  )
         stat.save!
 
         @runner = RunTask.new host, metric, task, stat, env, self
@@ -13,20 +13,20 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
 
     def before(job) 
         log :debug, "scheduled async stat ID: #{stat.id}. env: #{env}"
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'DJ_BEFORE'  )
+        stat.update( :status => 'DJ_BEFORE'  )
         stat.save!
     end
 
     def after(job)
         log :debug, "finished async stat ID: #{stat.id}"
-        stat.update({ :duration => (stat.updated_at - stat.created_at).to_int })
+        stat.update( :duration => Time.now.to_i - stat.timestamp )
         stat.save!
-        log :debug, "#{stat.duration} seconds took for this stat"
+        log :debug, "#{stat.duration} seconds took to evaluate this stat"
     end
 
     def success(job)
         log :debug, "succeeded async stat ID: #{stat.id}"
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'DJ_OK'  )
+        stat.update( :status => 'DJ_OK'  )
         stat.save!
     end
 
@@ -35,7 +35,7 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
         log  :error, "failed async stat ID: #{stat.id}"
         log  :error, "#{ex.class} : #{ex.message}"
         log  :error, ex.backtrace
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'DJ_ERROR'  )
+        stat.update( :status => 'DJ_ERROR'  )
         stat.save!
         log  :info, 'start notify to report error'
         @runner.notify "failed to execute stat for metric: #{ex.class}", %w{ app@adriver.ru }
