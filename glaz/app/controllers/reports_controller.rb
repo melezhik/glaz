@@ -254,7 +254,7 @@ class ReportsController < ApplicationController
 
                 json = Hash.new
                 json[:value] = s.value
-                json[:outdated] = s[:created_at] < 8.seconds.ago
+                json[:outdated] = Time.at(s[:timestamp]) < 10.seconds.ago
                 json[:timestamp] = s[:timestamp]
                 json[:relative_time] =  time_ago_in_words(Time.at(s[:timestamp]), include_seconds: true) + ' ago '
                 json[:stat_id] = m[:stat_id]
@@ -304,8 +304,7 @@ class ReportsController < ApplicationController
                     host = Host.find h[:id]
                     task = Task.find m[:task_id]
                     metric = Metric.find m[:metric_id]
-                    stat.update :timestamp =>  Time.now.to_i, :status => 'PENDING'
-                    #stat.update :value => "*#{stat[:value]}" unless stat[:value].nil?
+                    stat.update :created_at =>  Time.now, :status => 'PENDING'
                     stat.save!
 
                     Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, {}  ), :queue => m[:stat_id] )
@@ -400,7 +399,7 @@ private
 
                 	else
 
-                        stat = image.stats.create( :timestamp =>  Time.now.to_i, :metric_id => m.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
+                        stat = image.stats.create( :metric_id => m.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
                         stat.save!
                         logger.debug "schema create. metric ID: #{m.id} metric title: #{m.title} task ID: #{task.id} host ID: #{host.id}"
                         yield host, metric, task, stat, env if block_given?

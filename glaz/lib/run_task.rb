@@ -5,7 +5,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
     def run
 
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'PROCESSING' )
+        stat.update( :status => 'PROCESSING' )
         stat.save!
 
         if task.has_command?
@@ -55,7 +55,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
             build_async.short_log :info, "data returned from command stdout:\n<#{@retval}>" 
         end
 
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
+        stat.update( :status => 'CMD_OK' )
         stat.save!
 
 
@@ -73,7 +73,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
                 build_async.log :info, "data returned after handler: <#{@retval}>"
 
-                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
+                stat.update( :value => @retval , :status => 'HANDLER_OK' )
                 stat.save!
 
             rescue Exception => ex
@@ -98,7 +98,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
                 build_async.log :info, "data returned after handler: <#{@retval}>"
 
-                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
+                stat.update( :value => @retval , :status => 'HANDLER_OK' )
                 stat.save!
 
         
@@ -111,7 +111,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
         else
 
-            stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
+            stat.update( :value => @retval , :status => 'HANDLER_OK' )
             stat.save!
 
             build_async.log :debug, "no handler defined"
@@ -181,7 +181,7 @@ private
             if exit_status.success?
         
                 build_async.log :debug, "command successfully executed, exit status: #{exit_status}"
-                stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
+                stat.update( :status => 'CMD_OK' )
                 stat.save!
 
             else
