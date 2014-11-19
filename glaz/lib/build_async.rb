@@ -19,7 +19,7 @@ class BuildAsync < Struct.new( :host, :metric, :task, :stat, :env   )
 
     def after(job)
         log :debug, "finished async stat ID: #{stat.id}"
-        stat.update( :duration => Time.now.to_i - stat.timestamp )
+        stat.update( :timestamp =>  Time.now.to_i, :duration => ( Time.now - stat.created_at ).to_i )
         stat.save!
         log :debug, "#{stat.duration} seconds took to evaluate this stat"
     end
