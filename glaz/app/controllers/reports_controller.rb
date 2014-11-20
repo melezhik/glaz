@@ -1,7 +1,5 @@
 class ReportsController < ApplicationController
 
-    include ActionView::Helpers::DateHelper
-
     include ActionController::Live
 
     skip_before_filter :authenticate_user!, :only => [ :synchronize, :sync, :stat, :schema, :rt ]
@@ -235,7 +233,6 @@ class ReportsController < ApplicationController
 
         @report = Report.find(params[:id])
 
-        cach_treshold = 1.seconds.ago
         sse_retry = 100
         sse = SSE.new(response.stream)
 
@@ -256,7 +253,7 @@ class ReportsController < ApplicationController
                 json[:value] = s.value
                 json[:outdated] = Time.at(s[:timestamp]) < 10.seconds.ago
                 json[:timestamp] = s[:timestamp]
-                json[:relative_time] =  time_ago_in_words(Time.at(s[:timestamp]), include_seconds: true) + ' ago '
+                json[:relative_time] =  s.calculated_at
                 json[:stat_id] = m[:stat_id]
                 json[:deviated] = s.deviated
                 json[:status] = s.status
@@ -307,7 +304,7 @@ class ReportsController < ApplicationController
                     stat.update :created_at =>  Time.now, :status => 'PENDING'
                     stat.save!
 
-                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, {}  ), :queue => m[:stat_id] )
+                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, { :no_log => true }  ), :queue => m[:stat_id] )
                     schedulled = true
                 else
                     schedulled = false

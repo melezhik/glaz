@@ -61,7 +61,8 @@ private
 
     def _log level, data, limit
 
-        return
+        return if env.has_key? :no_log and env[:no_log] == true
+
         chunk = []; i = 0;
 
         data.split(/\n/).each do |line|
