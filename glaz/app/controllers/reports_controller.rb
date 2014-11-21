@@ -212,7 +212,7 @@ class ReportsController < ApplicationController
 
         _schema @report, @image, env do | host, metric, task, stat |
             stat.update :status => 'PENDING'
-            stat.update!
+            stat.save!
             Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ), :queue => "#{@report.id}:#{metric.id}:#{host.id}" )
             logger.info "report ID: #{@report.id}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"  
         end
@@ -247,7 +247,7 @@ class ReportsController < ApplicationController
             s = Stat.find indx[:stat_id]
             json = Hash.new
             json[:value] = s.value
-            json[:outdated] = Time.at(s[:timestamp]) < 10.seconds.ago
+            json[:outdated] = s.outdated?
             json[:timestamp] = s[:timestamp]
             json[:relative_time] =  s.calculated_at
             json[:stat_id] = indx[:id]

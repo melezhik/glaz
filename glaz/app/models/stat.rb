@@ -32,6 +32,19 @@ class Stat < ActiveRecord::Base
         else
             time_ago_in_words(Time.at(timestamp), include_seconds: true) + ' ago '
         end
+
+
     end
+
+    def outdated?
+        if timestamp.nil?
+            created_at < 10.seconds.ago
+        else
+           Time.at(timestamp)  < 10.seconds.ago
+        end
+
+
+    end
+
 
 end
