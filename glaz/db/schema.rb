@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141027101614) do
+ActiveRecord::Schema.define(version: 20141120150306) do
 
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",                    default: 0, null: false
@@ -86,6 +86,15 @@ ActiveRecord::Schema.define(version: 20141027101614) do
     t.binary   "handler"
   end
 
+  create_table "sindices", force: true do |t|
+    t.integer  "stat_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "host_id"
+    t.integer  "report_id"
+    t.integer  "metric_id"
+  end
+
   create_table "stats", force: true do |t|
     t.binary   "value",      limit: 2147483647
     t.integer  "metric_id"
@@ -98,6 +107,7 @@ ActiveRecord::Schema.define(version: 20141027101614) do
     t.string   "status",                        default: "PENDING"
     t.boolean  "deviated",                      default: false
     t.integer  "duration"
+    t.integer  "index_id"
   end
 
   add_index "stats", ["image_id"], name: "index_stats_on_images_id", using: :btree
