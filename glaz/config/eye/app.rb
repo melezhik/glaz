@@ -48,7 +48,7 @@ Eye.application app do
         #start_command "rails server -d -P #{cwd}/tmp/pids/server.pid -p 3002"
         start_command "puma -C config/puma.rb -d --pidfile #{cwd}/tmp/pids/server.pid"
         daemonize false
-        start_timeout 20.seconds
+        start_timeout 30.seconds
         stdall "#{cwd}/log/api.eye.log"
     end
 

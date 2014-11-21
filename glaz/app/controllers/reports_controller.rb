@@ -211,6 +211,8 @@ class ReportsController < ApplicationController
         env[ :image_url ] = url_for [ @report, @image ]
 
         _schema @report, @image, env do | host, metric, task, stat |
+            stat.update :status => 'PENDING'
+            stat.update!
             Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, env  ), :queue => "#{@report.id}:#{metric.id}:#{host.id}" )
             logger.info "report ID: #{@report.id}, stat ID:#{stat.id} has been successfully scheduled to synchronization queue"  
         end
@@ -231,7 +233,6 @@ class ReportsController < ApplicationController
 
     def stat
 
-        @report = Report.find(params[:id])
 
         sse_retry = 100
         sse = SSE.new(response.stream)
@@ -240,36 +241,29 @@ class ReportsController < ApplicationController
         response.headers['Cache-Control'] = 'no-cache'
         response.headers['Connection'] = 'keep-alive'
 
-        @image = @report.images.last
 
-        @image.schema[:schema].each do |h|
-            
-            h[:metrics].each do |m|
+        Sindex.where("report_id =?", params[:id]).each do |indx|
 
-                s  = Stat.order( timestamp: :desc ).find_by(task_id: m[:task_id], host_id: h[:id], metric_id: m[:metric_id] )
-                # s[:value] =  (0...8).map { (65 + rand(26)).chr }.join; s[:value] <<  `date`.chomp;
+            s = Stat.find indx[:stat_id]
+            json = Hash.new
+            json[:value] = s.value
+            json[:outdated] = Time.at(s[:timestamp]) < 10.seconds.ago
+            json[:timestamp] = s[:timestamp]
+            json[:relative_time] =  s.calculated_at
+            json[:stat_id] = indx[:id]
+            json[:deviated] = s.deviated
+            json[:status] = s.status
+            json[:create_at] = s.created_at
+            json[:updated_at] = s.updated_at
+            json[:duration] = "#{ ( Time.now - s[:created_at] ).to_i } seconds took for this request"
 
-                json = Hash.new
-                json[:value] = s.value
-                json[:outdated] = Time.at(s[:timestamp]) < 10.seconds.ago
-                json[:timestamp] = s[:timestamp]
-                json[:relative_time] =  s.calculated_at
-                json[:stat_id] = m[:stat_id]
-                json[:deviated] = s.deviated
-                json[:status] = s.status
-                json[:create_at] = s.created_at
-                json[:updated_at] = s.updated_at
-                json[:duration] = "#{ ( Time.now - s[:created_at] ).to_i } seconds took for this request"
+            begin
+                sse.write(json, event: "stat", retry: sse_retry )
+            rescue IOError
 
-                begin
-                    sse.write(json, event: "stat", retry: sse_retry )
-                rescue IOError
+            end
 
-                end
-
-            end # next m
-            
-        end # next h
+        end # next index
 
     ensure
 
@@ -279,42 +273,35 @@ class ReportsController < ApplicationController
 
     def sync
 
-        @report = Report.find(params[:id])
         sse_retry = 100
-
         sse = SSE.new(response.stream)
+
         response.headers['Content-Type'] = 'text/event-stream; charset=utf-8'
         response.headers['Cache-Control'] = 'no-cache'
         response.headers['Connection'] = 'keep-alive'
 
-        @image = @report.images.last
+        Sindex.where("report_id =?", params[:id]).each do |indx|
 
-        @image.schema[:schema].each do |h|
-            
-            h[:metrics].each do |m|
+            stat = Stat.find indx[:stat_id]
 
-                sync_cnt = Delayed::Job.where( queue: m[:stat_id] ).count
-                stat = Stat.find m[:id]
-        
+            if stat.status.include? 'DJ_' or stat.status == 'NEW'
 
-                if sync_cnt == 0
-                    host = Host.find h[:id]
-                    task = Task.find m[:task_id]
-                    metric = Metric.find m[:metric_id]
+                    host = Host.find stat[:host_id]
+                    task = Task.find stat[:task_id]
+                    metric = Metric.find stat[:metric_id]
                     stat.update :created_at =>  Time.now, :status => 'PENDING'
                     stat.save!
 
-                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, { :no_log => true }  ), :queue => m[:stat_id] )
+                    Delayed::Job.enqueue( BuildAsync.new( host, metric, task, stat, { :no_log => true }  ) )
+
                     schedulled = true
-                else
+            else
                     schedulled = false
-                end
-
-                sse.write({ :stat_id => m[:stat_id] , :count => sync_cnt, :schedulled => schedulled }, event: 'sync', retry: sse_retry )
-
             end
-        end
-            
+
+            sse.write({ :index_id => indx[:id] , :schedulled => schedulled }, event: 'sync', retry: sse_retry )
+
+        end # next index
 
         sse.write({}, event: 'sync', retry: sse_retry )
 
@@ -396,10 +383,32 @@ private
 
                 	else
 
-                        stat = image.stats.create( :metric_id => m.id, :task_id => task.id, :status => 'PENDING', :host_id => host.id )
+                        stat = image.stats.create( :metric_id => m.id, :task_id => task.id, :status => 'NEW', :host_id => host.id )
                         stat.save!
+
                         logger.debug "schema create. metric ID: #{m.id} metric title: #{m.title} task ID: #{task.id} host ID: #{host.id}"
-                        yield host, metric, task, stat, env if block_given?
+
+                        si = Sindex.find_by( :metric_id => m.id, :host_id => host.id, :report_id => report.id )
+
+                        if si.nil?
+                            si = Sindex.new :metric_id => m.id, :host_id => host.id, :report_id => report.id 
+                            si.save!
+                            stat.update :index_id => si.id
+                            stat.save!
+
+                            si.update :stat_id => stat.id
+                            si.save!
+
+                        else
+                            stat.update :index_id => si.id
+                            stat.save!
+
+                            si.update :stat_id => stat.id
+                            si.save!
+
+                        end
+
+                        yield host, metric, task, stat, si, env if block_given?
 
                 	end                
 
