@@ -10,7 +10,6 @@ class Image < ActiveRecord::Base
     end
 
     def outdated?
-
         # created_at <= 10.seconds.ago
         true
     end
