@@ -38,7 +38,7 @@
 ## адмитад, каждый час, в конце часа
 #50 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/12/synchronize' -d 'notify=1'  -o /dev/null  -s 
 
-## soloway reports, every day, 12.00
+## soloway reports, every day, 13.00
 0 13 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/21/synchronize' -d 'notify=1'  -o /dev/null  -s 
 
 ## check  jc-wheezy.x, pinto.webdev.x disk space and free inodes , every day, midnight
@@ -50,11 +50,14 @@
 ## check leadstat restapi every 15 minutes
 */15 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/28/synchronize' -d 'notify=1' -o /dev/null  -s 
 
-## check requests to web2.adriver.x:5000  every 10 minutes
-*/10 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/29/synchronize' -d 'notify=1' -o /dev/null  -s 
+## check requests to web2.adriver.x:5000, every hour
+10 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/29/synchronize' -d 'notify=1' -o /dev/null  -s 
 
 ## check gb20-queue health every 15 minutes
 */15 * * * * curl  -f -X POST 'http://glaz.adriver.x/reports/6/synchronize' -d 'notify=1' -o /dev/null  -s 
+
+## check yandex creatives moderation cron script, every 2 hours 
+10 */2 * * * curl  -f -X POST 'http://glaz.adriver.x/reports/37/synchronize' -d 'notify=1' -o /dev/null  -s 
 
 
 
