@@ -1,3 +1,5 @@
+require 'syslogger'
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -82,5 +84,7 @@ Rails.application.configure do
 
   config.allow_concurrency = true
 
+
+  config.logger = Syslogger.new
 
 end

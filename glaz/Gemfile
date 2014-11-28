@@ -69,3 +69,4 @@ gem 'puma'
 
 gem 'time_ago_in_words'
 
+gem 'syslogger'
