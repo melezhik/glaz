@@ -168,7 +168,11 @@ private
         Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
             while line = stdout.gets("\n")
+                if line.size >= 10000
+                    raise "too big response from command: #{line.size} characters in single line, exiting ... "
+                end
                 retval << line
+        
             end
 
             while line = stderr.gets("\n")
