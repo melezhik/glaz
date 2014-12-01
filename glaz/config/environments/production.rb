@@ -84,7 +84,6 @@ Rails.application.configure do
 
   config.allow_concurrency = true
 
-
   config.logger = Syslogger.new
 
 end
