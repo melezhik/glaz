@@ -17,7 +17,7 @@ Eye.application app do
             
         chain grace: 5.seconds
 
-        workers = 5
+        workers = 10
     
         (1 .. workers).each do |i|
     
