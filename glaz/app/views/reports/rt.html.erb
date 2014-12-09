@@ -22,7 +22,7 @@
     <tr>
 <% @schema[:schema].each do |h| %>
      <% h[:metrics].each do |m| %> 
-     <td id="<%= m[:stat_id] %>"></td>
+     <td><pre id="<%= m[:stat_id] %>"></pre></td>
          <% i += 1 %>
          <% if i >= 9 %>
             <% i = 0 %>
