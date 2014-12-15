@@ -31,11 +31,6 @@ Eye.application app do
                 stdall "#{cwd}/log/dj.eye.log"
 
                 env 'RAILS_ENV'  => 'development'
-                env 'http_proxy' => 'http://squid.adriver.x:3128'
-                env 'https_proxy' => 'http://squid.adriver.x:3128'
-                env 'HTTP_PROXY' => 'http://squid.adriver.x:3128'
-                env 'HTTPS_PROXY' => 'http://squid.adriver.x:3128'
-                env 'adriver_leadstat_pass' => 'TSwccpzFfvFvwFhe'
         
             end
         end
