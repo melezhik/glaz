@@ -2,6 +2,8 @@ cwd = File.expand_path(File.join(File.dirname(__FILE__), %w[ ../ ../ ]))
 
 app = :glaz
 
+secret_key_base = 'c0e5e5e3cc5d279191580b5f1a7468d134084591228820c983b438af670051fcedf36ed83d56f4dccf63601ecabf203196a1a69bb47adfc19600f883d6f3b280'
+
 Eye.config do
     logger "#{cwd}/log/eye.log"
 end
@@ -14,7 +16,8 @@ Eye.application app do
     group 'dj' do
             
         chain grace: 5.seconds
-        workers = 4
+
+        workers = 10
     
         (1 .. workers).each do |i|
     
@@ -28,13 +31,14 @@ Eye.application app do
         
                 daemonize true
         
-                stdall "#{cwd}/log/dj.eye.log"
+                stdall '/dev/null'
 
-                env 'RAILS_ENV'  => 'development'
-                env 'http_proxy' => 'http://squid.adriver.x:3128'
-                env 'https_proxy' => 'http://squid.adriver.x:3128'
-                env 'HTTP_PROXY' => 'http://squid.adriver.x:3128'
-                env 'HTTPS_PROXY' => 'http://squid.adriver.x:3128'
+                env 'SECRET_KEY_BASE'   => secret_key_base
+                env 'RAILS_ENV'         => 'production'
+                env 'http_proxy'        => 'http://squid.adriver.x:3128'
+                env 'https_proxy'       => 'http://squid.adriver.x:3128'
+                env 'HTTP_PROXY'        => 'http://squid.adriver.x:3128'
+                env 'HTTPS_PROXY'       => 'http://squid.adriver.x:3128'
                 env 'adriver_leadstat_pass' => 'TSwccpzFfvFvwFhe'
         
             end
@@ -43,12 +47,14 @@ Eye.application app do
 
     process :api do
 
+        env 'RAILS_ENV' => 'production'
+        env 'SECRET_KEY_BASE' => secret_key_base
         pid_file "tmp/pids/server.pid"
-        env 'RAILS_ENV'  => 'development'
+
         #start_command "rails server -d -P #{cwd}/tmp/pids/server.pid -p 3002"
-        start_command "puma -C config/puma.rb -d --pidfile #{cwd}/tmp/pids/server.pid"
+        start_command "puma -C config/puma_production.rb -d --pidfile #{cwd}/tmp/pids/server.pid"
         daemonize false
-        start_timeout 30.seconds
+        start_timeout 20.seconds
         stdall "#{cwd}/log/api.eye.log"
     end
 
