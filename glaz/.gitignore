@@ -19,4 +19,5 @@ tmp/
 
 config/database.yml
 config/eye/app_production.rb
+config/ldap.yml
 
