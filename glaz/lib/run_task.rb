@@ -5,7 +5,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
     def run
 
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'PROCESSING' )
+        stat.update( :status => 'PROCESSING' )
         stat.save!
 
         if task.has_command?
@@ -34,7 +34,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
         build_async.log :info, "running #{command_type} command: #{command} for host: #{fqdn}"
 
-        raise "empty command" if command.nil? or  metric.command.empty?
+        raise "empty command" if command.nil? or command.empty?
 
         if command_type == 'ssh'
 	        build_async.log :info, "running command as ssh command"
@@ -55,7 +55,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
             build_async.short_log :info, "data returned from command stdout:\n<#{@retval}>" 
         end
 
-        stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
+        stat.update( :status => 'CMD_OK' )
         stat.save!
 
 
@@ -73,10 +73,10 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
                 build_async.log :info, "data returned after handler: <#{@retval}>"
 
-                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
+                stat.update( :value => @retval , :status => 'HANDLER_OK' )
                 stat.save!
 
-            rescue Execption => ex
+            rescue Exception => ex
 
                 build_async.log :error, "handler execution failed. #{ex.class}: #{ex.message}"
                 raise "#{ex.class}: #{ex.message}"
@@ -98,7 +98,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
                 build_async.log :info, "data returned after handler: <#{@retval}>"
 
-                stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
+                stat.update( :value => @retval , :status => 'HANDLER_OK' )
                 stat.save!
 
         
@@ -111,7 +111,7 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
         else
 
-            stat.update( :value => @retval , :timestamp =>  Time.now.to_i, :status => 'HANDLER_OK' )
+            stat.update( :value => @retval , :status => 'HANDLER_OK' )
             stat.save!
 
             build_async.log :debug, "no handler defined"
@@ -142,6 +142,21 @@ class RunTask < Struct.new( :host, :metric, :task, :stat, :env, :build_async   )
 
     end
 
+    def notify subject, recipients = []
+        build_async.log :info, "hit notification stage"
+        if env[ :notify ]
+            build_async.log :info, "send notification: <#{subject}>"
+            cmd = "echo #{env[:image_url]}  | mail -s '#{stat.image.report.title} report notification. metric: #{metric.title}. message: #{subject}.' #{recipients.join ' '}"
+            if system(cmd) == true
+                build_async.log :info, "succesffully executed cmd: #{cmd}"
+            else
+                build_async.log :error, "failed execute cmd: #{cmd}"
+            end
+        else
+            build_async.log :info, "skip sending notification, because env[:notify]: #{env[:notify]}"
+        end
+    end
+
 private
 
     def execute_command(cmd, raise_ex = true)
@@ -153,7 +168,11 @@ private
         Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 
             while line = stdout.gets("\n")
+                if line.size >= 10000
+                    raise "too big response from command: #{line.size} characters in single line, exiting ... "
+                end
                 retval << line
+        
             end
 
             while line = stderr.gets("\n")
@@ -166,7 +185,7 @@ private
             if exit_status.success?
         
                 build_async.log :debug, "command successfully executed, exit status: #{exit_status}"
-                stat.update( :timestamp =>  Time.now.to_i, :status => 'CMD_OK' )
+                stat.update( :status => 'CMD_OK' )
                 stat.save!
 
             else
@@ -183,20 +202,6 @@ private
     end
 
 
-    def notify subject, recipients = []
-        build_async.log :info, "hit notification stage"
-        if env[ :notify ]
-            build_async.log :info, "send notification: <#{subject}>"
-            cmd = "echo #{env[:image_url]}  | mail -s '#{subject}' #{recipients.join ' '}"
-            if system(cmd) == true
-                build_async.log :info, "succesffully executed cmd: #{cmd}"
-            else
-                build_async.log :error, "failed execute cmd: #{cmd}"
-            end
-        else
-            build_async.log :info, "skip sending notification, because env[:notify]: #{env[:notify]}"
-        end
-    end
 
 end
 

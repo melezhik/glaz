@@ -1,16 +1,15 @@
-<script src="http://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
-
-
 <table class="table-striped table-bordered table" >
 <tr>
     <th>Report Title</th>
+    <th>Image Type</th>
     <th colspan=2>Actions</th>
 </tr>
 <tr>
-    <th><%= link_to @report.title, report_path(@report, @image), :title => 'edit report attributes'  %></th>
-    <th>  
+    <td><%= link_to @report.title, report_path(@report), :title => 'edit report attributes'  %></td>
+    <td> --- </td>
+    <td>  
         <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %>
-    </th>
+    </td>
     <% if @image.nil? %>
 	    <td>no data found</td>
     <% else %>
@@ -20,6 +19,19 @@
 </tr>
 </table>
 
+
+<% if @image.nil? %>
+
+no data found,  click <%= link_to 'synchronize', synchronize_report_path(@report), :title => 'synchronzie report data', :method => :POST, :id => 'synchronize'  %> link
+to get fresh report data
+
+<% else %>
+
+<% if @image.layout_type == 'free' %>
+
+    <pre><%= @image.raw_data %></pre>
+
+<% elsif @image.layout_type == 'table' %>
 
 <table class="table-bordered table sortable">
 
@@ -37,16 +49,20 @@
 
            <th width="100"><%= row[:fqdn] %></th>
            <% row[:data].each do |i| %>
-                <% age = time_ago_in_words(Time.at(i[0][:timestamp])) %>
                 <% stat = i[0]; title = i[1]; css_class = i[2]; %>
-                <td title="<%= title %> updated: <%= age %> ago." class="<%= css_class %>">
-                    <pre title="<%= title %> updated: <%= age %> ago."><%= (stat.value||"").force_encoding('UTF-8') %></pre>
+                <td title="<%= title %> calculated: <%= stat.calculated_at %>." class="<%= css_class %>">
+                    <pre title="<%= title %> calculated: <%= stat.calculated_at %>"><%= (stat.value||"").force_encoding('UTF-8') %></pre>
                 </td>
            <% end %>
         </tr> 
    <% end %>
 </table>
 
+<% else %>
+    unknown image type - <%= @image.layout_type %>
+<% end %>
+
+<% end %>
 
 <!--
 

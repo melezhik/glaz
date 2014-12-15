@@ -18,6 +18,16 @@ class Report < ActiveRecord::Base
         metrics.size != 0
     end
 
+    def has_handler?
+
+        if handler.nil? or handler.empty? 
+            false
+        else
+            true
+        end
+
+    end
+
     def has_images?
         images.size != 0
     end
